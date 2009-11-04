@@ -1,4 +1,4 @@
-package example.ui;
+package example.ui.console;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -115,14 +115,20 @@ public class LaunchMyTransport {
 										String message = input.readLine();
 										System.out.print("\tContact = ");
 										String message2 = input.readLine();
-										myTransport.put(key + "+" + key2, message + " contact: " + message2);
+										if(!key2.equals(""))
+											myTransport.put(key + "+" + key2, message + " contact: " + message2);
+										else
+											myTransport.put(key, message + " contact: " + message2);
 										break;
 									case 2 :
 										System.out.print("\n\tDay = ");
 										key = input.readLine();
 										System.out.print("\t\tDestination = ");
 										key2 = input.readLine();
-										System.out.println("\t\tMatch found: " + myTransport.get(key + "+" + key2));
+										if(!key2.equals(""))
+											System.out.println("\t\tfound: " + myTransport.get(key + "+" + key2));
+										else
+											System.out.println("\t\tfound: " + myTransport.get(key));
 										break;
 									default : break;
 									}
@@ -141,14 +147,20 @@ public class LaunchMyTransport {
 										String message = input.readLine();
 										System.out.print("\tContact = ");
 										String message2 = input.readLine();
-										myTransport.put(key + "+" + key2, message + " contact: " + message2);
+										if(!key2.equals(""))
+											myTransport.put(key + "+" + key2, message + " contact: " + message2);
+										else
+											myTransport.put(key, message + " contact: " + message2);
 										break;
 									case 2 :
 										System.out.print("\n\tDay = ");
 										key = input.readLine();
 										System.out.print("\tDestination = ");
 										key2 = input.readLine();
-										System.out.println("\tconcert found: " + myTransport.get(key + "+" + key2));
+										if(!key2.equals(""))
+											System.out.println("\t\tfound: " + myTransport.get(key + "+" + key2));
+										else
+											System.out.println("\t\tfound: " + myTransport.get(key));
 										break;
 									default : break;
 									}
@@ -165,14 +177,20 @@ public class LaunchMyTransport {
 										String key2 = input.readLine();
 										System.out.print("\tContact = ");
 										String message = input.readLine();;
-										myTransport.put(key + "+" + key2, " contact: " + message);
+										if(!key2.equals(""))
+											myTransport.put(key + "+" + key2, "myTransport" + "+" + message);
+										else
+											myTransport.put(key, "myTransport" + "+" + message);
 										break;
 									case 2 :
 										System.out.print("\n\tDay = ");
 										key = input.readLine();
 										System.out.print("\tDestination = ");
 										key2 = input.readLine();
-										System.out.println("\tfound: " + myTransport.get(key + "+" + key2));
+										if(!key2.equals(""))
+											System.out.println("\t\tfound: " + myTransport.get(key + "+" + key2));
+										else
+											System.out.println("\t\tfound: " + myTransport.get(key));
 										break;
 									default : break;
 									}

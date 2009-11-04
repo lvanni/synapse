@@ -1,11 +1,11 @@
-package example.ui.dev;
+package example.ui.console.dev;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 import example.overlay.jchord.JChord2;
-import example.ui.InfoConsole;
+import example.ui.console.InfoConsole;
 
 
 

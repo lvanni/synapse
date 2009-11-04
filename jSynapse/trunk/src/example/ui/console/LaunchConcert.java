@@ -1,30 +1,30 @@
-package example.ui;
+package example.ui.console;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import example.overlay.foot.Foot;
+import example.overlay.concert.Concert;
 
 
 
-public class LaunchFoot {
+public class LaunchConcert {
 	public static void main(String[] args){
 		try {
 			// LAUNCHING
-			System.out.print("foot's Launching, please wait... ");
+			System.out.print("Concert's Launching, please wait... ");
 			String ip = InfoConsole.getIp();
-			Foot foot = new Foot(ip, Integer.parseInt(args[0]));
-			new Thread(foot).start();
+			Concert concert = new Concert(ip, Integer.parseInt(args[0]));
+			new Thread(concert).start();
 			do{
 				Thread.sleep(1000);
-			} while(foot.getTransport() == null);
+			} while(concert.getTransport() == null);
 
 			// IF ARGS
 			if(args.length > 1 && args[1].equals("-j")){
 				String hostToJoin = args[2];
 				int portToJoin = Integer.parseInt(args[3]);
-				foot.join(hostToJoin, portToJoin);
+				concert.join(hostToJoin, portToJoin);
 			}
 
 			System.out.println("ok!");
@@ -34,13 +34,13 @@ public class LaunchFoot {
 			IHM:
 				while(true){
 					InfoConsole.clearScreen();
-					System.out.println("    _/_/_/_/                      _/           \n" +     
-								       "   _/        _/_/      _/_/    _/_/_/_/        \n" +
-								       "  _/_/_/  _/    _/  _/    _/    _/             \n" +
-								       " _/      _/    _/  _/    _/    _/              \n" +
-									   "_/        _/_/      _/_/        _/_/           \n");
-					System.out.println("1) Publish a football match");
-					System.out.println("2) Search a football match");
+					System.out.println("                                                                 _/      \n" +     
+									   "    _/_/_/    _/_/    _/_/_/      _/_/_/    _/_/    _/  _/_/  _/_/_/_/   \n" + 
+									   " _/        _/    _/  _/    _/  _/        _/_/_/_/  _/_/        _/        \n" +
+									   "_/        _/    _/  _/    _/  _/        _/        _/          _/         \n" + 
+									   " _/_/_/    _/_/    _/    _/    _/_/_/    _/_/_/  _/            _/_/      \n");
+					System.out.println("1) Publish a concert");
+					System.out.println("2) Search a concert");
 					System.out.println("3) Quit");
 					System.out.print("---> ");
 					try{
@@ -48,27 +48,33 @@ public class LaunchFoot {
 						String key;
 						switch(chx){
 						case 0 :
-							System.out.println("\n" + foot + "\n"); break;
+							System.out.println("\n" + concert + "\n"); break;
 						case 1 :
 							System.out.print("\nDay = ");
 							key = input.readLine();
 							System.out.print("Destination = ");
 							String key2 = input.readLine();
-							System.out.print("Match = ");
+							System.out.print("Concert = ");
 							String message = input.readLine();
 							System.out.print("Contact = ");
 							String message2 = input.readLine();
-							foot.put(key + "+" + key2, message + " contact: " + message2);
+							if(!key2.equals(""))
+								concert.put(key + "+" + key2, message + " contact: " + message2);
+							else
+								concert.put(key, message + " contact: " + message2);
 							break;
 						case 2 :
 							System.out.print("\nDay = ");
 							key = input.readLine();
 							System.out.print("Destination = ");
 							key2 = input.readLine();
-							System.out.println("Match found: " + foot.get(key + "+" + key2));
+							if(!key2.equals(""))
+								System.out.println("concert found: " + concert.get(key + "+" + key2));
+							else
+								System.out.println("concert found: " + concert.get(key));
 							break;
 						case 3:
-							foot.kill();
+							concert.kill();
 						default : break;
 						}
 						System.out.println("\npress Enter to continue...");

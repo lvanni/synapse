@@ -1,4 +1,4 @@
-package example.ui;
+package example.ui.console;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
