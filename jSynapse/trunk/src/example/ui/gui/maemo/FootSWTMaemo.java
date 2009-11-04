@@ -15,18 +15,18 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-public class ConcertSWTMaemo {
+public class FootSWTMaemo {
 	
 	private final Shell shell;
 	private Display display;
 //	private Color background = new Color(null, 250, 250, 255);
 	
-	public ConcertSWTMaemo() {
+	public FootSWTMaemo() {
 		display = Display.getDefault();
 		shell = new Shell(display);
 
 		/* Init the shell */
-		shell.setText("MyConcert");
+		shell.setText("MyFoot");
 		FormLayout layout = new FormLayout();
 		layout.marginHeight = 5;
 		layout.marginWidth = 5;
@@ -36,7 +36,7 @@ public class ConcertSWTMaemo {
 		
 		// CHECKBOXS
 		final Button checkPublish = new Button(shell, SWT.CHECK);
-		checkPublish.setText("Publish a concert");
+		checkPublish.setText("Publish a football match");
 //		checkPublish.setBackground(background);
 		FormData checkPublishFormData = new FormData();
 		checkPublishFormData.top = new FormAttachment(0, 0);
@@ -44,7 +44,7 @@ public class ConcertSWTMaemo {
 		checkPublish.setLayoutData(checkPublishFormData);
 
 		final Button checkSearch = new Button(shell, SWT.CHECK);
-		checkSearch.setText("Search a concert");
+		checkSearch.setText("Search a football match");
 //		checkSearch.setBackground(background);
 		FormData checkSearchFormData = new FormData();
 		checkSearchFormData.top = new FormAttachment(checkPublish, 10);
@@ -61,8 +61,8 @@ public class ConcertSWTMaemo {
 		day.setLayoutData(dayFormData);
 		
 		Text dayText = new Text(shell, SWT.BORDER);
-//		dayText.setBackground(background);
 		dayText.setTextLimit(2);
+//		dayText.setBackground(background);
 		FormData dayTextFormData = new FormData();
 		dayTextFormData.width = 30;
 		dayTextFormData.top = new FormAttachment(checkSearch, 46);
@@ -140,7 +140,7 @@ public class ConcertSWTMaemo {
 		
 		// CONCERT
 		Label concert = new Label(shell, SWT.NONE);
-		concert.setText("Concert: ");
+		concert.setText("Match: ");
 //		concert.setBackground(background);
 		FormData concertFormData = new FormData();
 		concertFormData.top = new FormAttachment(destinationText, 10);
@@ -199,8 +199,8 @@ public class ConcertSWTMaemo {
 		
 		// button "SEND"
 		final Button okButton = new Button(shell, SWT.PUSH);
-		okButton.setEnabled(false);
 		okButton.setText("Send");
+		okButton.setEnabled(false);
 //		okButton.setBackground(background);
 		okButton.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
@@ -216,8 +216,8 @@ public class ConcertSWTMaemo {
 		// RESULT
 		StyledText result = new StyledText(shell, SWT.BORDER);
 		Image font = new Image(display,
-				ConcertSWTMaemo.class.getResourceAsStream(
-			      "concert.png"));
+				FootSWTMaemo.class.getResourceAsStream(
+			      "foot.png"));
 		result.setBackgroundImage(font);
 		FormData resultTextFormData = new FormData();
 		resultTextFormData.width = 280;
@@ -234,7 +234,7 @@ public class ConcertSWTMaemo {
 	}
 
 	public static void main(String[] args) {
-		ConcertSWTMaemo concert = new ConcertSWTMaemo();
+		FootSWTMaemo concert = new FootSWTMaemo();
 		concert.start();
 	}
 }
