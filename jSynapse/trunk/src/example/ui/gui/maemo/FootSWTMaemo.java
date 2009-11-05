@@ -11,7 +11,9 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -19,6 +21,7 @@ public class FootSWTMaemo {
 	
 	private final Shell shell;
 	private Display display;
+	private Color error = new Color(null, 255, 0, 0);
 //	private Color background = new Color(null, 250, 250, 255);
 	
 	public FootSWTMaemo() {
@@ -51,6 +54,15 @@ public class FootSWTMaemo {
 		checkSearchFormData.left = new FormAttachment(0, 0);
 		checkSearch.setLayoutData(checkSearchFormData);
 		
+		// ERROR
+		final Label error = new Label(shell, SWT.NONE);
+		error.setForeground(FootSWTMaemo.this.error);
+		error.setText("Bad format number!");
+		error.setVisible(false);
+		FormData errorFormData = new FormData();
+		errorFormData.top = new FormAttachment(checkSearch, 20);
+		errorFormData.left = new FormAttachment(0, 140);
+		
 		// DAY
 		Label day = new Label(shell, SWT.NONE);
 		day.setText("Day (jj/mm/yyyy): ");
@@ -60,7 +72,7 @@ public class FootSWTMaemo {
 		dayFormData.left = new FormAttachment(0, 0);
 		day.setLayoutData(dayFormData);
 		
-		Text dayText = new Text(shell, SWT.BORDER);
+		final Text dayText = new Text(shell, SWT.BORDER);
 		dayText.setTextLimit(2);
 //		dayText.setBackground(background);
 		FormData dayTextFormData = new FormData();
@@ -77,7 +89,7 @@ public class FootSWTMaemo {
 		slash1FormData.left = new FormAttachment(dayText, 5);
 		slash1.setLayoutData(slash1FormData);
 		
-		Text mounthText = new Text(shell, SWT.BORDER);
+		final Text mounthText = new Text(shell, SWT.BORDER);
 		mounthText.setTextLimit(2);
 //		mounthText.setBackground(background);
 		FormData mounthTextFormData = new FormData();
@@ -94,7 +106,7 @@ public class FootSWTMaemo {
 		slash2FormData.left = new FormAttachment(mounthText, 5);
 		slash2.setLayoutData(slash2FormData);
 		
-		Text yearText = new Text(shell, SWT.BORDER);
+		final Text yearText = new Text(shell, SWT.BORDER);
 		yearText.setTextLimit(4);
 //		yearText.setBackground(background);
 		FormData yearTextFormData = new FormData();
@@ -121,7 +133,7 @@ public class FootSWTMaemo {
 		destinationFormData.left = new FormAttachment(0, 0);
 		destination.setLayoutData(destinationFormData);
 		
-		Text destinationText = new Text(shell, SWT.BORDER);
+		final Text destinationText = new Text(shell, SWT.BORDER);
 //		destinationText.setBackground(background);
 		FormData destinationTextFormData = new FormData();
 		destinationTextFormData.width = 216;
@@ -204,6 +216,8 @@ public class FootSWTMaemo {
 //		okButton.setBackground(background);
 		okButton.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
+				Integer.parseInt(dayText.getText() + mounthText.getText() + yearText.getText());
+				error.setVisible(false);
 			}
 		});
 		FormData okFormData = new FormData();
@@ -212,6 +226,24 @@ public class FootSWTMaemo {
 		okFormData.left = new FormAttachment(0, 150);
 		okButton.setLayoutData(okFormData);
 		shell.setDefaultButton(okButton);
+
+		// SELECTION LISTENER
+		Listener sendListener = new Listener() {
+			public void handleEvent(Event event) {
+				okButton.setEnabled(
+						(checkPublish.getSelection() || checkSearch.getSelection()) &&
+						!dayText.getText().equals("") && !mounthText.getText().equals("") &&
+						!yearText.getText().equals("") && !destinationText.getText().equals(""));
+				checkPublish.setEnabled(!checkSearch.getSelection());
+				checkSearch.setEnabled(!checkPublish.getSelection());
+			}
+		};
+		checkPublish.addListener(SWT.Selection, sendListener);
+		checkSearch.addListener(SWT.Selection, sendListener);
+		dayText.addListener(SWT.KeyUp, sendListener);
+		mounthText.addListener(SWT.KeyUp, sendListener);
+		yearText.addListener(SWT.KeyUp, sendListener);
+		destinationText.addListener(SWT.KeyUp, sendListener);
 		
 		// RESULT
 		StyledText result = new StyledText(shell, SWT.BORDER);

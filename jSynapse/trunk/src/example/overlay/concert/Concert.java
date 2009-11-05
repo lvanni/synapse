@@ -74,7 +74,12 @@ public class Concert extends AbstractChord implements Runnable{
 
 	public void put(int hKey, String value){
 		if(Range.inside(hKey, getPredecessor().getId() + 1, getThisNode().getId())){
-			table.put(hKey, value);
+			
+			if(table.containsKey(hKey)){
+				table.put(hKey, table.get(hKey) + "+" + value);
+			} else {
+				table.put(hKey, value);
+			}
 			System.out.println("New entry in the hash table...");
 		} else {
 			forward(IChord.PUT + "," + hKey + "," + value, findSuccessor(hKey));
