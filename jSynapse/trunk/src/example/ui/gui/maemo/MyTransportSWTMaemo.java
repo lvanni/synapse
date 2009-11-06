@@ -41,7 +41,7 @@ public class MyTransportSWTMaemo {
 		layout.marginHeight = 5;
 		layout.marginWidth = 5;
 		shell.setLayout(layout);
-		shell.setSize(710, 430);
+		shell.setSize(710, 450);
 
 		// MENU
 		Menu menuBar = new Menu(shell, SWT.BAR);

@@ -30,14 +30,14 @@ public class AddServiceDialog extends Dialog{
 		
 		/* Init the shell */
 		final Shell shell = new Shell(getParent(), SWT.BORDER | SWT.CLOSE);
-		shell.setText("Add service");
+		shell.setText("Add " + item.getText() + " service");
 		FormLayout layout = new FormLayout();
 		layout.marginHeight = 5;
 		layout.marginWidth = 5;
 		shell.setLayout(layout);
 		
 		Label portToStart = new Label(shell, SWT.NONE);
-		portToStart.setText("Start " + item.getText() + " service on: ");
+		portToStart.setText("New port:");
 		FormData portToStartFormData = new FormData();
 		portToStartFormData.top = new FormAttachment(0, 15);
 		portToStartFormData.left = new FormAttachment(0, 0);
@@ -46,13 +46,13 @@ public class AddServiceDialog extends Dialog{
 		final Text portToStartText = new Text(shell, SWT.BORDER);
 		portToStartText.setText("8000");
 		FormData portToStartTextFormData = new FormData();
-		portToStartTextFormData.width = 40;
+		portToStartTextFormData.width = 50;
 		portToStartTextFormData.top = new FormAttachment(0, 10);
-		portToStartTextFormData.left = new FormAttachment(0, 180);
+		portToStartTextFormData.left = new FormAttachment(0, 100);
 		portToStartText.setLayoutData(portToStartTextFormData);
 		
 		Label addressToJoin = new Label(shell, SWT.NONE);
-		addressToJoin.setText("Address:port to join: ");
+		addressToJoin.setText("Contact");
 		FormData addressToJoinFormData = new FormData();
 		addressToJoinFormData.top = new FormAttachment(portToStartText, 15);
 		addressToJoinFormData.left = new FormAttachment(0, 0);
@@ -63,7 +63,7 @@ public class AddServiceDialog extends Dialog{
 		FormData addressToJoinTextFormData = new FormData();
 		addressToJoinTextFormData.width = 150;
 		addressToJoinTextFormData.top = new FormAttachment(portToStartText, 10);
-		addressToJoinTextFormData.left = new FormAttachment(0, 180);
+		addressToJoinTextFormData.left = new FormAttachment(0, 100);
 		addressToJoinText.setLayoutData(addressToJoinTextFormData);
 		
 		// SEPARATOR
