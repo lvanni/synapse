@@ -257,12 +257,16 @@ public class ConcertSWTMaemo {
 						} else {
 							found = concert.get(key2);
 						}
-						if(found == null || found.equals("null")){
+						if(found == null || found.equals("null") || found.equals("")){
 							result.setText("No concert found...");
 						} else {
-							String[] args = found.split("\\+");
-							for(int i=0 ; i<args.length ; i+=3)
-								result.setText(result.getText() + "Concert found:\n\t- concert: " + args[i] + "\n\t- contact: " + args[i+1] + "\n\t- transport: " + args[i+2] + "\n\n");
+							String[] nbResult = found.split("\\*\\*\\*\\*");
+							for(int i=0 ; i<nbResult.length ; i++){
+								if(!nbResult[i].equals("") && !nbResult.equals("null")){
+									String[] args = nbResult[i].split("\\+");
+									result.setText(result.getText() + "Concert found:\n\t- concert: " + args[0] + "\n\t- contact: " + args[1] + "\n\t- transport: " + args[2] + "\n\n");
+								}
+							}
 						}
 					}
 				} catch(NumberFormatException excep){
@@ -300,8 +304,11 @@ public class ConcertSWTMaemo {
 
 	public void start(){
 		shell.open();		
-		while (!shell.isDisposed())
-			display.readAndDispatch();
+		while (!shell.isDisposed()) {
+			if (!display.readAndDispatch())
+				display.sleep();
+		}
+		display.dispose();
 		concert.kill();
 	}
 

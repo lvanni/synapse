@@ -76,7 +76,7 @@ public class Concert extends AbstractChord implements Runnable{
 		if(Range.inside(hKey, getPredecessor().getId() + 1, getThisNode().getId())){
 			
 			if(table.containsKey(hKey)){
-				table.put(hKey, table.get(hKey) + "+" + value);
+				table.put(hKey, table.get(hKey) + "****" + value);
 			} else {
 				table.put(hKey, value);
 			}

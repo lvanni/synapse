@@ -3,10 +3,6 @@ package example.ui.console;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
-
-
 
 import core.protocols.p2p.IOverlay;
 import example.mytansport.MyTransport;
@@ -116,9 +112,9 @@ public class LaunchMyTransport {
 										System.out.print("\tContact = ");
 										String message2 = input.readLine();
 										if(!key2.equals(""))
-											myTransport.put(key + "+" + key2, message + " contact: " + message2);
+											myTransport.put(key + "+" + key2, message + "+" + message2 + "+car, maybe...");
 										else
-											myTransport.put(key, message + " contact: " + message2);
+											myTransport.put(key, message + "+" + message2 + "+car, maybe...");
 										break;
 									case 2 :
 										System.out.print("\n\tDay = ");
@@ -148,9 +144,9 @@ public class LaunchMyTransport {
 										System.out.print("\tContact = ");
 										String message2 = input.readLine();
 										if(!key2.equals(""))
-											myTransport.put(key + "+" + key2, message + " contact: " + message2);
+											myTransport.put(key + "+" + key2, message + "+" + message2 + "+car, maybe...");
 										else
-											myTransport.put(key, message + " contact: " + message2);
+											myTransport.put(key, message + "+" + message2 + "+car, maybe...");
 										break;
 									case 2 :
 										System.out.print("\n\tDay = ");
@@ -178,9 +174,9 @@ public class LaunchMyTransport {
 										System.out.print("\tContact = ");
 										String message = input.readLine();;
 										if(!key2.equals(""))
-											myTransport.put(key + "+" + key2, "myTransport" + "+" + message);
+											myTransport.put(key + "+" + key2,"myTransport+" + message + "+car, maybe...");
 										else
-											myTransport.put(key, "myTransport" + "+" + message);
+											myTransport.put(key,"myTransport+" + message + "+car, maybe...");
 										break;
 									case 2 :
 										System.out.print("\n\tDay = ");

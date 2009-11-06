@@ -40,6 +40,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 	//	private Map<String, Integer> get;
 
 	private String result = "";
+	private int nbResponse = 0;
 
 	/* just for the dev */
 	public static boolean debugMode = false;
@@ -79,7 +80,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 		Node chord = new Node(host,  h.SHA1ToInt(host+port+myMedIntifier), port);
 		join(chord);
 	}
-	
+
 	public void kill(){
 		for(IOverlay o : networks){
 			((AbstractChord) o).kill();
@@ -105,7 +106,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 	public void put(int hKey, String value){
 		if(Range.inside(hKey, getPredecessor().getId() + 1, getThisNode().getId())){
 			table.put(hKey, value); // SAVE THE CLEAN KEY
-//			System.out.println("New entry in the hash table...");
+			//			System.out.println("New entry in the hash table...");
 		} else {
 			forward(IChord.PUT + "," + hKey + "," + value, findSuccessor(hKey));
 		}
@@ -128,8 +129,8 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 			put(hKey, "[" + o.keyToH(key) + "|" + o.getIdentifier()+"]:"+key);     // SAVE THE CLEAN KEY
 			String res = o.get(key);
 //			System.out.println("to concat: " + res);
-			if(res != null && !res.equals("") && !res.equals("null"))
-				s.concatResult(res);  // MULTIGET	
+			s.concatResult(res == null ? "null" : res);  // MULTIGET
+			nbResponse++;
 		}
 	}
 
@@ -143,12 +144,12 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 
 	public String get(String key){
 		result = ""; // init result
+		nbResponse = 0;
 		for(IOverlay o : networks){
 			new Thread(new Get(key, o, this)).start();
 		}
-		int timeout = 20;
-		while(timeout > 0){
-			if(result.split("AND").length == networks.size() && !result.equals("")){
+		while(true){
+			if(nbResponse == networks.size()){
 				break;
 			}
 			try {
@@ -156,9 +157,8 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			timeout--;
 		}
-		return result; // TO CHANGE WITH CONCATENATE RESULT
+		return result;
 	}
 
 	public String get(int hKey){
@@ -287,7 +287,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 		if(result.equals("")){
 			result = res;
 		} else {
-			result += " AND " + res;
+			result += "****" + res;
 		}
 	}
 }

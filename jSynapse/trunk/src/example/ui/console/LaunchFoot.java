@@ -59,9 +59,9 @@ public class LaunchFoot {
 							System.out.print("Contact = ");
 							String message2 = input.readLine();
 							if(!key2.equals(""))
-								foot.put(key + "+" + key2, message + " contact: " + message2);
+								foot.put(key + "+" + key2, message + "+" + message2 + "+car, maybe...");
 							else
-								foot.put(key, message + " contact: " + message2);
+								foot.put(key, message + "+" + message2 + "+car, maybe...");
 							break;
 						case 2 :
 							System.out.print("\nDay = ");

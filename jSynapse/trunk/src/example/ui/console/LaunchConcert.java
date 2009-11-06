@@ -59,9 +59,9 @@ public class LaunchConcert {
 							System.out.print("Contact = ");
 							String message2 = input.readLine();
 							if(!key2.equals(""))
-								concert.put(key + "+" + key2, message + " contact: " + message2);
+								concert.put(key + "+" + key2, message + "+" + message2 + "+car, maybe...");
 							else
-								concert.put(key, message + " contact: " + message2);
+								concert.put(key, message + "+" + message2 + "+car, maybe...");
 							break;
 						case 2 :
 							System.out.print("\nDay = ");
