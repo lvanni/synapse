@@ -39,12 +39,10 @@ public class ConcertSWTMaemo {
 		layout.marginWidth = 5;
 		shell.setLayout(layout);
 		shell.setSize(710, 430);
-		//		shell.setBackground(background);
 
 		// CHECKBOXS
 		final Button checkPublish = new Button(shell, SWT.CHECK);
 		checkPublish.setText("Publish a concert");
-		//		checkPublish.setBackground(background);
 		FormData checkPublishFormData = new FormData();
 		checkPublishFormData.top = new FormAttachment(0, 0);
 		checkPublishFormData.left = new FormAttachment(0, 0);
@@ -52,7 +50,6 @@ public class ConcertSWTMaemo {
 
 		final Button checkSearch = new Button(shell, SWT.CHECK);
 		checkSearch.setText("Search a concert");
-		//		checkSearch.setBackground(background);
 		FormData checkSearchFormData = new FormData();
 		checkSearchFormData.top = new FormAttachment(checkPublish, 10);
 		checkSearchFormData.left = new FormAttachment(0, 0);
@@ -71,14 +68,12 @@ public class ConcertSWTMaemo {
 		// DAY
 		Label day = new Label(shell, SWT.NONE);
 		day.setText("Day (jj/mm/yyyy): ");
-		//		day.setBackground(background);
 		FormData dayFormData = new FormData();
 		dayFormData.top = new FormAttachment(checkSearch, 50);
 		dayFormData.left = new FormAttachment(0, 0);
 		day.setLayoutData(dayFormData);
 
 		final Text dayText = new Text(shell, SWT.BORDER);
-		//		dayText.setBackground(background);
 		dayText.setTextLimit(2);
 		FormData dayTextFormData = new FormData();
 		dayTextFormData.width = 30;
@@ -88,7 +83,6 @@ public class ConcertSWTMaemo {
 
 		Label slash1 = new Label(shell, SWT.NONE);
 		slash1.setText("/");
-		//		slash1.setBackground(background);
 		FormData slash1FormData = new FormData();
 		slash1FormData.top = new FormAttachment(checkSearch, 50);
 		slash1FormData.left = new FormAttachment(dayText, 5);
@@ -96,7 +90,6 @@ public class ConcertSWTMaemo {
 
 		final Text mounthText = new Text(shell, SWT.BORDER);
 		mounthText.setTextLimit(2);
-		//		mounthText.setBackground(background);
 		FormData mounthTextFormData = new FormData();
 		mounthTextFormData.width = 30;
 		mounthTextFormData.top = new FormAttachment(checkSearch, 46);
@@ -105,7 +98,6 @@ public class ConcertSWTMaemo {
 
 		Label slash2 = new Label(shell, SWT.NONE);
 		slash2.setText("/");
-		//		slash2.setBackground(background);
 		FormData slash2FormData = new FormData();
 		slash2FormData.top = new FormAttachment(checkSearch, 50);
 		slash2FormData.left = new FormAttachment(mounthText, 5);
@@ -113,7 +105,6 @@ public class ConcertSWTMaemo {
 
 		final Text yearText = new Text(shell, SWT.BORDER);
 		yearText.setTextLimit(4);
-		//		yearText.setBackground(background);
 		FormData yearTextFormData = new FormData();
 		yearTextFormData.width = 60;
 		yearTextFormData.top = new FormAttachment(checkSearch, 46);
@@ -132,14 +123,12 @@ public class ConcertSWTMaemo {
 		// DESTINATION
 		Label destination = new Label(shell, SWT.NONE);
 		destination.setText("Destination: ");
-		//		destination.setBackground(background);
 		FormData destinationFormData = new FormData();
 		destinationFormData.top = new FormAttachment(yearText, 10);
 		destinationFormData.left = new FormAttachment(0, 0);
 		destination.setLayoutData(destinationFormData);
 
 		final Text destinationText = new Text(shell, SWT.BORDER);
-		//		destinationText.setBackground(background);
 		FormData destinationTextFormData = new FormData();
 		destinationTextFormData.width = 216;
 		destinationTextFormData.top = new FormAttachment(yearText, 5);
@@ -158,14 +147,12 @@ public class ConcertSWTMaemo {
 		// CONCERT
 		Label lconcert = new Label(shell, SWT.NONE);
 		lconcert.setText("Concert: ");
-		//		concert.setBackground(background);
 		FormData concertFormData = new FormData();
 		concertFormData.top = new FormAttachment(destinationText, 10);
 		concertFormData.left = new FormAttachment(0, 0);
 		lconcert.setLayoutData(concertFormData);
 
 		final Text concertText = new Text(shell, SWT.BORDER);
-		//		concertText.setBackground(background);
 		FormData concertTextFormData = new FormData();
 		concertTextFormData.width = 216;
 		concertTextFormData.top = new FormAttachment(destinationText, 5);
@@ -175,14 +162,12 @@ public class ConcertSWTMaemo {
 		// CONTACT
 		Label contact = new Label(shell, SWT.NONE);
 		contact.setText("Contact: ");
-		//		contact.setBackground(background);
 		FormData contactFormData = new FormData();
 		contactFormData.top = new FormAttachment(concertText, 10);
 		contactFormData.left = new FormAttachment(0, 0);
 		contact.setLayoutData(contactFormData);
 
 		final Text contactText = new Text(shell, SWT.BORDER);
-		//		contactText.setBackground(background);
 		FormData contactTextFormData = new FormData();
 		contactTextFormData.width = 216;
 		contactTextFormData.top = new FormAttachment(concertText, 5);
@@ -192,14 +177,12 @@ public class ConcertSWTMaemo {
 		// TRANSPORT
 		Label transport = new Label(shell, SWT.NONE);
 		transport.setText("Transport: ");
-		//		transport.setBackground(background);
 		FormData transportFormData = new FormData();
 		transportFormData.top = new FormAttachment(contactText, 10);
 		transportFormData.left = new FormAttachment(0, 0);
 		transport.setLayoutData(transportFormData);
 
 		final Text transportText = new Text(shell, SWT.BORDER);
-		//		transportText.setBackground(background);
 		FormData transportTextFormData = new FormData();
 		transportTextFormData.width = 216;
 		transportTextFormData.top = new FormAttachment(contactText, 5);
@@ -208,7 +191,6 @@ public class ConcertSWTMaemo {
 
 		// SEPARATOR
 		Label separator1 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.LINE_SOLID);
-		//		separator1.setBackground(background);
 		FormData separator1FormData = new FormData();
 		separator1FormData.width = 365;
 		separator1FormData.top = new FormAttachment(transportText,20);
@@ -279,9 +261,23 @@ public class ConcertSWTMaemo {
 		FormData okFormData = new FormData();
 		okFormData.width = 80;
 		okFormData.top = new FormAttachment(separator1, 20);
-		okFormData.left = new FormAttachment(0, 150);
+		okFormData.left = new FormAttachment(0, 100);
 		okButton.setLayoutData(okFormData);
 		shell.setDefaultButton(okButton);
+		
+		// button "CLEAR"
+		final Button clearButton = new Button(shell, SWT.PUSH);
+		clearButton.setText("Clear");
+		clearButton.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				result.setText("");
+			}
+		});
+		FormData clearFormData = new FormData();
+		clearFormData.width = 80;
+		clearFormData.top = new FormAttachment(separator1, 20);
+		clearFormData.left = new FormAttachment(okButton, 5);
+		clearButton.setLayoutData(clearFormData);
 
 		// SELECTION LISTENER
 		Listener sendListener = new Listener() {
@@ -292,6 +288,15 @@ public class ConcertSWTMaemo {
 						!yearText.getText().equals("") && !destinationText.getText().equals(""));
 				checkPublish.setEnabled(!checkSearch.getSelection());
 				checkSearch.setEnabled(!checkPublish.getSelection());
+				if(checkPublish.getEnabled()){
+					concertText.setEnabled(true);
+					contactText.setEnabled(true);
+					transportText.setEnabled(true);
+				} else {
+					concertText.setEnabled(false);
+					contactText.setEnabled(false);
+					transportText.setEnabled(false);
+				}
 			}
 		};
 		checkPublish.addListener(SWT.Selection, sendListener);

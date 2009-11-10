@@ -279,9 +279,23 @@ public class FootSWTMaemo {
 		FormData okFormData = new FormData();
 		okFormData.width = 80;
 		okFormData.top = new FormAttachment(separator1, 20);
-		okFormData.left = new FormAttachment(0, 150);
+		okFormData.left = new FormAttachment(0, 100);
 		okButton.setLayoutData(okFormData);
 		shell.setDefaultButton(okButton);
+		
+		// button "CLEAR"
+		final Button clearButton = new Button(shell, SWT.PUSH);
+		clearButton.setText("Clear");
+		clearButton.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				result.setText("");
+			}
+		});
+		FormData clearFormData = new FormData();
+		clearFormData.width = 80;
+		clearFormData.top = new FormAttachment(separator1, 20);
+		clearFormData.left = new FormAttachment(okButton, 5);
+		clearButton.setLayoutData(clearFormData);
 
 		// SELECTION LISTENER
 		Listener sendListener = new Listener() {
@@ -292,6 +306,15 @@ public class FootSWTMaemo {
 						!yearText.getText().equals("") && !destinationText.getText().equals(""));
 				checkPublish.setEnabled(!checkSearch.getSelection());
 				checkSearch.setEnabled(!checkPublish.getSelection());
+				if(checkPublish.getEnabled()){
+					footText.setEnabled(true);
+					contactText.setEnabled(true);
+					transportText.setEnabled(true);
+				} else {
+					footText.setEnabled(false);
+					contactText.setEnabled(false);
+					transportText.setEnabled(false);
+				}
 			}
 		};
 		checkPublish.addListener(SWT.Selection, sendListener);
