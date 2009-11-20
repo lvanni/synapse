@@ -1,5 +1,7 @@
 package example.ui.gui.maemo;
 
+import java.util.ArrayList;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -14,11 +16,17 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import core.protocols.p2p.chord.IChord;
+
 import example.overlay.foot.Foot;
 import example.ui.console.InfoConsole;
+import example.ui.gui.maemo.dialog.ConsoleDialog;
+import example.ui.gui.maemo.dialog.JoinDialog;
 
 public class FootSWTMaemo {
 
@@ -38,13 +46,22 @@ public class FootSWTMaemo {
 		layout.marginHeight = 5;
 		layout.marginWidth = 5;
 		shell.setLayout(layout);
-		shell.setSize(710, 430);
-		//		shell.setBackground(background);
+		shell.setSize(710, 450);
+		
+		// MENU
+		Menu menuBar = new Menu(shell, SWT.BAR);
+		MenuItem fileMenuHeader = new MenuItem(menuBar, SWT.PUSH);
+		fileMenuHeader.setText("join");
+		fileMenuHeader.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+					new JoinDialog(shell, (IChord) foot);
+				}
+		});
+		shell.setMenuBar(menuBar);
 
 		// CHECKBOXS
 		final Button checkPublish = new Button(shell, SWT.CHECK);
 		checkPublish.setText("Publish a football match");
-		//		checkPublish.setBackground(background);
 		FormData checkPublishFormData = new FormData();
 		checkPublishFormData.top = new FormAttachment(0, 0);
 		checkPublishFormData.left = new FormAttachment(0, 0);
@@ -52,11 +69,27 @@ public class FootSWTMaemo {
 
 		final Button checkSearch = new Button(shell, SWT.CHECK);
 		checkSearch.setText("Search a football match");
-		//		checkSearch.setBackground(background);
 		FormData checkSearchFormData = new FormData();
 		checkSearchFormData.top = new FormAttachment(checkPublish, 10);
 		checkSearchFormData.left = new FormAttachment(0, 0);
 		checkSearch.setLayoutData(checkSearchFormData);
+
+		// ID
+		final Label id = new Label(shell, SWT.NONE);
+		id.setVisible(false);
+		id.setText("ID: ");
+		FormData idFormData = new FormData();
+		idFormData.top = new FormAttachment(checkSearch, 20);
+		idFormData.left = new FormAttachment(0, 0);
+		id.setLayoutData(idFormData);
+
+		final Text idText = new Text(shell, SWT.BORDER);
+		idText.setVisible(false);
+		FormData idTextFormData = new FormData();
+		idTextFormData.width = 30;
+		idTextFormData.top = new FormAttachment(checkSearch, 16);
+		idTextFormData.left = new FormAttachment(0, 142);
+		idText.setLayoutData(idTextFormData);
 
 		// ERROR
 		final Label error = new Label(shell, SWT.NONE);
@@ -65,30 +98,27 @@ public class FootSWTMaemo {
 		error.setVisible(false);
 		FormData errorFormData = new FormData();
 		errorFormData.top = new FormAttachment(checkSearch, 20);
-		errorFormData.left = new FormAttachment(0, 140);
+		errorFormData.left = new FormAttachment(0, 200);
 		error.setLayoutData(errorFormData);
 
 		// DAY
 		Label day = new Label(shell, SWT.NONE);
-		day.setText("Day (jj/mm/yyyy): ");
-		//		day.setBackground(background);
+		day.setText("Day: ");
 		FormData dayFormData = new FormData();
 		dayFormData.top = new FormAttachment(checkSearch, 50);
 		dayFormData.left = new FormAttachment(0, 0);
 		day.setLayoutData(dayFormData);
 
 		final Text dayText = new Text(shell, SWT.BORDER);
-		//		dayText.setBackground(background);
 		dayText.setTextLimit(2);
 		FormData dayTextFormData = new FormData();
 		dayTextFormData.width = 30;
 		dayTextFormData.top = new FormAttachment(checkSearch, 46);
-		dayTextFormData.left = new FormAttachment(day, 15);
+		dayTextFormData.left = new FormAttachment(0, 142);
 		dayText.setLayoutData(dayTextFormData);
 
 		Label slash1 = new Label(shell, SWT.NONE);
 		slash1.setText("/");
-		//		slash1.setBackground(background);
 		FormData slash1FormData = new FormData();
 		slash1FormData.top = new FormAttachment(checkSearch, 50);
 		slash1FormData.left = new FormAttachment(dayText, 5);
@@ -96,7 +126,6 @@ public class FootSWTMaemo {
 
 		final Text mounthText = new Text(shell, SWT.BORDER);
 		mounthText.setTextLimit(2);
-		//		mounthText.setBackground(background);
 		FormData mounthTextFormData = new FormData();
 		mounthTextFormData.width = 30;
 		mounthTextFormData.top = new FormAttachment(checkSearch, 46);
@@ -105,7 +134,6 @@ public class FootSWTMaemo {
 
 		Label slash2 = new Label(shell, SWT.NONE);
 		slash2.setText("/");
-		//		slash2.setBackground(background);
 		FormData slash2FormData = new FormData();
 		slash2FormData.top = new FormAttachment(checkSearch, 50);
 		slash2FormData.left = new FormAttachment(mounthText, 5);
@@ -113,7 +141,6 @@ public class FootSWTMaemo {
 
 		final Text yearText = new Text(shell, SWT.BORDER);
 		yearText.setTextLimit(4);
-		//		yearText.setBackground(background);
 		FormData yearTextFormData = new FormData();
 		yearTextFormData.width = 60;
 		yearTextFormData.top = new FormAttachment(checkSearch, 46);
@@ -132,14 +159,12 @@ public class FootSWTMaemo {
 		// DESTINATION
 		Label destination = new Label(shell, SWT.NONE);
 		destination.setText("Destination: ");
-		//		destination.setBackground(background);
 		FormData destinationFormData = new FormData();
 		destinationFormData.top = new FormAttachment(yearText, 10);
 		destinationFormData.left = new FormAttachment(0, 0);
 		destination.setLayoutData(destinationFormData);
 
 		final Text destinationText = new Text(shell, SWT.BORDER);
-		//		destinationText.setBackground(background);
 		FormData destinationTextFormData = new FormData();
 		destinationTextFormData.width = 216;
 		destinationTextFormData.top = new FormAttachment(yearText, 5);
@@ -158,14 +183,12 @@ public class FootSWTMaemo {
 		// MATCH
 		Label lfoot = new Label(shell, SWT.NONE);
 		lfoot.setText("Match: ");
-		//		foot.setBackground(background);
 		FormData footFormData = new FormData();
 		footFormData.top = new FormAttachment(destinationText, 10);
 		footFormData.left = new FormAttachment(0, 0);
 		lfoot.setLayoutData(footFormData);
 
 		final Text footText = new Text(shell, SWT.BORDER);
-		//		footText.setBackground(background);
 		FormData footTextFormData = new FormData();
 		footTextFormData.width = 216;
 		footTextFormData.top = new FormAttachment(destinationText, 5);
@@ -175,14 +198,12 @@ public class FootSWTMaemo {
 		// CONTACT
 		Label contact = new Label(shell, SWT.NONE);
 		contact.setText("Contact: ");
-		//		contact.setBackground(background);
 		FormData contactFormData = new FormData();
 		contactFormData.top = new FormAttachment(footText, 10);
 		contactFormData.left = new FormAttachment(0, 0);
 		contact.setLayoutData(contactFormData);
 
 		final Text contactText = new Text(shell, SWT.BORDER);
-		//		contactText.setBackground(background);
 		FormData contactTextFormData = new FormData();
 		contactTextFormData.width = 216;
 		contactTextFormData.top = new FormAttachment(footText, 5);
@@ -192,14 +213,12 @@ public class FootSWTMaemo {
 		// TRANSPORT
 		Label transport = new Label(shell, SWT.NONE);
 		transport.setText("Transport: ");
-		//		transport.setBackground(background);
 		FormData transportFormData = new FormData();
 		transportFormData.top = new FormAttachment(contactText, 10);
 		transportFormData.left = new FormAttachment(0, 0);
 		transport.setLayoutData(transportFormData);
 
 		final Text transportText = new Text(shell, SWT.BORDER);
-		//		transportText.setBackground(background);
 		FormData transportTextFormData = new FormData();
 		transportTextFormData.width = 216;
 		transportTextFormData.top = new FormAttachment(contactText, 5);
@@ -208,7 +227,6 @@ public class FootSWTMaemo {
 
 		// SEPARATOR
 		Label separator1 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.LINE_SOLID);
-		//		separator1.setBackground(background);
 		FormData separator1FormData = new FormData();
 		separator1FormData.width = 365;
 		separator1FormData.top = new FormAttachment(transportText,20);
@@ -243,28 +261,43 @@ public class FootSWTMaemo {
 					String message1 = footText.getText();
 					String message2 = contactText.getText();
 					String message3 = transportText.getText();
-					if(checkPublish.getSelection()){
-						if(!yearText.getText().equals(destinationText.getText())) { // DEBUG MODE! 
-							foot.put(key1 + "+" + key2, message1 + "+" + message2 + "+" + message3);
-						} else {
-							foot.put(key2, message1 + "+" + message2 + "+" + message3); // Debug
+					if(key1.equals("0/0/0")){  // DEBUG MODE!
+						if(key2.equals("DebugOn") || key2.equals("debugOn")){
+							id.setVisible(true);
+							idText.setVisible(true);
+							ConsoleDialog console = new ConsoleDialog(shell, foot);
+							console.checkConsole();
+							console.start();
+						} if(key2.equals("DebugOff") || key2.equals("debugOff")){
+							id.setVisible(false);
+							idText.setVisible(false);
 						}
-						result.setText("Summary:\n\t- foot: " + message1 + "\n\t- contact: " + message2 + "\n\t- transport: " + message3 + "\n\n===> Foot published!");
 					} else {
-						String found;
-						if(!yearText.getText().equals(destinationText.getText())) { // DEBUG MODE! 
-							found = foot.get(key1 + "+" + key2);
+						if(checkPublish.getSelection()){
+							if(idText.getText().equals("")) { // DEBUG MODE! 
+								foot.put(key1 + "+" + key2, message1 + "+" + message2 + "+" + message3);
+							} else {
+								foot.put(idText.getText(), message1 + "+" + message2 + "+" + message3); // Debug
+							}
+							result.setText("Summary:\n\t- foot: " + message1 + "\n\t- contact: " + message2 + "\n\t- transport: " + message3 + "\n\n===> Foot published!");
 						} else {
-							found = foot.get(key2);
-						}
-						if(found == null || found.equals("null") || found.equals("")){
-							result.setText("No match found...");
-						} else {
-							String[] nbResult = found.split("\\*\\*\\*\\*");
-							for(int i=0 ; i<nbResult.length ; i++){
-								if(!nbResult[i].equals("") && !nbResult.equals("null")){
-									String[] args = nbResult[i].split("\\+");
-									result.setText(result.getText() + "Foot found:\n\t- foot: " + args[0] + "\n\t- contact: " + args[1] + "\n\t- transport: " + args[2] + "\n\n");
+							String found;
+							if(idText.getText().equals("")) { // DEBUG MODE! 
+								found = foot.get(key1 + "+" + key2);
+							} else {
+								found = foot.get(idText.getText());
+							}
+							if(found == null || found.equals("null") || found.equals("")){
+								result.setText("No match found...");
+							} else {
+								String[] nbResult = found.split("\\*\\*\\*\\*");
+								ArrayList<String> cache = new ArrayList<String>();
+								for(int i=0 ; i<nbResult.length ; i++){
+									if(!nbResult[i].equals("") && !nbResult.equals("null") && !cache.contains(nbResult[i])){
+										String[] args = nbResult[i].split("\\+");
+										result.setText(result.getText() + "Foot found:\n\t- foot: " + args[0] + "\n\t- contact: " + args[1] + "\n\t- transport: " + args[2] + "\n\n");
+										cache.add(nbResult[i]);
+									}
 								}
 							}
 						}
@@ -282,7 +315,7 @@ public class FootSWTMaemo {
 		okFormData.left = new FormAttachment(0, 100);
 		okButton.setLayoutData(okFormData);
 		shell.setDefaultButton(okButton);
-		
+
 		// button "CLEAR"
 		final Button clearButton = new Button(shell, SWT.PUSH);
 		clearButton.setText("Clear");

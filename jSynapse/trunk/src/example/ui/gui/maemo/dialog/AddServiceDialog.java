@@ -1,4 +1,4 @@
-package example.ui.gui.maemo;
+package example.ui.gui.maemo.dialog;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -16,16 +16,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import core.protocols.p2p.IOverlay;
+import core.protocols.p2p.chord.AbstractChord;
 import example.mytansport.MyTransport;
 import example.mytansport.MyTransport.OverlayID;
 
 public class AddServiceDialog extends Dialog{
-
-	private MenuItem item;
 	
 	public AddServiceDialog(Shell parent, final MenuItem item, final MyTransport myTransport, final Label services) {
 		super(parent);
-		this.item = item;
 		Display display = getParent().getDisplay();
 		
 		/* Init the shell */
@@ -44,7 +42,10 @@ public class AddServiceDialog extends Dialog{
 		portToStart.setLayoutData(portToStartFormData);
 
 		final Text portToStartText = new Text(shell, SWT.BORDER);
-		portToStartText.setText("8000");
+		if(item.getText().equals("Concert"))
+			portToStartText.setText("8006");
+		else
+			portToStartText.setText("9006");
 		FormData portToStartTextFormData = new FormData();
 		portToStartTextFormData.width = 50;
 		portToStartTextFormData.top = new FormAttachment(0, 10);
@@ -59,7 +60,10 @@ public class AddServiceDialog extends Dialog{
 		addressToJoin.setLayoutData(addressToJoinFormData);
 
 		final Text addressToJoinText = new Text(shell, SWT.BORDER);
-		addressToJoinText.setText("192.168.0.1:8000");
+		if(item.getText().equals("Concert"))
+			addressToJoinText.setText("localhost:8000");
+		else
+			addressToJoinText.setText("localhost:9000");
 		FormData addressToJoinTextFormData = new FormData();
 		addressToJoinTextFormData.width = 150;
 		addressToJoinTextFormData.top = new FormAttachment(portToStartText, 10);
@@ -87,7 +91,7 @@ public class AddServiceDialog extends Dialog{
 				services.setForeground(new Color(null, 0, 180, 0));
 				String text = "Services enabled: ";
 				for(IOverlay o : myTransport.getNetworks()){
-					text += o.getIdentifier() + ", ";
+					text += o.getIdentifier()+ "[" + ((AbstractChord) o).getThisNode().getId() + "," + ((AbstractChord) o).getPredecessor().getId() + "], ";
 				}
 				services.setText(text);
 				} catch (Exception excep){

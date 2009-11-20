@@ -1,5 +1,7 @@
 package example.ui.gui.maemo;
 
+import java.util.ArrayList;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -14,18 +16,25 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import core.protocols.p2p.chord.IChord;
 import example.overlay.concert.Concert;
 import example.ui.console.InfoConsole;
+import example.ui.gui.maemo.dialog.ConsoleDialog;
+import example.ui.gui.maemo.dialog.JoinDialog;
 
-public class ConcertSWTMaemo {
+public class ConcertSWTMaemo{
 
 	private final Shell shell;
 	private Display display;
 	private Color error = new Color(null, 255, 0, 0);
 	private Concert concert;
+	private Label id;
+	private Text idText;
 
 	public ConcertSWTMaemo(final Concert concert) {
 		this.concert = concert;
@@ -38,7 +47,18 @@ public class ConcertSWTMaemo {
 		layout.marginHeight = 5;
 		layout.marginWidth = 5;
 		shell.setLayout(layout);
-		shell.setSize(710, 430);
+		shell.setSize(710, 450);
+
+		// MENU
+		Menu menuBar = new Menu(shell, SWT.BAR);
+		MenuItem fileMenuHeader = new MenuItem(menuBar, SWT.PUSH);
+		fileMenuHeader.setText("join");
+		fileMenuHeader.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				new JoinDialog(shell, (IChord) concert);
+			}
+		});
+		shell.setMenuBar(menuBar);
 
 		// CHECKBOXS
 		final Button checkPublish = new Button(shell, SWT.CHECK);
@@ -55,6 +75,23 @@ public class ConcertSWTMaemo {
 		checkSearchFormData.left = new FormAttachment(0, 0);
 		checkSearch.setLayoutData(checkSearchFormData);
 
+		// ID
+		id = new Label(shell, SWT.NONE);
+		id.setVisible(false);
+		id.setText("ID: ");
+		FormData idFormData = new FormData();
+		idFormData.top = new FormAttachment(checkSearch, 17);
+		idFormData.left = new FormAttachment(0, 0);
+		id.setLayoutData(idFormData);
+
+		idText = new Text(shell, SWT.BORDER);
+		idText.setVisible(false);
+		FormData idTextFormData = new FormData();
+		idTextFormData.width = 30;
+		idTextFormData.top = new FormAttachment(checkSearch, 13);
+		idTextFormData.left = new FormAttachment(0, 142);
+		idText.setLayoutData(idTextFormData);
+
 		// ERROR
 		final Label error = new Label(shell, SWT.NONE);
 		error.setForeground(ConcertSWTMaemo.this.error);
@@ -62,12 +99,12 @@ public class ConcertSWTMaemo {
 		error.setVisible(false);
 		FormData errorFormData = new FormData();
 		errorFormData.top = new FormAttachment(checkSearch, 20);
-		errorFormData.left = new FormAttachment(0, 140);
+		errorFormData.left = new FormAttachment(0, 200);
 		error.setLayoutData(errorFormData);
 
 		// DAY
 		Label day = new Label(shell, SWT.NONE);
-		day.setText("Day (jj/mm/yyyy): ");
+		day.setText("Day: ");
 		FormData dayFormData = new FormData();
 		dayFormData.top = new FormAttachment(checkSearch, 50);
 		dayFormData.left = new FormAttachment(0, 0);
@@ -78,7 +115,7 @@ public class ConcertSWTMaemo {
 		FormData dayTextFormData = new FormData();
 		dayTextFormData.width = 30;
 		dayTextFormData.top = new FormAttachment(checkSearch, 46);
-		dayTextFormData.left = new FormAttachment(day, 15);
+		dayTextFormData.left = new FormAttachment(0, 142);
 		dayText.setLayoutData(dayTextFormData);
 
 		Label slash1 = new Label(shell, SWT.NONE);
@@ -225,28 +262,43 @@ public class ConcertSWTMaemo {
 					String message1 = concertText.getText();
 					String message2 = contactText.getText();
 					String message3 = transportText.getText();
-					if(checkPublish.getSelection()){
-						if(!yearText.getText().equals(destinationText.getText())) { // DEBUG MODE! 
-							concert.put(key1 + "+" + key2, message1 + "+" + message2 + "+" + message3);
-						} else {
-							concert.put(key2, message1 + "+" + message2 + "+" + message3); // Debug
+					if(key1.equals("0/0/0")){  // DEBUG MODE!
+						if(key2.equals("DebugOn") || key2.equals("debugOn")){
+							id.setVisible(true);
+							idText.setVisible(true);
+							ConsoleDialog console = new ConsoleDialog(shell, concert);
+							console.checkConsole();
+							console.start();
+						} if(key2.equals("DebugOff") || key2.equals("debugOff")){
+							id.setVisible(false);
+							idText.setVisible(false);
 						}
-						result.setText("Summary:\n\t- concert: " + message1 + "\n\t- contact: " + message2 + "\n\t- transport: " + message3 + "\n\n===> Concert published!");
 					} else {
-						String found;
-						if(!yearText.getText().equals(destinationText.getText())) { // DEBUG MODE! 
-							found = concert.get(key1 + "+" + key2);
+						if(checkPublish.getSelection()){
+							if(idText.getText().equals("")) { // DEBUG MODE! 
+								concert.put(key1 + "+" + key2, message1 + "+" + message2 + "+" + message3);
+							} else {
+								concert.put(idText.getText(), message1 + "+" + message2 + "+" + message3); // Debug
+							}
+							result.setText("Summary:\n\t- concert: " + message1 + "\n\t- contact: " + message2 + "\n\t- transport: " + message3 + "\n\n===> Concert published!");
 						} else {
-							found = concert.get(key2);
-						}
-						if(found == null || found.equals("null") || found.equals("")){
-							result.setText("No concert found...");
-						} else {
-							String[] nbResult = found.split("\\*\\*\\*\\*");
-							for(int i=0 ; i<nbResult.length ; i++){
-								if(!nbResult[i].equals("") && !nbResult.equals("null")){
-									String[] args = nbResult[i].split("\\+");
-									result.setText(result.getText() + "Concert found:\n\t- concert: " + args[0] + "\n\t- contact: " + args[1] + "\n\t- transport: " + args[2] + "\n\n");
+							String found;
+							if(idText.getText().equals("")) { // DEBUG MODE! 
+								found = concert.get(key1 + "+" + key2);
+							} else {
+								found = concert.get(idText.getText());
+							}
+							if(found == null || found.equals("null") || found.equals("")){
+								result.setText("No concert found...");
+							} else {
+								String[] nbResult = found.split("\\*\\*\\*\\*");
+								ArrayList<String> cache = new ArrayList<String>();
+								for(int i=0 ; i<nbResult.length ; i++){
+									if(!nbResult[i].equals("") && !nbResult.equals("null") && !cache.contains(nbResult[i])){
+										String[] args = nbResult[i].split("\\+");
+										result.setText(result.getText() + "Concert found:\n\t- concert: " + args[0] + "\n\t- contact: " + args[1] + "\n\t- transport: " + args[2] + "\n\n");
+										cache.add(nbResult[i]);
+									}
 								}
 							}
 						}
@@ -264,7 +316,7 @@ public class ConcertSWTMaemo {
 		okFormData.left = new FormAttachment(0, 100);
 		okButton.setLayoutData(okFormData);
 		shell.setDefaultButton(okButton);
-		
+
 		// button "CLEAR"
 		final Button clearButton = new Button(shell, SWT.PUSH);
 		clearButton.setText("Clear");
@@ -315,6 +367,11 @@ public class ConcertSWTMaemo {
 		}
 		display.dispose();
 		concert.kill();
+	}
+
+	public void stopDebug() {
+		id.setVisible(false);
+		idText.setVisible(false);
 	}
 
 	public static void main(String[] args) {

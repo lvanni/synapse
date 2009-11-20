@@ -1,5 +1,7 @@
 package example.ui.gui.maemo;
 
+import java.util.ArrayList;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -21,12 +23,15 @@ import org.eclipse.swt.widgets.Text;
 
 import example.mytansport.MyTransport;
 import example.ui.console.InfoConsole;
+import example.ui.gui.maemo.dialog.AddServiceDialog;
+import example.ui.gui.maemo.dialog.ConsoleDialog;
 
 public class MyTransportSWTMaemo {
 
 	private final Shell shell;
 	private Display display;
 	private Color error = new Color(null, 255, 0, 0);
+	private Color white = new Color(null, 255, 255, 255);
 	private MyTransport myTransport;
 	private Label services;
 
@@ -46,7 +51,7 @@ public class MyTransportSWTMaemo {
 		// MENU
 		Menu menuBar = new Menu(shell, SWT.BAR);
 		MenuItem fileMenuHeader = new MenuItem(menuBar, SWT.CASCADE);
-		fileMenuHeader.setText("Add service");
+		fileMenuHeader.setText("Add services");
 		Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
 		fileMenuHeader.setMenu(fileMenu);
 		final MenuItem concertItem = new MenuItem(fileMenu, SWT.PUSH);
@@ -72,19 +77,36 @@ public class MyTransportSWTMaemo {
 		checkSearchFormData.left = new FormAttachment(0, 0);
 		checkSearch.setLayoutData(checkSearchFormData);
 
+		// ID
+		final Label id = new Label(shell, SWT.NONE);
+		id.setVisible(false);
+		id.setText("ID: ");
+		FormData idFormData = new FormData();
+		idFormData.top = new FormAttachment(checkSearch, 20);
+		idFormData.left = new FormAttachment(0, 0);
+		id.setLayoutData(idFormData);
+
+		final Text idText = new Text(shell, SWT.BORDER);
+		idText.setVisible(false);
+		FormData idTextFormData = new FormData();
+		idTextFormData.width = 30;
+		idTextFormData.top = new FormAttachment(checkSearch, 16);
+		idTextFormData.left = new FormAttachment(0, 142);
+		idText.setLayoutData(idTextFormData);
+
 		// ERROR
 		final Label error = new Label(shell, SWT.NONE);
 		error.setForeground(MyTransportSWTMaemo.this.error);
 		error.setText("Bad format number!");
 		error.setVisible(false);
 		FormData errorFormData = new FormData();
-		errorFormData.top = new FormAttachment(checkSearch, 10);
-		errorFormData.left = new FormAttachment(0, 140);
+		errorFormData.top = new FormAttachment(checkSearch, 20);
+		errorFormData.left = new FormAttachment(0, 200);
 		error.setLayoutData(errorFormData);
 
 		// DAY
 		Label day = new Label(shell, SWT.NONE);
-		day.setText("Day (jj/mm/yyyy): ");
+		day.setText("Day: ");
 		FormData dayFormData = new FormData();
 		dayFormData.top = new FormAttachment(checkSearch, 50);
 		dayFormData.left = new FormAttachment(0, 0);
@@ -95,7 +117,7 @@ public class MyTransportSWTMaemo {
 		FormData dayTextFormData = new FormData();
 		dayTextFormData.width = 30;
 		dayTextFormData.top = new FormAttachment(checkSearch, 46);
-		dayTextFormData.left = new FormAttachment(day, 15);
+		dayTextFormData.left = new FormAttachment(0, 142);
 		dayText.setLayoutData(dayTextFormData);
 
 		Label slash1 = new Label(shell, SWT.NONE);
@@ -166,7 +188,7 @@ public class MyTransportSWTMaemo {
 		services.setForeground(MyTransportSWTMaemo.this.error);
 		services.setText("No service enable...");
 		FormData myTransportFormData = new FormData();
-		myTransportFormData.width = 300;
+		myTransportFormData.width = 380;
 		myTransportFormData.top = new FormAttachment(destinationText, 10);
 		myTransportFormData.left = new FormAttachment(0, 0);
 		services.setLayoutData(myTransportFormData);
@@ -211,6 +233,7 @@ public class MyTransportSWTMaemo {
 		// RESULT
 		final StyledText result = new StyledText(shell, SWT.BORDER);
 		result.setEditable(false);
+		result.setForeground(white);
 		Image font = new Image(display,
 				MyTransportSWTMaemo.class.getResourceAsStream(
 				"myTransport.png"));
@@ -237,28 +260,43 @@ public class MyTransportSWTMaemo {
 					String message1 = "MyTransport";
 					String message2 = contactText.getText();
 					String message3 = transportText.getText();
-					if(checkPublish.getSelection()){
-						if(!yearText.getText().equals(destinationText.getText())) { // DEBUG MODE! 
-							myTransport.put(key1 + "+" + key2, message1 + "+" + message2 + "+" + message3);
-						} else {
-							myTransport.put(key2, message1 + "+" + message2 + "+" + message3); // Debug
+					if(key1.equals("0/0/0")){  // DEBUG MODE!
+						if(key2.equals("DebugOn") || key2.equals("debugOn")){
+							id.setVisible(true);
+							idText.setVisible(true);
+							ConsoleDialog console = new ConsoleDialog(shell, myTransport);
+							console.checkConsole();
+							console.start();
+						} if(key2.equals("DebugOff") || key2.equals("debugOff")){
+							id.setVisible(false);
+							idText.setVisible(false);
 						}
-						result.setText("Summary:\n\t- event: " + message1 + "\n\t- contact: " + message2 + "\n\t- transport: " + message3 + "\n\n===> MyTransport published!");
 					} else {
-						String found;
-						if(!yearText.getText().equals(destinationText.getText())) { // DEBUG MODE! 
-							found = myTransport.get(key1 + "+" + key2);
+						if(checkPublish.getSelection()){
+							if(idText.getText().equals("")) { // DEBUG MODE! 
+								myTransport.put(key1 + "+" + key2, message1 + "+" + message2 + "+" + message3);
+							} else {
+								myTransport.put(idText.getText(), message1 + "+" + message2 + "+" + message3); // Debug
+							}
+							result.setText("Summary:\n\t- event: " + message1 + "\n\t- contact: " + message2 + "\n\t- transport: " + message3 + "\n\n===> MyTransport published!");
 						} else {
-							found = myTransport.get(key2);
-						}
-						if(found == null || found.equals("null") || found.equals("")){
-							result.setText("No transport found...");
-						} else {
-							String[] nbResult = found.split("\\*\\*\\*\\*");
-							for(int i=0 ; i<nbResult.length ; i++){
-								if(!nbResult[i].equals("") && !nbResult[i].equals("null")){
-									String[] args = nbResult[i].split("\\+");
-									result.setText(result.getText() + "MyTransport found:\n\t- event: " + args[0] + "\n\t- contact: " + args[1] + "\n\t- transport: " + args[2] + "\n\n");
+							String found;
+							if(idText.getText().equals("")) { // DEBUG MODE! 
+								found = myTransport.get(key1 + "+" + key2);
+							} else {
+								found = myTransport.get(idText.getText());
+							}
+							if(found == null || found.equals("null") || found.equals("")){
+								result.setText("No transport found...");
+							} else {
+								String[] nbResult = found.split("\\*\\*\\*\\*");
+								ArrayList<String> cache = new ArrayList<String>();
+								for(int i=0 ; i<nbResult.length ; i++){
+									if(!nbResult[i].equals("") && !nbResult[i].equals("null") && !cache.contains(nbResult[i])){
+										String[] args = nbResult[i].split("\\+");
+										result.setText(result.getText() + "MyTransport found:\n\t- event: " + args[0] + "\n\t- contact: " + args[1] + "\n\t- transport: " + args[2] + "\n\n");
+										cache.add(nbResult[i]);
+									}
 								}
 							}
 						}
@@ -276,7 +314,7 @@ public class MyTransportSWTMaemo {
 		okFormData.left = new FormAttachment(0, 100);
 		okButton.setLayoutData(okFormData);
 		shell.setDefaultButton(okButton);
-		
+
 		// button "CLEAR"
 		final Button clearButton = new Button(shell, SWT.PUSH);
 		clearButton.setText("Clear");

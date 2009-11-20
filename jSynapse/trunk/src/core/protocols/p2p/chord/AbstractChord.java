@@ -187,7 +187,7 @@ public abstract class AbstractChord implements IChord {
 			res += "null";
 		}
 		if (!table.isEmpty()) {
-			res += "\n\tData Content : ";
+			res += "\n\n\tData Content : ";
 			for (Map.Entry<Integer, String> entry : table.entrySet()) {
 				res += "\n\t  [" + entry.getKey() + "] - ";
 				res += entry.getValue().toString();
