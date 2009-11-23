@@ -10,9 +10,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 
+import core.overlay.concert.Concert;
 import core.protocols.p2p.Node;
 import core.protocols.transport.ITransport;
-import example.overlay.concert.Concert;
 
 public class SocketImpl implements ITransport{
 
