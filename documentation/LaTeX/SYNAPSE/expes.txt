@@ -1,0 +1,25 @@
+
+Assumptions:
+	- heterogeneous processing capacity of peers (number of requests they are able to process per second)
+	- heterogeneous storage capacity of peers (we can assume a node can not store its part of the table)
+	- heterogeneous RTT of each link
+	- possibility to tune the number of floors visited at each hop (ringTTL)
+
+
+Experiments:
+
+	- Lookup length (number of hops) VS ringTTL
+	- Lookup length (number of hops) VS different policies of creation of a new ring
+
+	- Lookup latency (time) VS different policies of creation of a new ring
+	- Lookup latency (time) compared to basic chord
+
+	- proportion of failed lookup VS churn rate
+	- proportion of failed lookup VS ringTTL
+	- proportion of failed lookup VS different policies of creation of a new ring
+	- proportion of failed lookup compared to basic chord
+
+	- exhaustivity, size of the global table, number of (key,value) pairs that are stored on peers
+			- VS different policies of creation of a new ring
+			- compared to basic chord
+

@@ -24,12 +24,17 @@ import org.eclipse.swt.widgets.Text;
 import ui.console.InfoConsole;
 import ui.gui.maemo.dialog.ConsoleDialog;
 import ui.gui.maemo.dialog.JoinDialog;
-
 import core.overlay.foot.Foot;
+import core.protocols.p2p.ITracker;
+import core.protocols.p2p.Node;
 import core.protocols.p2p.chord.IChord;
 
 
 public class FootSWTMaemo {
+
+	/** address on the tracker which give the peerSet*/
+	private static String TRACKER_HOST = "cycloid.inria.fr";
+	private static int 	  TRACKER_PORT = 8000;
 
 	private final Shell shell;
 	private Display display;
@@ -385,7 +390,17 @@ public class FootSWTMaemo {
 				String hostToJoin = args[2];
 				int portToJoin = Integer.parseInt(args[3]);
 				foot.join(hostToJoin, portToJoin);
-			}
+			} else {
+
+				// CONNECT ON TRACKER
+					String trackerResponse = foot.getTransport().forward(ITracker.GETCONNECTION + "," + foot.getIdentifier(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
+					if(trackerResponse.equals("null")) {
+						foot.getTransport().forward(ITracker.ADDNODE + "," + foot.getIdentifier() + "," + foot.getThisNode(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
+					} else {
+					Node n = new Node(trackerResponse);
+					foot.join(n.getIp(), n.getPort());
+					}
+				}
 
 			System.out.println("ok!");
 			Thread.sleep(300);

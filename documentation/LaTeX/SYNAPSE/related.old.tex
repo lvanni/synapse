@@ -1,0 +1,304 @@
+% related.tex
+
+%% CT: ne dis pas ce que tu fais, pas la place, juste fais le :-)
+%% CT: peut être plus appuyer aussi qu'une façon de collaborer, c de faire
+%% CT: du merging (ce qui est couteux, citer EPFL, KTH) du hiérarchique,
+%% CT: ce qui suppose aussi de merger ou d'autres mécanismes de maintient de la topologie
+
+Pointing out the limits of a unique global structured overlay
+(rigidity, maintenance cost, security, $\dots$), several proposition
+has been made over the years to build alternate topologies based on
+the co-existance of smaller local overlay networks. A first approach
+has been based on hierarchical systems~\cite{Biersack,XuMH03}, leading
+to the requirement of costly merging mechanisms to ensure a high level
+of exhaustiveness. In a more general view, merging several co-existing
+structured overlay networks has been shown to be a very costly
+operation~\cite{Datta,Haridi}, leading to inefficient overlay
+networks~\cite{cheng2006tdh}.
+
+We organize the related work into two parts: related mechanisms that
+will enable/ease overlay
+inter-connection %on top of the current Internet architecture
+and we will briefly present some clean-slate routing architectures, as
+discussed in \cite{feldmann_internet_2007}, built with networks
+inter-connection %this
+feature in mind from the ground up. Both parts share the same final
+goal, that is, providing easier ways to inter-connect networks. We
+could also cite some works that have been studying hierarchical DHT
+systems~\cite{Biersack} which also consider multiple spaces and some
+elected super peers promoted to a top-level overlay network. But the
+main issue is that they introduce a multi-level addressing and lookup
+space whereas we, in this work, try to avoid it in order to be more
+generic. Hence we can say that our work subsumes hierarchical
+DHTs.\newline
+
+\textbf{Related mechanisms:} We can identify two main mechanisms for
+enabling overlay networks inter-communication on top of the current
+Internet architecture: \textit{co-located nodes} and
+\textit{gateways}. The main difference between the two is that
+co-located nodes fully participate in the routing process of the
+various overlays they are registered to, whereas gateways are nodes
+have only a specific pointer to another node in another overlay
+networks and do not actively participate in the routing process of the
+different overlays they are registered to. Co-located nodes have thus
+higher state overhead than gateways, since they have to maintain more
+pointers and process more messages due to their active participation.
+Yet, nowadays it is more common to use multiple P2P applications in
+the same time, and overlooking the possibility to exploit this would
+be limiting.
+
+%%
+%%
+% talk about each of them (in some details), underline their
+% strong points and their drawbacks...
+% Question : what do we bring that they don't have? answer => don't know...
+%% Important : underline the difference between introducing novel
+%% architectures (clean slate) and mechanisms that could work no
+%% matter what the underlying architecture is. (ours is more a
+%% mechanism)
+%%
+%%
+
+Recently, authors in~\cite{cheng_bridging_2007}, stating that complete
+merging is inefficient, propose a novel search protocol, based on
+gateways called ``\textit{DHT-gatewaying}'', which is scalable and
+efficient across homogeneous\footnote{Homogeneous DHTs:~same
+  implementation and same keysize (ex. Two 160-bit Chord DHTs)},
+heterogeneous\footnote{Heterogeneous DHTs:~same implementation and
+  different keysize (ex. One 160-bit Chord and one 256-bit Chord
+  DHTs)} and assorted\footnote{Assorted DHTs:~different implementation
+  and/or different keysize (ex. One 160-bit Chord and one 256-CAN
+  DHTs)}~co-existing DHTs. Their argument is that there isn't a
+preferred DHT implementation, and that peers are members of
+co-existing DHTs. Their assumptions are (\textit{i}) only some peers
+support the implementations of different DHTs and (\textit{ii}) some
+peers are directly connected to peers that are members of other DHTs,
+and are called \textit{Virtual Gateways (VG))}. Their gatewaying
+protocol works in the following way: when a request is sent in one
+DHT, and no result was found, the requester can decide to widen his
+search by forwarding its original search request to nodes which belong
+to other DHTs (cross-DHT search). Those nodes will ``map'' the search
+to the format which is supported by their relative DHTs. Once the
+mapping is done, the search is carried out in each DHTs, and if a
+result is found, it will be returned to the original requester. Note
+that a Time-To-Live (TTL) value is added to the original search, in
+order to avoid cycles; this value is decremented each time a request
+crosses a new DHT domain. Because VGs can be overloaded, authors
+devised a mechanism in order to distribute the mapping by electing
+more VGs (according to a specific VG determination scheme), and they
+also introduced self-organizing ``gateways pointers'' whose roles are
+to keep track of VGs where-abouts. Conceptually, this work seems the
+closest to our proposition. Our purpose is to give study more
+accurately ...
+
+
+%% what can i say about the lack of algorithms? since they provide a
+%% detailed description of their protocol... + yes in the title it is
+%% said 'Wireless'...but their protocol
+% is applicable in wired networks too
+
+%% \textbf{talk about : }\cite{furtado_multiple_2007}\\
+Author in \cite{furtado_multiple_2007} presents mechanisms for
+managing the multiple identifier spaces as well as inter-space linking
+and routing alternatives. They consider multiple spaces with some
+degree of intersection between spaces,~\ie~with co-located nodes. They
+compared various inter-space routing policies by analyzing which
+trade-offs, in terms of state overhead, would give the best results in
+terms of the number of messages generated and routed, the number of
+hops it takes to find a result and the state overhead (\ie~the number
+of fingers a node has to keep). They do not present any algorithms but
+they do provide an comparative analytical study of the different
+policies. They showed that with some dynamic finger caching and with
+multiple gateways (in order to avoid bottlenecks and single points of
+failures) which are tactfully laid out, they attain pretty good
+performances.
+
+
+% \textbf{talk about : }\cite{cheng2006tdh}\\
+In~\cite{cheng2006tdh} authors presented two models for two overlays
+to be (de)composed, known as \textit{absorption}~(equivalent to
+merging) and \textit{gatewaying}. Their protocol enables a CAN-DHT to
+be completely absorbed into another one (in the case of the
+absorption), and also provide a mechanism to create bridges between
+DHTs (in the case of the gatewaying). They do not specifically take
+advantage of a simple assumption that nodes can be part of multiple
+overlays in the same time thus playing the role of natural bridges.
+They did not evaluate their protocol and do not provide any algorithms
+of their protocol.
+
+
+%\textbf{talk about : }\cite{junjiro_design_2006}\\
+
+Authors in \cite{junjiro_design_2006} present a model which considers
+the symbiosis between different overlays networks with a specific goal
+in mind: file sharing. They propose a mechanism for hybrid P2P
+networks cooperation and investigates the influence of system
+conditions such as the numbers of peers and the number of
+meta-information a peer has to keep. Their work is bit more generic in
+the sense that they do not focus on structured overlay networks as we
+do, but still, they provide interesting observations on: \textit{(i)}~
+joining a candidate network (\ie~considering to enhance one's QoS by
+joining another network), \textit{(ii)}~selecting cooperative peers
+(that is which peer(s) among this newly joined network will cooperate
+with me), \textit{(iii)}~finding other P2P networks, \textit{(iv)}~the
+very decision of starting cooperation, by taking into account the size
+of the network (for instance a very large network will not really
+benefit from a cooperation with a small network),
+\textit{(v)}~relaying messages and files, \textit{(vi)}~caching
+mechanisms in cooperative peers
+ and finally \textit{(vii)}~ when it is appropriate to end a cooperation.
+Their simulations showed the effect the popularity of a cooperative
+peer on the search latency evaluation, that is the more a node has neighbors, the better,
+as well as the effect of their caching mechanism which reduces (when appropriately
+adjusted) the load on nodes (but interestingly does not contribute to faster search).
+
+Authors in~\cite{kwon_synergy:overlay_2005} presents Synergy, an
+overlay inter-networking architecture which improves the routing
+performance in terms of delay, throughput and loss packets by
+providing cooperative forwarding of flows. Authors acknowledge that
+co-located nodes can serve as good candidates for enabling
+inter-overlay routing and that they reduce traffic.
+
+In this work, and in our previous preliminary work~\cite{LTB09}, we
+also argue that co-located nodes are also good candidates for widening
+the search capability. However in this paper we focus on the
+co-located nodes heuristic in more details than the aforementioned
+works by providing not only a simple algorithm which enables
+inter-overlay routing but also more intensive simulations to show the
+behaviours of such networks as well as a real implementation and
+experiments. We first want to grasp the complete potential that
+co-located nodes offer and we want to deepen the study
+of overlay networks with these types of nodes.~\\
+
+%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%
+
+%% EXPLAIN HOW WE DO THINGS !!! AND HOW DO WE COMPARE TO THE OTHERS
+
+%% second part : talk about other type of approaches ( (clean-slates)
+%% internet routing architectures ) //Detour and NIRA
+
+%% Partie ``clean-slate'' encore bcp trop longue. comme tu le dis
+%% c pas directement relié au notre. Je dirais de faire un paragraphe
+%% que tu déplaces avant la partie qui nous intéresse vraiment.
+
+%% CT: cette phrase est bien, sers-t-en pour appuyer le fait que
+%% CT: le futur internet passera par de l'interconnection
+%% CT: (mais au début du related work)
+
+\textbf{Clean-slate routing architectures:}~The following works,
+although not directly related to ours, propose alternatives to the
+current Internet architecture and also present interesting methods for
+inter-connecting domains.
+
+%%ROFL~\cite{caesar_rofl:_2006}:
+%% briefly explain what is their contribution
+
+Authors in \cite{caesar_rofl:_2006} propose and analyze a routing
+scheme based on flat names. They want to get rid of location
+information that we can find the network layer and route directly on
+the identities themselves. Although they propose a compact routing
+scheme, some questions arise regarding the scalability of their
+solution.
+
+%% CT: oui oui, les overlays c pas bien pour les perfs, je suis
+%% CT: d'accord, nous ce qu'on fait, c'est de la recherche d'information
+%% CT: et entre nous, on est pas les seuls à faire des overlays pour ça :-)
+
+%% briefly explain what is their contribution
+In~\cite{yang_nira:new_2003} authors present the design of a new
+Internet routing architecture (NIRA) that aims at providing end users
+the ability to choose the sequence of Internet service providers a
+packet traverses at the domain level, ~\ie~they will be able to choose
+how inter-domain routing is done.
+%% authors VS overlays
+Authors argue that overlay networks are not ubiquitous, that only
+nodes on the overlay network can control the packet's paths by
+tunnelling traffic through other nodes on the overlay. They also
+present scepticisms regarding the scalability of the overlay,
+stipulating that they are unlikely to scale up so to include every
+user on the Internet, and that an overlay path may traverse duplicate
+physical links.
+% Feedback-Based Routing~\cite{zhu_feedback_2003}:
+%% briefly explain what is their contribution
+
+%% CT: voilà pareil, bien sûr qu'Overnet ne marche pas si le cable est pas branché
+%% CT: ou si y'a une coupure de courant.
+%% CT: je n'ai pas lu les papiers, mais j'ai l'impression que les auteurs disent
+%% CT: "pour faire de l'interconnexion sûre et efficace de composants réseaux,
+%% CT: il ne faut pas se placer au niveau overlay, mais en dessous" et je suis d'accord.
+%% CT: mais nous on met en place un algorithme générique pour la recherche d'information
+%% CT: dans des DHT qui sont interconnectés... pas pareil.
+
+In~\cite{zhu_feedback_2003} authors propose a routing scheme which
+separates structural information and dynamic information. They provide
+a system in which only structural information is disseminated, and
+dynamic information is discovered by routers based on feedbacks and
+probes, which apparently helps improving the routing decisions.
+%% authors VS overlays
+Authors believe that overlay network is not the final solution for
+reliable packet forwarding. Their reasoning is based on the fact that
+overlay network only increase the probability that the communication
+does not fail when there are only isolated routing failures in the
+network. No overlay network is going to function when the underlying
+routing infrastructure completely fails.
+
+%%DETOUR~\cite{savage_detour:case_1999}:
+%% briefly explain what is their contribution
+
+%% Explain their common viewpoint that the BGP protocol is not enough and much
+%% flexibility has to be given to the user concerning the route of packets
+%% when traversing domains
+
+%\textbf{Common ascertainment:}
+
+%% CT: Pareil, BGP c'est niveau 3, nous on s'occupe de réseaux logiques, niveau applicatif,
+%% CT: une seule de nos DHT peut être distribué sur plein d'AS, qui vont utiliser
+%% CT: RIP, BGP ou OSPF pour router entre eux, c même pas notre problème.
+%% CT: Nous, on cherche pas à router entre des AS, on veut
+%% CT: faire un lookup sur plusieurs DHTs.
+
+Regarding the clean-slate redesigns of the Internet, most of the cited
+authors (\cite{yang_nira:new_2003},\cite{zhu_feedback_2003}) seem to
+agree that the BGP routing protocol~\cite{rfc1771}, the main protocol
+for inter-domain routing, does not provide enough information
+regarding the packet routes and does not give the possibility to the
+users to be able to choose their own domain-level routes. BGP does not
+scale particularly well, converges rather slowly (and sometimes with
+certain routing policy combinations it diverges
+\cite{labovitz_delayed_2000}). They attempt, and so do we, to
+circumvent the current Internet limitations by proposing an
+alternative method for interconnecting networks.
+
+Although their insights and proposals are more than relevant, we do
+believe they are far from being applicable in practise. The obvious
+reason is that the current established Internet cannot be changed in
+such radical ways and their solutions cannot be easily deployed. In
+this sense, overlay networks are a more flexible solution than
+complete re-designs, plus they can also serve as a framework for
+clean-slate re-designs to accelerate prototyping their new approaches.
+
+In this work we focus our attention on inter-connecting overlay
+networks, because we believe that since their introduction they have
+matured and they can answer most of todays Internet's challenges. We
+provide what we consider as a simple and natural solution for bridging
+overlay networks together.
+
+\begin{comment}
+
+  In this sense, and in response to overlay detractors, we argue
+  %% list some coherent responses for their comments that ON are not
+  %% suited for interconnecting domains
+  that works like \cite{XuMK03}, \cite{EURECOM+1205} and \cite{zhou_balancing_2003}
+  show  efficient method for constructing an overlay network while taking into
+  account the underlying topology. Therefore we can say with confidence that we do
+  have mechanisms in order to ensure that the paths the packets traverse
+  are not using duplicate physical links.
+
+\end{comment}
+
+%% SPECIAL MENTION OF THE P2PSIP effort going on at the IETF
+
+
+

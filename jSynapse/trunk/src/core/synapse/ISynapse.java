@@ -9,9 +9,6 @@ public interface ISynapse {
 	public final static int INVITE = 6;
 	public final static int JOIN   = 7;
 	
-	public void OPE();
-	public void find(int id);
-	public void found();
 	public void invite();
-//	public void join(OverlayID o, int port, String hostToJoin, int portToJoin);
+	public void join(String host, int port);
 }

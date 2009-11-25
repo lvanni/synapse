@@ -36,9 +36,6 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 
 	protected ITransport transport;
 
-	//	private Map<String, Integer> put;
-	//	private Map<String, Integer> get;
-
 	private String result = "";
 	private int nbResponse = 0;
 
@@ -52,33 +49,20 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 		this.h = new HashFunction(myMedIntifier);
 		int id = h.SHA1ToInt(ip+port+time);
 		this.transport = new SocketImpl(port); // TRANSPORT CHOICE
-		initialise(ip, id, port);
+		initialise(ip, id, transport.getPort());
 		networks = new ArrayList<IOverlay>();
 	}
 
 	// /////////////////////////////////////////// //
 	//              SYNAPSE ALGORITHM              //
 	// /////////////////////////////////////////// //
-	public void OPE() {
-		// TODO Auto-generated method stub
-	}
-
-	public void find(final int id) {
-		// TODO Auto-generated method stub
-	}
-
-	public void found() {
-		// TODO Auto-generated method stub
-	}
-
 	public void invite() {
 		// TODO Auto-generated method stub
 	}
 
-	// CHORD JOIN
 	public void join(String host, int port) {
 		Node chord = new Node(host,  h.SHA1ToInt(host+port+myMedIntifier), port);
-		join(chord);
+		join(chord); // chord join
 	}
 
 	public void kill(){
@@ -128,7 +112,6 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 			int hKey = keyToH(o.keyToH(key)+o.getIdentifier()); // h(key)|IDENT
 			put(hKey, "[" + o.keyToH(key) + "|" + o.getIdentifier()+"]:"+key);     // SAVE THE CLEAN KEY
 			String res = o.get(key);
-//			System.out.println("to concat: " + res);
 			s.concatResult(res == null ? "null" : res);  // MULTIGET
 			nbResponse++;
 		}
@@ -170,7 +153,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 	}
 
 	// /////////////////////////////////////////// //
-	//                                             //
+	//                  TRANSPORT                  //
 	// /////////////////////////////////////////// //
 	public String forward(String message, Node destination){
 		String res = "";

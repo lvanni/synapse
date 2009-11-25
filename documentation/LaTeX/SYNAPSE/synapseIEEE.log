@@ -1,0 +1,383 @@
+This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=pdflatex 2008.7.7)  1 AUG 2009 05:52
+entering extended mode
+ %&-line parsing enabled.
+**\input synapseIEEE.tex
+(./synapseIEEE.tex (./IEEEtran.cls
+Document Class: IEEEtran 2007/03/05 V1.7a by Michael Shell
+-- See the "IEEEtran_HOWTO" manual for usage information.
+-- http://www.michaelshell.org/tex/ieeetran/
+\@IEEEtrantmpdimenA=\dimen102
+\@IEEEtrantmpdimenB=\dimen103
+\@IEEEtrantmpcountA=\count79
+\@IEEEtrantmpcountB=\count80
+\@IEEEtrantmptoksA=\toks14
+LaTeX Font Info:    Try loading font information for OT1+ptm on input line 366.
+
+(/usr/local/texlive/2007/texmf-dist/tex/latex/psnfss/ot1ptm.fd
+File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
+)
+-- Using 8.5in x 11in (letter) paper.
+-- Using PDF output.
+\@IEEEnormalsizeunitybaselineskip=\dimen104
+-- This is a 10 point document.
+\CLASSINFOnormalsizebaselineskip=\dimen105
+\CLASSINFOnormalsizeunitybaselineskip=\dimen106
+\IEEEnormaljot=\dimen107
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <5> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 724.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <5> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 724.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 724.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <7> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 724.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <8> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 724.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <8> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 724.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 724.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <9> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 724.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 724.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <10> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 724.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <11> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 724.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <11> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 724.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 724.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <12> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 724.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <17> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 724.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <17> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 724.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <20> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 724.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <20> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 724.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <24> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 724.
+LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <24> not available
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 724.
+\IEEEilabelindentA=\dimen108
+\IEEEilabelindentB=\dimen109
+\IEEEilabelindent=\dimen110
+\IEEEelabelindent=\dimen111
+\IEEEdlabelindent=\dimen112
+\IEEElabelindent=\dimen113
+\IEEEiednormlabelsep=\dimen114
+\IEEEiedmathlabelsep=\dimen115
+\IEEEiedtopsep=\skip41
+\c@section=\count81
+\c@subsection=\count82
+\c@subsubsection=\count83
+\c@paragraph=\count84
+\c@IEEEsubequation=\count85
+\abovecaptionskip=\skip42
+\belowcaptionskip=\skip43
+\c@figure=\count86
+\c@table=\count87
+\@IEEEeqnnumcols=\count88
+\@IEEEeqncolcnt=\count89
+\@IEEEtmpitemindent=\dimen116
+\c@IEEEbiography=\count90
+\@IEEEtranrubishbin=\box26
+)
+** ATTENTION: Overriding command lockouts (line 66).
+(/usr/local/texlive/2007/texmf-dist/tex/latex/cite/cite.sty
+LaTeX Info: Redefining \cite on input line 149.
+LaTeX Info: Redefining \nocite on input line 214.
+Package: cite 2003/11/04  v 4.01
+)
+(/usr/local/texlive/2007/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/local/texlive/2007/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks15
+)
+(/usr/local/texlive/2007/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2006/02/20 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/local/texlive/2007/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+)
+(/usr/local/texlive/2007/texmf/tex/latex/config/graphics.cfg
+File: graphics.cfg 2007/01/18 v1.5 graphics configuration of teTeX/TeXLive
+)
+Package graphics Info: Driver file: pdftex.def on input line 90.
+
+(/usr/local/texlive/2007/texmf-dist/tex/latex/pdftex-def/pdftex.def
+File: pdftex.def 2007/01/08 v0.04d Graphics/color for pdfTeX
+\Gread@gobject=\count91
+))
+\Gin@req@height=\dimen117
+\Gin@req@width=\dimen118
+)
+(/usr/local/texlive/2007/texmf-dist/tex/latex/subfig/subfig.sty
+Package: subfig 2005/06/28 ver: 1.3 subfig package
+
+(/usr/local/texlive/2007/texmf-dist/tex/latex/caption/caption3.sty
+Package: caption3 2007/01/07 v3.0k caption3 kernel (AR)
+\captionmargin=\dimen119
+\captionmarginx=\dimen120
+\captionwidth=\dimen121
+\captionindent=\dimen122
+\captionparindent=\dimen123
+\captionhangindent=\dimen124
+)
+\c@KVtest=\count92
+\sf@farskip=\skip44
+\sf@captopadj=\dimen125
+\sf@capskip=\skip45
+\sf@nearskip=\skip46
+\c@subfigure=\count93
+\c@subfigure@save=\count94
+\c@lofdepth=\count95
+\c@subtable=\count96
+\c@subtable@save=\count97
+\c@lotdepth=\count98
+\sf@top=\skip47
+\sf@bottom=\skip48
+)
+(/usr/local/texlive/2007/texmf-dist/tex/latex/ltxmisc/url.sty
+\Urlmuskip=\muskip10
+Package: url 2005/06/27  ver 3.2  Verb mode for urls, etc.
+)
+(/usr/local/texlive/2007/texmf-dist/tex/latex/base/inputenc.sty
+Package: inputenc 2006/05/05 v1.1b Input encoding file
+\inpenc@prehook=\toks16
+\inpenc@posthook=\toks17
+
+(/usr/local/texlive/2007/texmf-dist/tex/latex/base/latin1.def
+File: latin1.def 2006/05/05 v1.1b Input encoding file
+))
+(/usr/local/texlive/2007/texmf-dist/tex/latex/comment/comment.sty
+\CommentStream=\write3
+
+Excluding comment 'comment')
+(/usr/local/texlive/2007/texmf-dist/tex/latex/base/alltt.sty
+Package: alltt 1997/06/16 v2.0g defines alltt environment
+) (./algorithm.sty
+Package: algorithm
+
+Document Style `algorithm' - floating environment
+(/usr/local/texlive/2007/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count99
+\float@exts=\toks18
+\float@box=\box27
+\@float@everytoks=\toks19
+\@floatcapt=\box28
+)
+(/usr/local/texlive/2007/texmf-dist/tex/latex/base/ifthen.sty
+Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
+)
+\@float@every@algorithm=\toks20
+\c@algorithm=\count100
+)
+(/usr/local/texlive/2007/texmf-dist/tex/latex/graphics/color.sty
+Package: color 2005/11/14 v1.0j Standard LaTeX Color (DPC)
+
+(/usr/local/texlive/2007/texmf/tex/latex/config/color.cfg
+File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+)
+Package color Info: Driver file: pdftex.def on input line 130.
+)
+\c@theorem=\count101
+\c@example=\count102
+\c@remark=\count103
+
+\@input{algorithmic_header.aux}
+\openout2 = `algorithmic_header.aux'.
+
+(./algorithmic_header.tex
+\@float@every@algo=\toks21
+\c@algo=\count104
+\ALGOLine=\count105
+\ALGOLineStart=\count106
+\ALGONum=\count107
+) (./synapseIEEE.aux)
+\openout1 = `synapseIEEE.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 402.
+LaTeX Font Info:    ... okay on input line 402.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 402.
+LaTeX Font Info:    ... okay on input line 402.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 402.
+LaTeX Font Info:    ... okay on input line 402.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 402.
+LaTeX Font Info:    ... okay on input line 402.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 402.
+LaTeX Font Info:    ... okay on input line 402.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 402.
+LaTeX Font Info:    ... okay on input line 402.
+
+(/usr/local/texlive/2007/texmf-dist/tex/context/base/supp-pdf.tex
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count108
+\scratchdimen=\dimen126
+\scratchbox=\box29
+\nofMPsegments=\count109
+\nofMParguments=\count110
+\MPscratchCnt=\count111
+\MPscratchDim=\dimen127
+\MPnumerator=\count112
+\everyMPtoPDFconversion=\toks22
+) (/usr/local/texlive/2007/texmf-dist/tex/latex/ragged2e/ragged2e.sty
+Package: ragged2e 2003/03/25 v2.04 ragged2e Package (MS)
+
+(/usr/local/texlive/2007/texmf-dist/tex/latex/everysel/everysel.sty
+Package: everysel 1999/06/08 v1.03 EverySelectfont Package (MS)
+LaTeX Info: Redefining \selectfont on input line 125.
+)
+\CenteringLeftskip=\skip49
+\RaggedLeftLeftskip=\skip50
+\RaggedRightLeftskip=\skip51
+\CenteringRightskip=\skip52
+\RaggedLeftRightskip=\skip53
+\RaggedRightRightskip=\skip54
+\CenteringParfillskip=\skip55
+\RaggedLeftParfillskip=\skip56
+\RaggedRightParfillskip=\skip57
+\JustifyingParfillskip=\skip58
+\CenteringParindent=\skip59
+\RaggedLeftParindent=\skip60
+\RaggedRightParindent=\skip61
+\JustifyingParindent=\skip62
+)
+LaTeX Font Info:    Calculating math sizes for size <24> on input line 464.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <24> on input line 464.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <16.79993> on input line 464.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 464.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 464.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 464.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 464.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 464.
+
+(./intro.tex [1{/usr/local/texlive/2007/texmf-var/fonts/map/pdftex/updmap/pdfte
+x.map}
+
+
+
+
+]
+LaTeX Font Info:    Try loading font information for OT1+pcr on input line 149.
+
+ (/usr/local/texlive/2007/texmf-dist/tex/latex/psnfss/ot1pcr.fd
+File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
+)
+LaTeX Font Info:    Try loading font information for OT1+phv on input line 150.
+
+
+(/usr/local/texlive/2007/texmf-dist/tex/latex/psnfss/ot1phv.fd
+File: ot1phv.fd 2001/06/04 scalable font definitions for OT1/phv.
+)) (./related.tex [2]
+Underfull \hbox (badness 4144) in paragraph at lines 93--100
+[]\OT1/ptm/m/n/10 Authors in [22] present Syn-ergy, an over-lay inter-
+ []
+
+) (./protocol.tex
+LaTeX Font Info:    Font shape `OT1/pcr/bx/n' in size <7> not available
+(Font)              Font shape `OT1/pcr/b/n' tried instead on input line 54.
+ [3]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [4]
+<fig/GET_into_other_ON.pdf, id=27, 700.8911pt x 548.11023pt>
+File: fig/GET_into_other_ON.pdf Graphic file (type pdf)
+
+<use fig/GET_into_other_ON.pdf>
+<fig/ON_with_network_partition.pdf, id=28, 700.8911pt x 548.11023pt>
+File: fig/ON_with_network_partition.pdf Graphic file (type pdf)
+
+<use fig/ON_with_network_partition.pdf>
+LaTeX Font Info:    Font shape `OT1/pcr/m/it' in size <10> not available
+(Font)              Font shape `OT1/pcr/m/sl' tried instead on input line 264.
+ [5 <./fig/GET_into_other_ON.pdf
+
+pdfTeX warning: pdflatex (file ./fig/GET_into_other_ON.pdf): PDF inclusion: Pag
+e Group detected which pdfTeX can't handle. Ignoring it.
+> <./fig/ON_with_network_partition.pdf
+
+pdfTeX warning: pdflatex (file ./fig/ON_with_network_partition.pdf): PDF inclus
+ion: Page Group detected which pdfTeX can't handle. Ignoring it.
+>]) (./simulation.tex <fig/3D-sat.pdf, id=88, 361.35pt x 252.945pt>
+File: fig/3D-sat.pdf Graphic file (type pdf)
+
+<use fig/3D-sat.pdf> <fig/3D-hops.pdf, id=89, 361.35pt x 252.945pt>
+File: fig/3D-hops.pdf Graphic file (type pdf)
+
+<use fig/3D-hops.pdf> [6] <fig/3D-msgs.pdf, id=93, 361.35pt x 252.945pt>
+File: fig/3D-msgs.pdf Graphic file (type pdf)
+
+<use fig/3D-msgs.pdf> <fig/TTL-sat.pdf, id=94, 361.35pt x 252.945pt>
+File: fig/TTL-sat.pdf Graphic file (type pdf)
+
+<use fig/TTL-sat.pdf> <fig/TTL-msgs.pdf, id=95, 361.35pt x 252.945pt>
+File: fig/TTL-msgs.pdf Graphic file (type pdf)
+
+<use fig/TTL-msgs.pdf> <fig/churn-sat.pdf, id=96, 361.35pt x 252.945pt>
+File: fig/churn-sat.pdf Graphic file (type pdf)
+
+<use fig/churn-sat.pdf>) [7 <./fig/3D-sat.pdf> <./fig/3D-hops.pdf> <./fig/3D-ms
+gs.pdf> <./fig/TTL-sat.pdf>] (./deployement.tex
+<fig/dep1-sat.pdf, id=117, 361.35pt x 252.945pt>
+File: fig/dep1-sat.pdf Graphic file (type pdf)
+ <use fig/dep1-sat.pdf>
+<fig/dep1-time.pdf, id=118, 361.35pt x 252.945pt>
+File: fig/dep1-time.pdf Graphic file (type pdf)
+ <use fig/dep1-time.pdf>)
+[8 <./fig/TTL-msgs.pdf> <./fig/churn-sat.pdf> <./fig/dep1-sat.pdf>]
+(./conclusions.tex) (./synapseIEEE.bbl)
+
+** Conference Paper **
+Before submitting the final camera ready copy, remember to:
+
+ 1. Manually equalize the lengths of two columns on the last page
+ of your paper;
+
+ 2. Ensure that any PostScript and/or PDF output post-processing
+ uses only Type 1 fonts and that every step in the generation
+ process uses the appropriate paper size.
+
+[9 <./fig/dep1-time.pdf>] (./synapseIEEE.aux) )
+Here is how much of TeX's memory you used:
+ 2827 strings out of 94073
+ 43402 string characters out of 1162985
+ 99382 words of memory out of 1500000
+ 6044 multiletter control sequences out of 10000+50000
+ 45807 words of font info for 93 fonts, out of 1200000 for 2000
+ 648 hyphenation exceptions out of 8191
+ 35i,9n,38p,407b,437s stack positions out of 5000i,500n,6000p,200000b,5000s
+{/usr/local/texlive/2007/texmf-d
+ist/fonts/enc/dvips/base/8r.enc}</usr/local/texlive/2007/texmf-dist/fonts/type1
+/bluesky/cm/cmmi10.pfb></usr/local/texlive/2007/texmf-dist/fonts/type1/bluesky/
+cm/cmr10.pfb></usr/local/texlive/2007/texmf-dist/fonts/type1/bluesky/cm/cmr7.pf
+b></usr/local/texlive/2007/texmf-dist/fonts/type1/bluesky/cm/cmsy10.pfb></usr/l
+ocal/texlive/2007/texmf-dist/fonts/type1/bluesky/cm/cmsy6.pfb></usr/local/texli
+ve/2007/texmf-dist/fonts/type1/bluesky/cm/cmsy7.pfb></usr/local/texlive/2007/te
+xmf-dist/fonts/type1/urw/courier/ucrb8a.pfb></usr/local/texlive/2007/texmf-dist
+/fonts/type1/urw/courier/ucrr8a.pfb></usr/local/texlive/2007/texmf-dist/fonts/t
+ype1/urw/courier/ucrro8a.pfb></usr/local/texlive/2007/texmf-dist/fonts/type1/ur
+w/helvetic/uhvr8a.pfb></usr/local/texlive/2007/texmf-dist/fonts/type1/urw/times
+/utmb8a.pfb></usr/local/texlive/2007/texmf-dist/fonts/type1/urw/times/utmbi8a.p
+fb></usr/local/texlive/2007/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/l
+ocal/texlive/2007/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on synapseIEEE.pdf (9 pages, 249654 bytes).
+PDF statistics:
+ 186 PDF objects out of 1000 (max. 8388607)
+ 0 named destinations out of 1000 (max. 131072)
+ 51 words of extra memory for PDF output out of 10000 (max. 10000000)
+

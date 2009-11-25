@@ -15,7 +15,7 @@ public class Foot extends Concert implements Runnable{
 		this.h = new HashFunction(overlayIntifier);
 		int id = h.SHA1ToInt(ip+port+time);
 		this.transport = new SocketImpl(port); // TRANSPORT CHOICE
-		initialise(ip, id, port);
+		initialise(ip, id, transport.getPort());
 	}
 	
 	public String getIdentifier() {

@@ -24,11 +24,16 @@ import org.eclipse.swt.widgets.Text;
 import ui.console.InfoConsole;
 import ui.gui.maemo.dialog.ConsoleDialog;
 import ui.gui.maemo.dialog.JoinDialog;
-
 import core.overlay.concert.Concert;
+import core.protocols.p2p.ITracker;
+import core.protocols.p2p.Node;
 import core.protocols.p2p.chord.IChord;
 
 public class ConcertSWTMaemo{
+
+	/** address on the tracker which give the peerSet*/
+	private static String TRACKER_HOST = "smart5.inria.fr";
+	private static int 	  TRACKER_PORT = 8000;
 
 	private final Shell shell;
 	private Display display;
@@ -380,7 +385,7 @@ public class ConcertSWTMaemo{
 			// LAUNCHING CHORD
 			System.out.print("Concert's Launching, please wait... ");
 			String ip = InfoConsole.getIp();
-			Concert concert = new Concert(ip, Integer.parseInt(args[0]));
+			Concert concert = new Concert(ip, 0);
 			new Thread(concert).start();
 			do{
 				Thread.sleep(1000);
@@ -391,10 +396,19 @@ public class ConcertSWTMaemo{
 				String hostToJoin = args[2];
 				int portToJoin = Integer.parseInt(args[3]);
 				concert.join(hostToJoin, portToJoin);
+			} else {
+
+			// CONNECT ON TRACKER
+				String trackerResponse = concert.getTransport().forward(ITracker.GETCONNECTION + "," + concert.getIdentifier(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
+				if(trackerResponse.equals("null")) {
+					concert.getTransport().forward(ITracker.ADDNODE + "," + concert.getIdentifier() + "," + concert.getThisNode(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
+				} else {
+				Node n = new Node(trackerResponse);
+				concert.join(n.getIp(), n.getPort());
+				}
 			}
 
 			System.out.println("ok!");
-			Thread.sleep(300);
 
 			ConcertSWTMaemo concertGUI = new ConcertSWTMaemo(concert);
 			concertGUI.start();

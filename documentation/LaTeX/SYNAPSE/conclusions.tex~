@@ -1,0 +1,5 @@
+% conclusions.tex
+
+..., but the software has been designed having its extension in
+mind, and we are currently extending the software with several other
+Distributed Hash Tables protocols like CAN~\cite{CAN}.
