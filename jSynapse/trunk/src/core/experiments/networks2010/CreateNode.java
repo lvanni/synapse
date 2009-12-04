@@ -22,7 +22,17 @@ public class CreateNode implements Runnable{
 
 	public CreateNode(ChordNode node, int port){
 		this.node = node;
-		this.transport = new SocketImpl(port);
+		try{
+			this.transport = new SocketImpl(port);
+		} catch(Exception e){
+			System.out.println("port" + port + " already in use: exit(1)");
+			node.kill();
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
+		}
 	}
 
 	public void put(String key, String value) {
@@ -40,6 +50,8 @@ public class CreateNode implements Runnable{
 			put(args[1], args[2]);
 		} else if(args[0].equals("get")){
 			return get(args[1]);
+		}  else if(args[0].equals("kill")){
+			node.kill();
 		}
 		return result;
 	}
@@ -95,16 +107,25 @@ public class CreateNode implements Runnable{
 
 			// BUILD NODE
 			ChordNode node = null;
+//			System.out.println("build node");
 			if(join){
 				SocketImpl s = new SocketImpl();
+//				System.out.println("get id:");
 				String identifier = s.forward("getIdentifier", new Node(hostToJoin, portToJoin));
+//				System.out.println("id = " + identifier);
+//				System.out.println("create node");
 				node = new ChordNode(InfoConsole.getIp(), Integer.parseInt(args[0]), identifier);
+//				System.out.println("create ok");
+//				System.out.println("start");
 				new Thread(node).start();
 				Thread.yield();
+//				System.out.println("start ok (yield finished), begin join");
 				node.join(hostToJoin, portToJoin);
+//				System.out.println("join ok");
 			} else {
 				node = new ChordNode(InfoConsole.getIp(), Integer.parseInt(args[0]));
 				new Thread(node).start();
+//				System.out.println("start ok");
 			}
 
 			// BUILD LISTENING
@@ -114,39 +135,42 @@ public class CreateNode implements Runnable{
 
 			// STAND-BY
 			BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+			System.out.println("the node is successfully created!");
 			while(true){
-				System.out.println("1) Publish");
-				System.out.println("2) Search");
-				System.out.println("3) Quit");
-				System.out.print("---> ");
+//				System.out.println("1) Publish");
+//				System.out.println("2) Search");
+//				System.out.println("3) Quit");
+//				System.out.print("---> ");
 				try{
-					int chx = Integer.parseInt(input.readLine().trim());
-					String key;
-					switch(chx){
-					case 0 :
-						System.out.println("\n" + node + "\n"); break;
-					case 1 :
-						System.out.print("\nkey = ");
-						key = input.readLine();
-						System.out.print("value = ");
-						String value = input.readLine();
-						node.put(key, value);
-						break;
-					case 2 :
-						System.out.print("\nkey = ");
-						key = input.readLine();
-						System.out.println("found: " + node.get(key));
-						break;
-					case 3:
-						node.kill();
-					default : break;
-					}
-					System.out.println("\npress Enter to continue...");
 					input.readLine();
+//					System.out.println("\n" + node + "\n");
+//					int chx = Integer.parseInt(input.readLine().trim());
+//					String key;
+//					switch(chx){
+//					case 0 :
+//						System.out.println("\n" + node + "\n"); break;
+//					case 1 :
+//						System.out.print("\nkey = ");
+//						key = input.readLine();
+//						System.out.print("value = ");
+//						String value = input.readLine();
+//						node.put(key, value);
+//						break;
+//					case 2 :
+//						System.out.print("\nkey = ");
+//						key = input.readLine();
+//						System.out.println("found: " + node.get(key));
+//						break;
+//					case 3:
+//						node.kill();
+//					default : break;
+//					}
+//					System.out.println("\npress Enter to continue...");
+//					input.readLine();
 				} catch (NumberFormatException e) {}
 			}
 		} catch (Exception e) {
-			System.out.println("==========> CreateNode <port> -j <host> <port> -l <port>");
+			System.out.println("!!! CreateNode <port> -j <host> <port> -l <port>");
 			e.printStackTrace();
 		}
 	}

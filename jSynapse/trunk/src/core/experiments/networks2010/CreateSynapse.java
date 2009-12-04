@@ -25,7 +25,17 @@ public class CreateSynapse implements Runnable{
 
 	public CreateSynapse(Synapse node, int port){
 		this.node = node;
-		this.transport = new SocketImpl(port);
+		try {
+			this.transport = new SocketImpl(port);
+		} catch (IOException e) {
+			System.out.println("port" + port + " already in use: exit(1)");
+			node.kill();
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
+		}
 	}
 
 	public void put(String key, String value) {
@@ -43,6 +53,8 @@ public class CreateSynapse implements Runnable{
 			put(args[1], args[2]);
 		} else if(args[0].equals("get")){
 			return get(args[1]);
+		} else if(args[0].equals("kill")){
+			node.kill();
 		}
 		return result;
 	}
@@ -65,7 +77,6 @@ public class CreateSynapse implements Runnable{
 						String message = pin.readLine(); // receive a message
 						String response = "";
 						if(message != null)
-							System.out.println("message= " + message);
 							response = this.doStuff(message);
 						pout.println(response);// sending a response <IP>,<ID>,<Port>
 					}
@@ -110,6 +121,13 @@ public class CreateSynapse implements Runnable{
 			if(join){
 				synapse.join(hostToJoin, portToJoin);
 			}
+
+			// BUILD LISTENING
+			CreateSynapse cn = new CreateSynapse(synapse, portToListen);
+			new Thread(cn).start();
+			do{} while(cn.getTransport() == null);
+
+			// ADDING PLUGIN
 			for(NewNode n : l){
 				ChordNodePlugin plugin = null;
 				if(n.getPortToJoin() != 0){ // IF JOIN
@@ -126,47 +144,44 @@ public class CreateSynapse implements Runnable{
 				synapse.getNetworks().add(plugin);
 			}
 
-			// BUILD LISTENING
-			CreateSynapse cn = new CreateSynapse(synapse, portToListen);
-			new Thread(cn).start();
-			do{} while(cn.getTransport() == null);
-
-
 			// STAND-BY
 			BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+			System.out.println("the synapse is successfully created!");
 			while(true){ // WAIT
-				System.out.println("1) Publish");
-				System.out.println("2) Search");
-				System.out.println("3) Quit");
-				System.out.print("---> ");
+//				System.out.println("1) Publish");
+//				System.out.println("2) Search");
+//				System.out.println("3) Quit");
+//				System.out.print("---> ");
 				try{
-					int chx = Integer.parseInt(input.readLine().trim());
-					String key;
-					switch(chx){
-					case 0 :
-						System.out.println("\n" + synapse + "\n"); break;
-					case 1 :
-						System.out.print("\nkey = ");
-						key = input.readLine();
-						System.out.print("value = ");
-						String value = input.readLine();
-						synapse.put(key, value);
-						break;
-					case 2 :
-						System.out.print("\nkey = ");
-						key = input.readLine();
-						System.out.println("found: " + synapse.get(key));
-						break;
-					case 3:
-						synapse.kill();
-					default : break;
-					}
-					System.out.println("\npress Enter to continue...");
 					input.readLine();
+//					System.out.println("\n" + synapse + "\n");
+//					int chx = Integer.parseInt(input.readLine().trim());
+//					String key;
+//					switch(chx){
+//					case 0 :
+//						System.out.println("\n" + synapse + "\n"); break;
+//					case 1 :
+//						System.out.print("\nkey = ");
+//						key = input.readLine();
+//						System.out.print("value = ");
+//						String value = input.readLine();
+//						synapse.put(key, value);
+//						break;
+//					case 2 :
+//						System.out.print("\nkey = ");
+//						key = input.readLine();
+//						System.out.println("found: " + synapse.get(key));
+//						break;
+//					case 3:
+//						synapse.kill();
+//					default : break;
+//					}
+//					System.out.println("\npress Enter to continue...");
+//					input.readLine();
 				} catch (Exception e) {}
 			}
 		} catch(ArrayIndexOutOfBoundsException e){
-			System.out.println("!!! CreateSynapse <port> -js <host> <port> (-a <port> -j <hostToJoin> <portToJoin>)+");
+			System.out.println("!!! CreateSynapse <port> -js <host> <port> -l <port> (-a <port> -j <hostToJoin> <portToJoin>)+");
 			e.printStackTrace();
 		}
 	}

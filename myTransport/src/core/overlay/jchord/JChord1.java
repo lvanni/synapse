@@ -1,5 +1,7 @@
 package core.overlay.jchord;
 
+import java.io.IOException;
+
 import core.overlay.concert.Concert;
 import core.protocols.transport.socket.SocketImpl;
 import core.tools.HashFunction;
@@ -14,7 +16,12 @@ public class JChord1 extends Concert implements Runnable{
 	public JChord1(String ip, int port) {
 		this.h = new HashFunction(overlayIntifier);
 		int id = h.SHA1ToInt(ip+port+time);
-		this.transport = new SocketImpl(port); // TRANSPORT CHOICE
+		try {
+			transport = new SocketImpl(port);
+		} catch (IOException e) {
+			System.out.println("port " + port + " already in use: exit(1)");
+			System.exit(1);
+		} // TRANSPORT CHOICE
 		initialise(ip, id, port);
 	}
 	

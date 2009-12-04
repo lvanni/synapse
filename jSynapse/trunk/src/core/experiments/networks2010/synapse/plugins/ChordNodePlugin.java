@@ -30,10 +30,10 @@ public class ChordNodePlugin extends ChordNode{
 				if(cleanKey != null && !cleanKey.equals("null") && !cleanKey.equals("")){ // it's a synapse request
 					String[] keys = cleanKey.split(":");
 					cleanKey = keys[1];
-//					System.out.println("clean key found: " + cleanKey + " \nsynapse routing begin...");
+//					System.out.println("PUT: clean key found: " + cleanKey + " \nsynapse routing begin...");
 					synapse.put(cleanKey, args[3]);
 				} else {
-//					System.out.println("unknown key, no synapse routing...");
+//					System.out.println("PUT: unknown key, no synapse routing...");
 					super.doStuff(code);
 				}
 				break;
@@ -43,10 +43,10 @@ public class ChordNodePlugin extends ChordNode{
 				if(cleanKey != null && !cleanKey.equals("null") && !cleanKey.equals("")){ // it's a synapse request
 					String[] keys = cleanKey.split(":");
 					cleanKey = keys[1];
-					System.out.println("clean key found: " + cleanKey + " \nsynapse routing begin...");
+//					System.out.println("GET: clean key found: " + cleanKey + " \nsynapse routing begin...");
 					result = synapse.get(cleanKey);
 				} else {
-//					System.out.println("unknown key, no synapse routing...");
+//					System.out.println("GET: unknown key, no synapse routing...");
 					result = super.doStuff(code);
 				}
 				break;

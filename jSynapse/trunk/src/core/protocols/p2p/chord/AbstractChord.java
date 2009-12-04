@@ -32,7 +32,7 @@ public abstract class AbstractChord implements IChord {
 	private int next = 0;
 
 	/** Time between each stabilization/fix fingerstable */
-	private int timeToCheck = 50;
+	private int timeToCheck = 200;
 
 	private boolean alive = true;
 
@@ -151,6 +151,7 @@ public abstract class AbstractChord implements IChord {
 		new Thread(new Runnable() {
 			public void run() {
 				while (alive) {
+//					System.out.println("*************");
 					try {
 						stabilize();
 						fixFingersTable();

@@ -20,17 +20,11 @@ public class SocketImpl implements ITransport{
 	// /////////////////////////////////////////// //
 	//                 CONSTRUCTOR                 //
 	// /////////////////////////////////////////// //
-	public SocketImpl(){
+	public SocketImpl(){}
 
-	}
-
-	public SocketImpl(int port){
+	public SocketImpl(int port) throws IOException {
 		do{
-			try {
-				serverSocket = new ServerSocket(port);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			serverSocket = new ServerSocket(port);
 		} while(serverSocket == null);
 		serverPort = serverSocket.getLocalPort();
 	}
@@ -74,14 +68,14 @@ public class SocketImpl implements ITransport{
 			}
 		}
 	}
-	
+
 	// /////////////////////////////////////////// //
 	//              GETTER AND SETTER              //
 	// /////////////////////////////////////////// //
 	public int getPort() {
 		return serverPort;
 	}
-	
+
 	public ServerSocket getServerSocket() {
 		return serverSocket;
 	}

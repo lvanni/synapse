@@ -50,7 +50,12 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 		this.identifier = identifier;
 		this.h = new HashFunction(identifier);
 		int id = h.SHA1ToInt(ip+port+time);
-		this.transport = new SocketImpl(port); // TRANSPORT CHOICE
+		try {
+			this.transport = new SocketImpl(port);
+		} catch (IOException e) {
+			System.out.println("port already in use: exit(1)");
+			System.exit(1);
+		} // TRANSPORT CHOICE
 		initialise(ip, id, transport.getPort());
 		networks = new ArrayList<IOverlay>();
 	}
@@ -94,7 +99,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 			table.put(hKey, value); // SAVE THE CLEAN KEY
 			//			System.out.println("New entry in the hash table...");
 		} else {
-			forward(IChord.PUT + "," + hKey + "," + value, findSuccessor(hKey));
+			forward(IChord.PUT + "," + hKey + "," + value, closestPrecedingNode(hKey));
 		}
 	}
 
@@ -134,7 +139,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 			new Thread(new Get(key, o, this)).start();
 		}
 		while(true){
-			if(nbResponse == networks.size()){
+			if(nbResponse >= networks.size()){
 				break;
 			}
 			try {
@@ -150,7 +155,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 		if(Range.inside(hKey, getPredecessor().getId() + 1, getThisNode().getId())){
 			return table.get(hKey);
 		} else {
-			return forward(IChord.GET + "," + hKey, findSuccessor(hKey));
+			return forward(IChord.GET + "," + hKey, closestPrecedingNode(hKey));
 		}
 	}
 
