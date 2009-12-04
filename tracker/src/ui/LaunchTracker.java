@@ -41,8 +41,9 @@ public class LaunchTracker {
 				case 1 :
 					Set<String> keys = tracker.getPeerSet().keySet();
 					for(String key : keys){
+						System.out.println(key + ":");
 						for(Node n :  tracker.getPeerSet().get(key)){
-							System.out.println(n);
+							System.out.println("\t" + n);
 						}
 					}
 					break;

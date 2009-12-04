@@ -21,14 +21,20 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import ui.console.InfoConsole;
 import ui.gui.maemo.dialog.AddServiceDialog;
 import ui.gui.maemo.dialog.ConsoleDialog;
 
+import core.experiments.tools.ITracker;
+import core.experiments.tools.InfoConsole;
 import core.mytansport.MyTransport;
+import core.protocols.p2p.Node;
 
 
 public class MyTransportSWTMaemo {
+
+	/** address on the tracker which give the peerSet*/
+	private static String TRACKER_HOST = "smart5.inria.fr";
+	private static int 	  TRACKER_PORT = 8000;
 
 	private final Shell shell;
 	private Display display;
@@ -383,7 +389,7 @@ public class MyTransportSWTMaemo {
 			// LAUNCHING CHORD
 			System.out.print("MyTransport's Launching, please wait... ");
 			String ip = InfoConsole.getIp();
-			MyTransport myTransport = new MyTransport(ip, Integer.parseInt(args[0]));
+			MyTransport myTransport = new MyTransport(ip, 0);
 			new Thread(myTransport).start();
 			do{
 				Thread.sleep(1000);
@@ -394,6 +400,15 @@ public class MyTransportSWTMaemo {
 				String hostToJoin = args[2];
 				int portToJoin = Integer.parseInt(args[3]);
 				myTransport.join(hostToJoin, portToJoin);
+			} else {
+
+				// CONNECT ON TRACKER
+				String trackerResponse = myTransport.getTransport().forward(ITracker.GETCONNECTION + "," + myTransport.getIdentifier(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
+				myTransport.getTransport().forward(ITracker.ADDNODE + "," + myTransport.getIdentifier() + "," + myTransport.getThisNode(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
+				if(!trackerResponse.equals("null")) {
+					Node n = new Node(trackerResponse);
+					myTransport.join(n.getIp(), n.getPort());
+				}
 			}
 
 			System.out.println("ok!");

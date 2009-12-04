@@ -21,11 +21,11 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import ui.console.InfoConsole;
 import ui.gui.maemo.dialog.ConsoleDialog;
 import ui.gui.maemo.dialog.JoinDialog;
+import core.experiments.tools.ITracker;
+import core.experiments.tools.InfoConsole;
 import core.overlay.foot.Foot;
-import core.protocols.p2p.ITracker;
 import core.protocols.p2p.Node;
 import core.protocols.p2p.chord.IChord;
 
@@ -33,7 +33,7 @@ import core.protocols.p2p.chord.IChord;
 public class FootSWTMaemo {
 
 	/** address on the tracker which give the peerSet*/
-	private static String TRACKER_HOST = "cycloid.inria.fr";
+	private static String TRACKER_HOST = "smart5.inria.fr";
 	private static int 	  TRACKER_PORT = 8000;
 
 	private final Shell shell;
@@ -53,15 +53,15 @@ public class FootSWTMaemo {
 		layout.marginWidth = 5;
 		shell.setLayout(layout);
 		shell.setSize(710, 450);
-		
+
 		// MENU
 		Menu menuBar = new Menu(shell, SWT.BAR);
 		MenuItem fileMenuHeader = new MenuItem(menuBar, SWT.PUSH);
 		fileMenuHeader.setText("join");
 		fileMenuHeader.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
-					new JoinDialog(shell, (IChord) foot);
-				}
+				new JoinDialog(shell, (IChord) foot);
+			}
 		});
 		shell.setMenuBar(menuBar);
 
@@ -379,7 +379,7 @@ public class FootSWTMaemo {
 			// LAUNCHING CHORD
 			System.out.print("Foot's Launching, please wait... ");
 			String ip = InfoConsole.getIp();
-			Foot foot = new Foot(ip, Integer.parseInt(args[0]));
+			Foot foot = new Foot(ip, 0);
 			new Thread(foot).start();
 			do{
 				Thread.sleep(1000);
@@ -393,14 +393,13 @@ public class FootSWTMaemo {
 			} else {
 
 				// CONNECT ON TRACKER
-					String trackerResponse = foot.getTransport().forward(ITracker.GETCONNECTION + "," + foot.getIdentifier(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
-					if(trackerResponse.equals("null")) {
-						foot.getTransport().forward(ITracker.ADDNODE + "," + foot.getIdentifier() + "," + foot.getThisNode(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
-					} else {
+				String trackerResponse = foot.getTransport().forward(ITracker.GETCONNECTION + "," + foot.getIdentifier(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
+				foot.getTransport().forward(ITracker.ADDNODE + "," + foot.getIdentifier() + "," + foot.getThisNode(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
+				if(!trackerResponse.equals("null")) {
 					Node n = new Node(trackerResponse);
 					foot.join(n.getIp(), n.getPort());
-					}
 				}
+			}
 
 			System.out.println("ok!");
 			Thread.sleep(300);

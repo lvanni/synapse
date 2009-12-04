@@ -9,8 +9,6 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-
-import core.overlay.concert.Concert;
 import core.protocols.p2p.Node;
 import core.protocols.transport.ITransport;
 
@@ -56,9 +54,6 @@ public class SocketImpl implements ITransport{
 
 			// SENDING A MESSAGE
 			pout.println(message); 
-			if(Concert.debugMode){
-				System.out.println("\n** DEBUG: forward\n*\tmessage: " + message + "\n************************************");
-			}
 
 			// WAIT FOR A RESPONSE
 			String res = pin.readLine();

@@ -13,12 +13,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import core.protocols.p2p.ITracker;
 import core.protocols.p2p.Node;
 import core.protocols.transport.ITransport;
 import core.protocols.transport.socket.SocketImpl;
 
-public class Tracker implements ITracker, Runnable{
+public class Tracker implements Runnable{
+
+	/** Code for the transport*/
+	public final static int ADDNODE  		= 0;
+	public final static int REMOVENODE 		= 1;
+	public final static int GETCONNECTION  	= 2;
 
 	/** peerSet<networkID, <id, address>>*/
 	private Map<String, List<Node>> peerSet;
@@ -130,4 +134,5 @@ public class Tracker implements ITracker, Runnable{
 	public void setTransport(ITransport transport) {
 		this.transport = transport;
 	}
+
 }

@@ -29,7 +29,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 
 	private static SimpleDateFormat formater = new SimpleDateFormat( "dd/MM/yy_H:mm:ss" );
 	private static String time = formater.format( new Date() );
-	public static String myMedIntifier = "MYTRANSPORT";
+	public static String identifier;
 
 	/** Hash function */
 	private HashFunction h;
@@ -45,8 +45,9 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 	// /////////////////////////////////////////// //
 	//                 CONSTRUCTOR                 //
 	// /////////////////////////////////////////// //
-	public AbstractSynapse(String ip, int port) {
-		this.h = new HashFunction(myMedIntifier);
+	public AbstractSynapse(String ip, int port, String identifier) {
+		AbstractSynapse.identifier = identifier;
+		this.h = new HashFunction(identifier);
 		int id = h.SHA1ToInt(ip+port+time);
 		this.transport = new SocketImpl(port); // TRANSPORT CHOICE
 		initialise(ip, id, transport.getPort());
@@ -61,7 +62,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 	}
 
 	public void join(String host, int port) {
-		Node chord = new Node(host,  h.SHA1ToInt(host+port+myMedIntifier), port);
+		Node chord = new Node(host,  h.SHA1ToInt(host+port+identifier), port);
 		join(chord); // chord join
 	}
 
@@ -172,7 +173,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 		}
 		String[] args = code.split(",");
 		String result = "";
-		if(args[0].equals(myMedIntifier)){
+		if(args[0].equals(identifier)){
 			int f = Integer.parseInt(args[1]);
 			switch(f){
 			case IChord.GETPRED :
@@ -240,7 +241,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 	//                     OTHER                   //
 	// /////////////////////////////////////////// //
 	public String toString(){
-		String res =  myMedIntifier + " on "+ getThisNode().getIp() + ":" + getThisNode().getPort() + "\n" + super.toString();
+		String res =  identifier + " on "+ getThisNode().getIp() + ":" + getThisNode().getPort() + "\n" + super.toString();
 		for(IOverlay o : networks){
 			res += "\n\n" + o.toString();
 		}
@@ -251,7 +252,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 	//              GETTER AND SETTER              //
 	// /////////////////////////////////////////// //
 	public String getIdentifier() {
-		return myMedIntifier;
+		return identifier;
 	}
 
 	public ITransport getTransport() {

@@ -21,11 +21,11 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import ui.console.InfoConsole;
 import ui.gui.maemo.dialog.ConsoleDialog;
 import ui.gui.maemo.dialog.JoinDialog;
+import core.experiments.tools.ITracker;
+import core.experiments.tools.InfoConsole;
 import core.overlay.concert.Concert;
-import core.protocols.p2p.ITracker;
 import core.protocols.p2p.Node;
 import core.protocols.p2p.chord.IChord;
 
@@ -398,13 +398,12 @@ public class ConcertSWTMaemo{
 				concert.join(hostToJoin, portToJoin);
 			} else {
 
-			// CONNECT ON TRACKER
+				// CONNECT ON TRACKER
 				String trackerResponse = concert.getTransport().forward(ITracker.GETCONNECTION + "," + concert.getIdentifier(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
-				if(trackerResponse.equals("null")) {
-					concert.getTransport().forward(ITracker.ADDNODE + "," + concert.getIdentifier() + "," + concert.getThisNode(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
-				} else {
-				Node n = new Node(trackerResponse);
-				concert.join(n.getIp(), n.getPort());
+				concert.getTransport().forward(ITracker.ADDNODE + "," + concert.getIdentifier() + "," + concert.getThisNode(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
+				if(!trackerResponse.equals("null")) {
+					Node n = new Node(trackerResponse);
+					concert.join(n.getIp(), n.getPort());
 				}
 			}
 

@@ -1,37 +1,35 @@
-package core.mytansport;
+package core.experiments.synapse;
 
-import core.mytansport.plugins.MyConcert;
-import core.mytansport.plugins.MyFoot;
+import core.experiments.synapse.plugins.ChordNodePlugin;
 import core.protocols.p2p.IOverlay;
 import core.protocols.p2p.chord.IChord;
 import core.synapse.AbstractSynapse;
 
-public class MyTransport extends AbstractSynapse{
+public class Synapse extends AbstractSynapse{
 
-	public static enum OverlayID{MYCONCERT, MYFOOT, MYJCHORD1, MYJCHORD2}
+	public final static int CHORD = 1;
+	public final static int CAN = 2;
 
 	// /////////////////////////////////////////// //
 	//                 CONSTRUCTOR                 //
 	// /////////////////////////////////////////// //
-	public MyTransport(String ip, int port){
-		super(ip, port, "MyTransport");
+	public Synapse(String ip, int port, String identifier){
+		super(ip, port, identifier);
 	}
 
 	// /////////////////////////////////////////// //
 	//                SYNAPSE ALGO                 //
 	// /////////////////////////////////////////// //
-	public void join(OverlayID o, int port, String hostToJoin, int portToJoin) {
+	public void join(int protocol, int port, String hostToJoin, int portToJoin, String overlayIntifier) {
 		IOverlay overlay = null;
-		switch (o) {
-		case MYCONCERT:
-			overlay = new MyConcert(getThisNode().getIp(), port, this);
+		switch (protocol) {
+		case CHORD:
+			overlay = new ChordNodePlugin(getThisNode().getIp(), port, this, overlayIntifier);
 			break;
-		case MYFOOT:
-			overlay = new MyFoot(getThisNode().getIp(), port, this);
+		case CAN: // no yet implemented...
 			break;
 		default : break;
 		}
-		System.out.print("\nStarting a new " + o + " service... ");
 		new Thread((Runnable)overlay).start();
 		do{
 			try {
@@ -40,7 +38,6 @@ public class MyTransport extends AbstractSynapse{
 				e.printStackTrace();
 			}
 		} while(overlay.getTransport() == null);
-		System.out.println("ok!");
 		((IChord) overlay).join(hostToJoin, portToJoin);
 		getNetworks().add(overlay);
 	}

@@ -4,8 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import ui.console.InfoConsole;
 
+import core.experiments.tools.InfoConsole;
 import core.overlay.jchord.JChord2;
 
 
