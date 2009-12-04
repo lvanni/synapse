@@ -1,8 +1,10 @@
 package core.tools;
 
+import java.io.Serializable;
+
 import core.protocols.p2p.chord.AbstractChord;
 
-public class Range {
+public class Range implements Serializable{
 	
 	public static int MAXid = (int) Math.pow(2, AbstractChord.SPACESIZE - 1) - 1;
 	public static int MINid = 0;

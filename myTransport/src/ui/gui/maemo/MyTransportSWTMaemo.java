@@ -24,8 +24,8 @@ import org.eclipse.swt.widgets.Text;
 import ui.gui.maemo.dialog.AddServiceDialog;
 import ui.gui.maemo.dialog.ConsoleDialog;
 
-import core.experiments.tools.ITracker;
-import core.experiments.tools.InfoConsole;
+import core.experiments.networks2010.tools.ITracker;
+import core.experiments.networks2010.tools.InfoConsole;
 import core.mytansport.MyTransport;
 import core.protocols.p2p.Node;
 

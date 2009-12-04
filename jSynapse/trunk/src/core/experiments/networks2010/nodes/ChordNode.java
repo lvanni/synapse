@@ -1,4 +1,4 @@
-package core.experiments.nodes;
+package core.experiments.networks2010.nodes;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -26,7 +26,7 @@ public class ChordNode extends AbstractChord implements Runnable{
 	/** name of the service*/
 	private static SimpleDateFormat formater = new SimpleDateFormat( "dd/MM/yy_H:mm:ss" );
 	protected static String time = formater.format( new Date() );
-	public String overlayIntifier; // use an unique ID is possible
+	public String overlayIntifier = "chord"; // use an unique ID is possible
 
 	/** Transport protocol */
 	protected ITransport transport;
@@ -40,13 +40,14 @@ public class ChordNode extends AbstractChord implements Runnable{
 	// /////////////////////////////////////////// //
 	//                CONSTRUCTOR                  //
 	// /////////////////////////////////////////// //
-	protected ChordNode(){}
-
+	public ChordNode(String ip, int port){
+		this(ip, port, "<"+ip+port+">");
+	}
 	public ChordNode(String ip, int port, String overlayIntifier) {
 		this.overlayIntifier = overlayIntifier;
 		this.h = new HashFunction(overlayIntifier);
 		int id = h.SHA1ToInt(ip+port+time);
-		this.transport = new SocketImpl(port);
+		this.transport = new SocketImpl(port); // TRANSPORT CHOICE
 		initialise(ip, id, transport.getPort());
 	}
 
@@ -57,12 +58,16 @@ public class ChordNode extends AbstractChord implements Runnable{
 		String res = "";
 		res = transport.forward(getIdentifier() + "," + message, destination);
 		if(res == null || res.equals(""))
-			res = getThisNode().toString();
+			res = getThisNode().toString(); // <================== A REVOIR
 		return res;
 	}
 
 	public void join(String host, int port) {
 		Node chord = new Node(host,  keyToH(host+port), port);
+//		this.overlayIntifier = transport.forward("getIdentifier", chord);
+//		this.h = new HashFunction(overlayIntifier);
+//		int id = h.SHA1ToInt(getThisNode().getIp()+getThisNode().getPort()+time);
+//		initialise(getThisNode().getIp(), id, getThisNode().getPort());
 		join(chord);
 	}
 
@@ -74,7 +79,11 @@ public class ChordNode extends AbstractChord implements Runnable{
 
 	public void put(int hKey, String value){
 		if(Range.inside(hKey, getPredecessor().getId() + 1, getThisNode().getId())){
-			table.put(hKey, value);
+			if(table.containsKey(hKey)){
+				table.put(hKey, table.get(hKey) + "****" + value);
+			} else {
+				table.put(hKey, value);
+			}
 			System.out.println("New entry in the hash table...");
 		} else {
 			forward(IChord.PUT + "," + hKey + "," + value, findSuccessor(hKey));
@@ -133,12 +142,8 @@ public class ChordNode extends AbstractChord implements Runnable{
 				break;
 			default: break;
 			}
-		} else { // OPERATION
-			if(args[0].equals("put")){
-				put(args[1], args[2]);
-			} else if(args[0].equals("get")){
-				return get(args[1]);
-			}
+		} else if(args[0].equals("getIdentifier")){
+			return getIdentifier();
 		}
 		return result;
 	}
@@ -190,7 +195,7 @@ public class ChordNode extends AbstractChord implements Runnable{
 		return overlayIntifier;
 	}
 
-	public int keyToH(String key){
+	public int keyToH(String key){          // A CHANGER!
 		return h.SHA1ToInt(key);
 	}
 }

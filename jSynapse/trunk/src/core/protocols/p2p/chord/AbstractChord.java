@@ -32,7 +32,7 @@ public abstract class AbstractChord implements IChord {
 	private int next = 0;
 
 	/** Time between each stabilization/fix fingerstable */
-	private int timeToCheck = 500;
+	private int timeToCheck = 50;
 
 	private boolean alive = true;
 
@@ -73,10 +73,10 @@ public abstract class AbstractChord implements IChord {
 		predecessor = null;
 		String succ = forward(FINDSUCC + "," + thisNode.getId(), chord);
 		successor = new Node(succ);
-		//		// GET OBJECT ON JOIN
+		// GET OBJECT ON JOIN
 		while(getPredecessor() == null){
 			try {
-				Thread.sleep(200);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

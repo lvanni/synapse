@@ -1,11 +1,12 @@
 package core.tools;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 
-public class HashFunction {
+public class HashFunction implements Serializable{
 
 	private int MaxInt = Range.MAXid;
 	private String epsilon;

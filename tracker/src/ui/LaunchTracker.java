@@ -31,24 +31,26 @@ public class LaunchTracker {
 
 			BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 			while(true){
-				System.out.println("\n\n1) print status");
-				System.out.println("0) exit");
-				System.out.print("---> ");
-				int chx = Integer.parseInt(input.readLine().trim());
-				switch(chx){
-				case 0 :
-					System.exit(0);
-				case 1 :
-					Set<String> keys = tracker.getPeerSet().keySet();
-					for(String key : keys){
-						System.out.println(key + ":");
-						for(Node n :  tracker.getPeerSet().get(key)){
-							System.out.println("\t" + n);
+				try{
+					System.out.println("\n\n1) print status");
+					System.out.println("0) exit");
+					System.out.print("---> ");
+					int chx = Integer.parseInt(input.readLine().trim());
+					switch(chx){
+					case 0 :
+						System.exit(0);
+					case 1 :
+						Set<String> keys = tracker.getPeerSet().keySet();
+						for(String key : keys){
+							System.out.println(key + ":");
+							for(Node n :  tracker.getPeerSet().get(key)){
+								System.out.println("\t" + n);
+							}
 						}
+						break;
+					default : break;
 					}
-					break;
-				default : break;
-				}
+				} catch(Exception e) {}
 			}
 		} catch(Exception e) {
 			e.printStackTrace();

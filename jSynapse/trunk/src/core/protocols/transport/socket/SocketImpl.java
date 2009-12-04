@@ -20,6 +20,10 @@ public class SocketImpl implements ITransport{
 	// /////////////////////////////////////////// //
 	//                 CONSTRUCTOR                 //
 	// /////////////////////////////////////////// //
+	public SocketImpl(){
+
+	}
+
 	public SocketImpl(int port){
 		do{
 			try {

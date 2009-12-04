@@ -11,6 +11,10 @@ public class Node {
 		this.port = port;
 	}
 
+	public Node(String ip,int port){
+		this(ip,0,port);
+	}
+
 	public Node(String node){
 		String[] args = node.split(",");
 		if(args.length == 3){

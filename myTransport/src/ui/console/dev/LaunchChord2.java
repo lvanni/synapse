@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 
-import core.experiments.tools.InfoConsole;
+import core.experiments.networks2010.tools.InfoConsole;
 import core.overlay.jchord.JChord2;
 
 

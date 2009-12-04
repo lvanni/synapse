@@ -25,14 +25,14 @@ import core.tools.Range;
 public abstract class AbstractSynapse extends AbstractChord implements ISynapse, Runnable{
 
 	/** Collection of networks*/
-	private List<IOverlay> networks;
+	protected List<IOverlay> networks;
 
 	private static SimpleDateFormat formater = new SimpleDateFormat( "dd/MM/yy_H:mm:ss" );
-	private static String time = formater.format( new Date() );
-	public static String identifier;
+	protected static String time = formater.format( new Date() );
+	public String identifier;
 
 	/** Hash function */
-	private HashFunction h;
+	protected HashFunction h;
 
 	protected ITransport transport;
 
@@ -45,8 +45,9 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 	// /////////////////////////////////////////// //
 	//                 CONSTRUCTOR                 //
 	// /////////////////////////////////////////// //
+	public AbstractSynapse(){}
 	public AbstractSynapse(String ip, int port, String identifier) {
-		AbstractSynapse.identifier = identifier;
+		this.identifier = identifier;
 		this.h = new HashFunction(identifier);
 		int id = h.SHA1ToInt(ip+port+time);
 		this.transport = new SocketImpl(port); // TRANSPORT CHOICE
@@ -253,6 +254,10 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 	// /////////////////////////////////////////// //
 	public String getIdentifier() {
 		return identifier;
+	}
+
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
 	}
 
 	public ITransport getTransport() {

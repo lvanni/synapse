@@ -1,7 +1,7 @@
-package core.experiments.synapse.plugins;
+package core.experiments.networks2010.synapse.plugins;
 
-import core.experiments.nodes.ChordNode;
-import core.experiments.synapse.Synapse;
+import core.experiments.networks2010.nodes.ChordNode;
+import core.experiments.networks2010.synapse.Synapse;
 import core.protocols.p2p.chord.IChord;
 
 public class ChordNodePlugin extends ChordNode{
@@ -10,6 +10,11 @@ public class ChordNodePlugin extends ChordNode{
 
 	public ChordNodePlugin(String host, int port, Synapse synapse, String overlayIntifier) {
 		super(host, port, overlayIntifier);
+		this.synapse = synapse;
+	}
+
+	public ChordNodePlugin(String host, int port, Synapse synapse) {
+		super(host, port);
 		this.synapse = synapse;
 	}
 
@@ -24,10 +29,11 @@ public class ChordNodePlugin extends ChordNode{
 				String cleanKey = synapse.getCleanKey(args[2]+overlayIntifier);
 				if(cleanKey != null && !cleanKey.equals("null") && !cleanKey.equals("")){ // it's a synapse request
 					String[] keys = cleanKey.split(":");
-					System.out.println(code);
 					cleanKey = keys[1];
+//					System.out.println("clean key found: " + cleanKey + " \nsynapse routing begin...");
 					synapse.put(cleanKey, args[3]);
 				} else {
+//					System.out.println("unknown key, no synapse routing...");
 					super.doStuff(code);
 				}
 				break;
@@ -37,8 +43,10 @@ public class ChordNodePlugin extends ChordNode{
 				if(cleanKey != null && !cleanKey.equals("null") && !cleanKey.equals("")){ // it's a synapse request
 					String[] keys = cleanKey.split(":");
 					cleanKey = keys[1];
+					System.out.println("clean key found: " + cleanKey + " \nsynapse routing begin...");
 					result = synapse.get(cleanKey);
 				} else {
+//					System.out.println("unknown key, no synapse routing...");
 					result = super.doStuff(code);
 				}
 				break;
@@ -47,12 +55,7 @@ public class ChordNodePlugin extends ChordNode{
 				break;
 			}
 		} else {
-			// OPERATION
-			if(args[0].equals("put")){
-				put(args[1], args[2]);
-			} else if(args[0].equals("get")){
-				return get(args[1]);
-			}
+			result = super.doStuff(code);
 		}
 		return result;
 	}

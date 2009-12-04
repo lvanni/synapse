@@ -1,19 +1,14 @@
-package core.experiments;
+package core.experiments.next;
 
-import core.experiments.nodes.ChordNode;
-import core.experiments.synapse.Synapse;
-import core.experiments.synapse.plugins.ChordNodePlugin;
-import core.experiments.tools.ITracker;
-import core.experiments.tools.InfoConsole;
+import core.experiments.networks2010.nodes.ChordNode;
+import core.experiments.networks2010.synapse.Synapse;
+import core.experiments.networks2010.tools.ITracker;
+import core.experiments.networks2010.tools.InfoConsole;
 import core.protocols.p2p.IOverlay;
 import core.protocols.p2p.Node;
 import core.protocols.p2p.chord.AbstractChord;
 
 public class Create {
-
-	/** address on the tracker which give the peerSet*/
-	private static String TRACKER_HOST = "smart5.inria.fr";
-	private static int 	  TRACKER_PORT = 8000;
 
 	private static enum NodeType{CHORD, CHORDPLUGIN, SYNAPSE}
 
@@ -24,27 +19,23 @@ public class Create {
 			AbstractChord node = null;
 			switch(t){
 			case CHORD:
-				node = new ChordNode(ip, 0, id);
+//				node = new ChordNode(ip, 0, id);
 				break;
 			case CHORDPLUGIN:
-				node = new ChordNodePlugin(ip, 0, s, id);
+//				node = new ChordNodePlugin(ip, 0, s, id);
 				break;
 			case SYNAPSE:
-				node = new Synapse(ip, 0, id);
+//				node = new Synapse(ip, 0, id);
 				break;
 			}
 			new Thread((Runnable) node).start();
 			do{
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				// wait
 			} while(node.getTransport() == null);
 
 			// CONNECT ON TRACKER
-			String trackerResponse = node.getTransport().forward(ITracker.GETCONNECTION + "," + node.getIdentifier(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
-			node.getTransport().forward(ITracker.ADDNODE + "," + node.getIdentifier() + "," + node.getThisNode(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
+			String trackerResponse = node.getTransport().forward(ITracker.GETCONNECTION + "," + node.getIdentifier(), new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
+			node.getTransport().forward(ITracker.ADDNODE + "," + node.getIdentifier() + "," + node.getThisNode(), new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 			if(!trackerResponse.equals("null")) {
 				Node n = new Node(trackerResponse);
 				node.join(n.getIp(), n.getPort());
