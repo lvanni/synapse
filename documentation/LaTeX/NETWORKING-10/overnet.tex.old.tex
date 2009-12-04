@@ -1,0 +1,226 @@
+\documentclass[times,10pt,twocolumn]{article}
+\usepackage[latin1]{inputenc}
+%\usepackage{latex8}
+\usepackage{times}
+\usepackage{comment}
+\usepackage{epsfig}
+\usepackage{amssymb}
+\usepackage{float}
+\usepackage{boxedminipage}
+\usepackage{algorithm}
+\usepackage{url}
+\urlstyle{sf}
+\usepackage{fullpage}
+\usepackage{alltt}
+\usepackage[usenames]{color}
+\usepackage{graphics}
+%\usepackage{ulem}
+\usepackage{verbatim}
+
+
+%%% ENVIRONMENTS
+\newtheorem{theorem}{Theorem}
+\newtheorem{prop}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}{Example}
+\newtheorem{remark}{Remark}
+
+%%%
+\newcommand{\ie}{\emph{i.e.}}
+\newcommand{\eg}{\emph{e.g.}}
+\newcommand{\verbi}[1]{{\small\texttt{#1}}}
+
+
+%% Intra nos
+\newcommand{\Ce} [1]{{[\color{cyan}{Cédric}}: {#1}]}
+\newcommand{\Fr} [1]{{[\color{blue}{Francesco}} {#1}]}
+\newcommand{\Lu} [1]{{[\color{red}{Luigi}}: {#1}]}
+\newcommand{\RESP} [1]{{[\color{red}{RESP: #1}]}}
+
+
+%%%% FORMATTING
+\newcommand{\rew}[1]   {\hspace{-#1mm}}
+\newcommand{\fwd}[1]   {\hspace{#1mm}}
+\newcommand{\down}[1]  {\vspace{#1mm}}
+\newcommand{\up}[1]    {\vspace{-#1mm}}
+
+
+\include{algorithmic_header}
+
+\sloppy
+
+\date{\mbox{}}
+
+%-------------------------------------------------------------------------
+% take the % away on next line to produce the final camera-ready version
+%\pagestyle{empty}
+%-------------------------------------------------------------------------
+
+%% High penalties for line and paragraph-breaking [Dan]
+\pretolerance=2000 \binoppenalty=2000 \relpenalty=1500
+%\interlinepenalty=150 \predisplaypenalty=10000 \postdisplaypenalty=400
+\hbadness=5000 \hfuzz=2pt
+
+
+\begin{document}
+
+\title{On the Interconnection of Heterogeneous Overlay Networks}
+
+\author{Francesco Bongiovanni \quad Luigi Liquori \quad Cédric
+  Tedeschi \quad Bojan Marinkovic \\[2mm]
+  INRIA Sophia Antipolis - M\'editerran\'ee, France\\
+  {\small \url{surname.name@sophia.inria.fr}} }
+
+\maketitle
+\thispagestyle{empty}
+
+\begin{abstract}
+  The interconnection of overlay networks has been recently identified
+  as a promising model for building the future Internet. Recent
+  research has focused on design of mechanisms for building bridges
+  between heterogeneous local overlay networks for cooperation.
+
+  However, in this way, some simple \emph{meta}-protocols defining
+  these bridges, and comprehensive quantitative studies of metrics
+  such as \emph{satisfaction rate} or \emph{routing length} in such
+  networks in the context of scalable information retrieval are still
+  missing.
+
+  The purpose of this paper is to presents Overnet, a \emph{meta}-protocol
+  capturing the very essence of information retrieval over the
+  interconnection of overlay networks. Overnet
+  is based on co-located nodes filling the role of \emph{neural
+    synapses} between networks. Second, we precisely capture the
+  behavior of key metrics measuring this protocol, result of intensive
+  simulations. Finally, we describe a new software prototype
+  implementing such a concept based on the interconnection of Chord
+  overlay networks, and exhibit some preliminary results of its actual
+  deployment over the nationwide Grid'5000 platform.
+\end{abstract}
+
+
+\section{Introduction}
+\input{intro}
+
+\section{Background and Related Work\label{sec:relatedwork}}
+\input{related}
+
+\section{Meta-Protocol\label{sec:protocol}}
+\input{protocol}
+
+\section{Simulations\label{sec:simulations}}
+\input{simulation}
+
+
+\section{Software\label{sec:software}}
+\input{software}
+
+
+\section{Conclusion}
+\input{conclusions}
+
+\bibliographystyle{plain}
+\bibliography{overnet}
+
+\end{document}
+
+
+% \AL \textbf{on receipt of} PUT(k,value) \textbf{from} ipsender \textbf{do}\alglabel{alg:lookupbegin}\hfill{\rm asking the peer for who is the responsible of key k}
+% \AL  t = this.new_tag(ipsender);\hfill{\rm create a new unique tag for this lookup}
+% \AL  \textbf{send} FIND(code,n,t,k,ipsender) \textbf{to} this.ip; \alglabel{alg:lookupend}\hfill{\rm send a FIND message to itself with TTL=n}
+% \AL  \textbf{on receipt of} FOUND(f) \textbf{from} ipsender \textbf{do}\hfill{\rm received a FOUND message from ipsender}
+% \AL   this.update_hotpeers(ipsender,f);\hfill{\rm update the hot peer list with ipsender at floor f}
+% \AL   this.update_hotfloors(f,ipsender);\hfill{\rm update the hot floor list with f with peer ipsender}s
+% \AL   \textbf{send} LOOKUP_TABLE(f,k) \textbf{to} ipsender \hfill{\rm send a LOOKUP\_TABLE message (omitted) at floor f on key k to ipsender}
+
+% \AL \textbf{on receipt of} JOIN(f) \txtbf{from} ipsender \textbf{do}\hfill{\rm current peer invited by ipsender to join f}
+% \AL   \textbf{if} this.good_join(f,ipsender)\hfill{\rm the join is ``good'' (peer's strategy)}
+% \AL     this.references.insert(f,ipsender);\hfill{\rm insert references with ipsender at floor f}
+% \AL     \textbf{send} JOINED(f) \textbf{to} ipsender;\hfill {\rm the peer ipsender has joined f}
+
+% \AL \textbf{on receipt of} LEAVE(f) \textbf{from} ipsender \textbf{do}\hfill{\rm ip notify the current peer to leave f}
+% \AL   this.references.delete(f,ipsender);\hfill{\rm delete references with ipsender at floor f}
+% \AL   \textbf{send} LEFT(f) \textbf{to} ipsender;\hfill {\rm  the peer ipsender has left f}
+% \end{alltt}}
+
+
+
+% \begin{theorem}
+%   With high probability, the number of nodes that must be contacted
+%   to find a successor on a $N_1\times...\times N_k$-node network of
+%   $k$ floors is $min(O(log(N_1)),...,O(log(N_k))$
+% \end{theorem}
+
+% \begin{theorem}
+%   With high probability, the number of nodes that must be contacted
+%   to (or to route back a success notification) on a
+%   $N_1\times...\times N_k$-node network of $k$ floors is
+%   $min(O(log(N_1)),...,O(log(N_k))$
+% \end{theorem}
+
+% \begin{theorem}
+%   With high probability, and without (respectively with) Game-over
+%   cut routing, the number of messages exchanged to find a successor
+%   (or to route back a success notification) in a $N_1\times...\times
+%   N_k$-node network of $k$ floors is $\sum_{i=1..k}O(log(N_i))$
+%   (respectively $M \le \sum_{i=1..k}O(log(N_i))$).
+% \end{theorem}
+
+
+
+CONJECTURE
+
+- With high probability and with time->infinity, an infinite number of
+chord will "simulate" a fully connected graph, with routing complexity
+-->_infty O(1), as in a plain array.
+
+
+\section{Distributed Construction Mechanism}
+
+At a given time, and within the default overlay (level $0$), a peer
+$P$, which observed that a lot of its requests are satisfied by
+another peer $Q$ may contact $Q$ for a possible collaboration. On
+receipt, $Q$, which is a member of at least one overlay at level $1$,
+enters in a negociation phase intended to decide whether $P$ may be a
+neighbor of $Q$ on level $1$. This decision may be done on several
+aspects, like \emph{capacities}, \emph{trust}, \emph{content}, etc.
+$Q$ can asks its neighbors on level $1$ in order to obtain a consensus
+on a possible membership of $P$. If $P$ has no membership at level
+$1$, $P$ and $Q$ may initiate a new ring.
+
+This mechanism can be easily extended to an arbitrary number of levels
+(just replace $0$ by $m$ and $1$ by $m+1$. A peer may be the member of
+several rings of the same level.
+
+An $m$-ring (ring at level $m$) is always a refinement of an $m-1$
+ring in which members consider the $m$ ring as more \emph{powerful}
+(in their own point of view).
+
+\section{Complexities}
+
+The number of members in a ring may be limited. For instance, consider
+that at level $1$, the members of a ring decide that no more than
+$\log(n)$ peers should enter their ring, $n$ being the number of peers
+at level $0$. As a consequence, routing table size and lookup length
+at level $1$ will be $\log(log(n))$. If we apply the same rule at each
+level, when the number of levels tends to infinity, the routing table
+size and lookup length will be $\log^*(n)$, which increases very
+(very) slowly.
+
+In a more general point of view, we can consider that the maximum
+number of members $N_m$ of a $m$-ring is always a function of $N_{m-1}$:
+
+$$
+N_m = f(N_{m-1})
+$$
+
+This function can be $\log()$ or the $\sqrt()$. Now, the number of
+rings in which a peer acts at a given level may also be
+limited. Finally, we have to find the right trade-off between the
+number of levels, the size of rings at each level and the number of
+rings a peer may belong to at a same level. (Thinking on this part...)
+
+
+
+

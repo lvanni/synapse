@@ -1,0 +1,18 @@
+% software.tex
+Implementation of the Synapse protocol client is based on \texttt{open-chord} implementation
+\cite{Bamberg-SW}. This client currently can interconnect an arbitrary number of Chord networks. This
+implementation follows notation of the \cite{LTB09}, so every new Chord network is called \textit{Floor}.
+Regarding \cite{Bamberg-SW} some new classes were implemented, like: Floor or MyFloor. The rest of code
+is changed only to follow new data structure, that References and Entries are specific for the particular
+floor. Major changes were made in main classes NodeImpl and ChordImpl, as well in the communication part,
+like specific proxy classes: SocketProxy with RequestHandler and ThreadProxy with ThreadEndpoint.
+
+Following the idea that every node potentially is a neural synapse, the decision was made not to do full
+object-oriented extension of the classes, but only to change \texttt{open-chord}  implementation
+\cite{Bamberg-SW}, because the new classes which should extend old classes would have  almost the
+same code as the old ones and the only new thing should be calls to changed structure. So,  in this
+case we have not real full object-oriented extension, just to deal with some sort the siblings
+classes.
+
+When we talk in figures, comparing to \texttt{open-chord} implementation
+\cite{Bamberg-SW}, we can say that about 1000 lines were added and 1500 lines were changed.
