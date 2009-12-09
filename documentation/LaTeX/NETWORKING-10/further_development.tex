@@ -1,0 +1,167 @@
+%further_development.tex
+% DISCONTINUED! Edit Appendix instead
+
+\subsection{Accessing blackbox networks}
+%
+The Synapse protocol hereby presented is capable of connecting heterogeneous 
+network topologies given the assumption that every node is aware of the additions 
+made to existing overlay protocols. The new parameters used to handle the game 
+over strategy and replication need to be embedded into the existing protocols, 
+so does the unhashed key in order to be rehashed when a synapse is met.
+
+Interconnecting existing overlay made of "blind" peers, who are not aware of the 
+additional parameters, is indeed an interesting problem worth investigating.
+So far a new approach is under studies, who starts from the same funding of the so called White Box model
+and tries to reproduce the same functionality in a Black Box environment.
+
+The BlackBox Model principle is that an overlay can be populated by blind peers (e.g. nodes previously in place) and synapses at the same time.
+Both interact in the same way in the overlay and exchange the same messages; moreover those synapses
+can be member of several overlays independently (thus being able to replicate a request from one overlay to another)
+and can communicate with each other exclusively through a dedicated Control Network.
+
+\subsection{Data structure}
+%
+As a general operational model we can imagine a set of entities responsible for the interaction with the individual overlays at level N that communicate with a Synapse Controller at level N+1 through a set of primitives.
+
+The Synapse Controller access the routing information through the Control Network and is completely agnostic of the underlying protocols.
+
+The Control Network is basically a set of DHTs allowing each node to share routing information with other synapses without being
+aware of the routing of the undergoing message.
+
+So far the DHTs implemented are the following:
+
+\subsubsection{Key Table}
+%
+The Key Table is responsible for storing the unhashed keys circulating in the underlying overlays.
+When a synapse node performs a PUT or a GET that it wishes to be replicated in other networks, it makes the unhashed key
+available to the other synapses through the Key Table. The key is stored using an index formed by a networks ID as a prefix 
+and the hashed key itself as a suffix. This way every other synapse in the originating network can easily retrieve the key in clear
+using only the information they are aware of.
+
+In order to avoid that its size explodes a mechanism of local FIFO is envisioned for the Key Table. Each node of the Control Network should
+treat its part of data as a FIFO of fixed size, treating every new access to an item as an insertion thus preserving the items most wanted.
+
+\subsubsection{Replication Table}
+%
+Used to provide the replication of PUT messages across networks, the table stores the number of times the key should be replicated in all the overlays.
+When a synapse node performs a new PUT with replciation, it inserts the unencrypted key in the Key Table and a new entry in the Replication Table in the form {\tt [HASH(key), MRR Counter, TTL, [NetworkIDs]]}.
+
+When another node receives the message to be forwarded, in order to perform a PUT in the other overlays it first checks if the MRR counter > 0.
+In case it performs a maximum of MRR replication of the PUT request, and decrements the MRR.
+
+To avoid sending the same request more than once in the same network, the Replication table stores a list of networks where the request has already been performed.
+
+A TTL, hardcoded or custom set by the synapse, manages the expiration of the entry in the table and avoids the risk of having infinite loops due, for example, to an MRR set much higher than the number of overall networks and therefore never getting down to 0.
+
+In case of overlapping PUT requests of the same key by different synapses, a FIFO criterion is applied and the old entry in the table is completely overwritten by the new request parameters.
+
+However it should be mentioned that the replication of PUT requests across multiple network is a critical point that need further investigation due to the many drawbacks, of top of whom is the problem of guaranteeing data consistency across networks in case of a new put of an existing key (data update).
+
+\subsubsection{Cache Table}
+%
+The Cache Table is used to implement the replication of get requests, cache multiple responses and control the flooding of foreign networks.
+
+It stores entries in the form of {\tt[HASH(key), TTL, [NetIDs], [Response cache set]]}.
+
+NetIDs are optional and used to perform selective flooding on specific networks.
+
+When another synapse receives a GET requests, it checks if there is an entry in the Key Table (to retrieve the unencrypted key), and an entry in the Cache Table; if so, it replicates the GET in the [NetIDs] networks he is connected to, or in all his networks if no [NetIDs] are specified.
+
+All the responses are stored in the [Response cache set] and only one is forwarded back, in order to maintain backward compatibility with possible Blind Nodes having performed the same request.
+
+As in the Replication Table, a TTL is specified to manage the cache expiration and block the flooding of networks.
+
+When the synapse originating the request receives the first response, it can retrieve from the Cache Table the rest of the results.
+
+The cached responses should be sent back with the associated NetworkID. This can allow a with time to define a strategy of selective flooding to the networks who are better responding to a synapse request.
+
+\subsection{Algorithm} 
+%
+Hereby we present the algorithm adopted by the Synapse Controller to perform multiple PUT or GET in a set of network.
+The different approach to the problem compared to a Whitebox model brings some limitations to certain functionality
+(e.g. request tagging is not possible) but allows on the other hand to implement additional options in the requests (e.g.
+selective broadcast during a GET request).
+
+The algorithm is described through the primitives exposed by a Synapse Controller to the upper and lower level.
+For simplicity all the operation performed on the Control Network's DHT are represented as local map operations.
+For example, KeyTable[key] is equivalent as send KeyTableGET(key) to ControlNetwork.
+
+The implementation of the Control Network (choice of routing, topology...) is not discussed here.
+
+To the upper level a Synapse Controller exposes the primitives SYNAPSE GET and SYNAPSE PUT, while
+to the lower level the Synapse Controller can exchange canonical GET/PUT messages with the entities responsible of the connection to the overlays.
+
+\begin{itemize}
+\item[SYNAPSE\_GET] initiate a multiple GET operation in all networks. The parameters passed are the key to be searched, the Time To Live for
+the data in the Cache Table (this represents as well the duration of the flooding across the networks) and optionally a list of specific networks to target.
+\\~\\
+Before sending the GET request to the networks the synapse is connected to, it initialize the Cache Table by adding a new entry with the specified TTL and the list of target networks if present. Then multiple requests are dispatched, taking care of storing for each network a copy of the unhashed key in the Key Table.
+\\~\\
+When all the responses are received, the synapse collects also all the results stored in the cache, representing the responses from network out of direct sight.
+\item[SYNAPSE\_PUT] initiate the data in the control network to perform multiple PUT requests. To begin with, the request is replicated to the first MRR networks to which the synapse is connected to. In case the MRR is higher that the number of connected networks (thus needing replication on out of sight networks), a new entry in the replication table is stored (or an old entry for the same key is replaced) with the remaining number of replications to do. Then, as per SYNAPSE\_GET, the request is dispatched to the underlying networks, taking care of storing for each netowkr a copy of the key in the Key Table.
+\item[GET] represents a GET request passing by to be replicated by the synapse. In order to replicate it, the Controller checks first if a copy of the unhashed key is stored in the control network (meaning that the request was initially performed by another synapse). If present, the Cache Table is checked to see if there is an entry corresponding to the requested key. If so, the controller dispatches the request either on the target networks it's connected to (if specified in the Cache Table) or to all its networks. To avoid breaking the compatibility with possible Blind Peers being able to handle only one response per request, only the first result is returned and the rest is stored in the Cache Table for later retrieval.
+\item[PUT] represents a passing PUT request to be replicated. As for the GET, the algorithm first retrieves the unhashed key for the network and, if present, the corresponding entry in the Replication Table. If there is such entry, the request is replicated in the networks not yet marked in the Network List corresponding to this entry, decrementing ReplicasLeft each time until 0 is reached. To avoid performing the request twice in the same network, the network ID is stored in the Network List.
+\end{itemize}
+
+\begin{figure*}[!t]
+{\scriptsize
+\begin{alltt}
+\AL\textbf{on receipt of} SYNAPSE_GET(key, cacheTTL, [targetNetworks]) \textbf{from} ipsend \textbf{do}\alglabel{alg:get}\hfill{\rm a GET request is instantiated by a synapse}
+\AL CacheTable[key].TimeToLive = cacheTTL; \hfill{\rm init the control data}
+\AL CacheTable[key].targetedNetworks = [targetNetworks]; \hfill{\rm specify the networks to target if any specific}  
+\AL if not (targetNetworks) \hfill{}
+\AL  targetNetworks = this.networks; \hfill{}
+\AL \textbf{for each} network \textbf{in} (this.networks \(\cap\) targetNetworks) \hfill{}
+\AL  KeyTable[network.ID|network.hash(key)] = key; \hfill{\rm store the unhashed key in the KeyTable}  
+\AL  result_array += network.get(network.hash(key)); \hfill{\rm Retrieve the result from each network}
+\AL result_array += CacheTable[key].cachedResults; \hfill{\rm Retrieve the cache content for further results from networks out of sight}
+\AL send SYNAPSE_FOUND(key, result_array) to ipsend;
+\NA
+\AL\textbf{on receipt of} SYNAPSE_PUT(key, value, mrr) \textbf{from} ipsend \textbf{do}\alglabel{alg:put}\hfill{\rm a PUT request is instantiated by a synapse}
+\AL \textbf{if} (mrr > 0)  \hfill{\rm if a value for the mrr has been specified}
+\AL  if (mrr > this.networks.size)
+\AL   mrrOutOfSight = mrr - this.networks.size;
+\AL   mrrInSight = this.network.size;
+\AL   delete ReplicationTable[key];
+\AL   ReplicationTable[key].ReplicasLeft = mrrOutOfSight; \hfill{\rm and update with the new mrr value}
+\AL  else
+\AL   mrrInSight = mrr;
+\AL  for i = [1:mrrInSight]
+\AL   KeyTable[this.networks[i].ID|this.networks[i].hash(key)] = key; \hfill{\rm store the unhashed key in the KeyTable}
+\AL   this.network[i].put(this.networks[i].hash(key), value);\alglabel{alg:ope_end}\hfill{\rm Perform the put as if we were forwarding a coming request}
+\NA
+\AL\textbf{on receipt of} PUT(hashKey, value) \textbf{from} this.network[i] \textbf{do}\alglabel{alg:forward_put}\hfill{\rm a synapse node receives a PUT to be forwarded}
+\AL key = KeyTable[network.ID|hashKey]; \hfill{\rm get the unhashed key from the Key Table}
+\AL \textbf{if} (ReplicationTable[key] exists) \hfill{\rm if there is an entry in the Replication Table for the key}
+\AL  \textbf{for each} replicaNetwork \textbf{in} this.connectedNetworks
+\AL   \textbf{if} (ReplicationTable[key].ReplicasLeft > 0) \textbf{and not} \hfill{\rm if there are still some replicas to be done}
+\AL     (ReplicationTable[key].hasNetwork?(replicaNetwork.ID)) \hfill{\rm and the network hasn't had a PUT already}
+\AL    KeyTable[replicaNetwork.ID|replicaNetwork.hash(key)] = key; \hfill{\rm add the entry in the Key Table for the new network}
+\AL    ReplicationTable[key].addNetwork(replicaNetwork.ID); \hfill{\rm add the target network ID to the already targeted network list}
+\AL    ReplicationTable[key].ReplicasLeft--; \hfill{\rm Decrement the number of replicas to be done}
+\AL    replicaNetwork.forward_put(); \hfill{\rm forward the message in the foreign network}
+\AL \textbf{else}
+\AL  network[i].put(hashKey, value);\alglabel{alg:forward_put_end} \hfill{\rm if there is no entry just forward in the current network}
+\NA
+\AL\textbf{on receipt of} GET(hashKey) \textbf{from} this.networks[i] \textbf{do}\alglabel{alg:forward_get}\hfill{\rm a synapse node receives a GET to be forwarded}
+\AL key = KeyTable[network.ID|hashKey]; \hfill{\rm get the unhashed key from the Key Table}
+\AL \textbf{if} (CacheTable[key] exists) \hfill{\rm if there is an entry in the Cache Table for the key}
+\AL  \textbf{if} (CacheTable[key].targetedNetworks is empty) \hfill{\rm if no target networks are specified}
+\AL   targetNetworks = this.networks; \hfill{\rm we target all the networks to which the synapse is connected}
+\AL  replicaNetworks = CacheTable[key].targetedNetworks \(\cap\) this.connectedNetworks; 
+\AL  \textbf{for each} replicaNetwork \textbf{in} replicaNetworks do
+\AL   KeyTable[replicaNetwork.ID|replicaNetwork.hash(key)] = key; \hfill{\rm add the entry in the Key Table for the new network}
+\AL   results += replicaNetwork.forward_get(replicaNetwork.hash(key)); \hfill{\rm append the new result for the targeted network}
+\AL  CacheTable[key].cahcedResults += results; \hfill{\rm store the collected results in the Cache Table}
+\AL  return results[1]; \hfill{\rm return only the first result}
+\AL \textbf{else}
+\AL  return network[i].get(hashKey);\alglabel{alg:forward_get_end} \hfill{\rm if there is no entry just forward in the current network}
+\NA
+
+
+
+
+
+\end{alltt}}
+\caption{The Synapse Blackbox protocol \label{fig:lookupBB}}
+\end{figure*}

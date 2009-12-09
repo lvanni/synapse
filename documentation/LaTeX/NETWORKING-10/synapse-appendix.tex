@@ -1,0 +1,103 @@
+\documentclass{llncs}
+\usepackage{a4wide}
+\usepackage{times,url,comment}
+\usepackage{amsmath,amssymb,amsfonts,bbm}
+\usepackage{graphicx,epsfig,epsf}
+\usepackage{alltt}
+\usepackage{url} 
+\usepackage{cite}
+ 
+   
+% mix and mac
+\usepackage[latin1]{inputenc}
+\usepackage{comment}
+\usepackage{algorithm}
+\usepackage[usenames]{color}
+
+ 
+
+%%%
+\newcommand{\ie}{i.e.}
+\newcommand{\eg}{e.g.}
+\newcommand{\vs}{vs.}
+
+\newcommand{\verbi}[1]{{\small\texttt{#1}}}
+
+
+%% Intra nos
+\newcommand{\Ce} [1]{{[\color{cyan}{Cdric}}: {#1}]}
+\newcommand{\Fr} [1]{{[\color{blue}{Francesco}}: {#1}]}
+\newcommand{\Gi} [1]{{[\color{red}{Gigi}}: {#1}]}
+\newcommand{\Bo} [1]{{[\color{green}{Bojan}}: {#1}]}
+\newcommand{\La} [1]{{[\color{pink}{Laurent}}: {#1}]}
+\newcommand{\Vi} [1]{{[\color{cyan}{Vincenzo}}: {#1}]}
+
+\newcommand{\RESP} [1]{{[\color{red}{RESP: #1}]}}
+
+
+%%%% FORMATTING
+\newcommand{\rew}[1]   {\hspace{-#1mm}}
+\newcommand{\fwd}[1]   {\hspace{#1mm}}
+\newcommand{\down}[1]  {\vspace{#1mm}}
+\newcommand{\up}[1]    {\vspace{-#1mm}}
+
+
+\include{algorithmic_header}
+
+
+\newenvironment{maliste}%
+{ \begin{list}%
+	{$-$}%
+	{\setlength{\labelwidth}{30pt}%
+	 \setlength{\leftmargin}{12pt}%
+	 \setlength{\itemsep}{\parsep}}}%
+{ \end{list} }
+
+
+
+\title{Web appendix of the paper: \\[3mm]
+  Synapse: A Scalable Protocol for Interconnecting\\ Heterogeneous
+  Overlay Networks
+%
+ \thanks{Supported by AEOLUS
+    FP6-IST-15964-FET Proactive and DEUKS JEP-41099 TEMPUS.}}
+% 
+ \title{Synapse: A Scalable Protocol for Interconnecting\\ Heterogeneous
+   Overlay Networks\thanks{Supported by AEOLUS
+     FP6-IST-15964-FET Proactive and DEUKS JEP-41099 TEMPUS.} \up{4}}
+% %
+ \author{Luigi Liquori \inst{1}\thanks{Corresponding author.  Thanks
+     to Ernst Biersack for the precious discussions.} \and C\'edric Tedeschi \inst{2} \and
+   Laurent Vanni \inst{1}
+   \and \\
+   Francesco Bongiovanni\inst{1} \and Vincenzo Ciancaglini\inst{1}
+   \and Bojan Marinkovic \inst{3}}
+
+\institute{Institut National de Recherche en Informatique et
+  Automatique, France\\
+  Email: {\tt firstName.lastName@sophia.inria.fr} \and
+  Universit\'e de Rennes I/INRIA, France\\ 
+  Email: {\tt Cedric.Tedeschi@inria.fr} \and
+  Mathematical Institute of the Serbian Academy of Sciences and Arts, Serbia\\
+  Email: {\tt bojanm@turing.mi.sanu.ac.rs}}
+
+\pagestyle{plain}
+
+\begin{document}
+ 
+
+\maketitle
+  
+\begin{abstract} 
+The complete web appendix is on
+\begin{center}
+\url{http://www-sop.inria.fr/teams/lognet/synapse}
+\end{center}
+\end{abstract}
+ 
+\input{appendix}
+
+
+\end{document}
+
+

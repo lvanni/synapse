@@ -1,0 +1,419 @@
+
+%% heart of the description
+
+%%%%%%%%%%%%%
+\section{``White box'' Synapse protocol }
+%
+Figure~\ref{fig:lookup} presents the pseudo-code of the protocol using
+message passing paradigm. 
+
+
+ 
+\subsection{The \texttt{GET} operation}
+%
+The {\tt GET} operation consists in finding the value of an object we
+are seeking, provided its key. A node seeking an object sends an
+\texttt{OPE(GET,key,\_)} message to an arbitrary node it knows. On
+receipt (see lines~\ref{alg:ope}-\ref{alg:ope_end}), the node
+generates a new tag {\tt tag} for this request that will be associated
+with the query all along its path. The routing is then initiated with
+a given TTL by sending an auxiliary {\tt FIND} message for this
+request to the node itself; this message seeks the node(s) responsible
+for the key sought in order to read the value (if it exists). Upon
+receipt of a {\tt FIND} message, a node checks first if the TTL is
+valid and second if this query was already processed on the node: in
+both cases, the routing aborts, in order to avoid useless message
+overhead.
+
+% tech white 
+%
+% More precisely, the initialization of a search query is done via the
+% following steps: The initiator $(i)$ logs the message in the node,
+% $(ii)$ sets a TTL and $(iii)$ launches a {\tt FIND} message in a
+% first overlay. Upon receipt of a {\tt FIND} message, a node checks
+% first if the TTL is valid and second if this query was already
+% processed on the node: in both cases, the routing aborts, in order
+% to avoid useless message overhead.
+
+
+
+On receipt of a {\tt FIND} message (see
+lines~\ref{alg:find}-\ref{alg:find_end}), the node checks the TTL and
+the tag of the request before starting processing the request, and,
+first, recording it as \emph{already processed} (``game over''
+strategy). The retrieval process starts then locally, in two steps for
+each intra-overlay the node belongs to: $(i)$ it checks if, according
+to the particular retrieval algorithm of the intra-overlay, it is
+itself assigned a range of keys containing {\tt key} (line
+\ref{alg:test}); if this is the case, for this overlay, the retrieval
+process ends and a {\tt FOUND} message is sent back to the initiator
+of the request informing it that the potential value sought is stored
+on this node (line~\ref{alg:send_found}). $(ii)$ if the node was not
+responsible for the key in this particular overlay, it forwards the
+request to the \emph{next hop} inside this intra-overlay, according to
+the particular overlay's policy (line \ref{alg:find_end}).
+
+% \Fr{}\Ce{ Parler de {\tt distrib\_mrr} as the function calculating the
+% associative list ({\tt net-mrr}), ligne 2.04 (see web page for
+% examples of how the function work)}
+
+On receipt of such a {\tt FOUND} message --- recall that several
+responses can be obtained for a request --- the initiator of the {\tt
+  GET} request sends a {\tt READ\_TABLE} message to the responsible of
+the key, basically to first to check if any value is assigned to this
+key and then to retrieve the value(s) and then get the value of the
+key sought (see lines~\ref{alg:get_code}-\ref{alg:get_code_end}).
+
+\subsection{The \texttt{PUT} operation}
+%
+The {\tt PUT} operation is a declaration of a resource. Depending on
+the purpose of the resource aggregation, the {\tt PUT} policy may
+change:
+
+\begin{itemize}
+\item If the purpose of the aggregation is to let each overlay keep
+  the control on their information (with exclusive rights for writing
+  and updating the information) while letting nodes from other overlay
+  read this information, the {\tt PUT} operation will be performed
+  independently within each overlay, each node declaring their
+  resources to their intra-overlays. In this first case, the {\tt PUT}
+  operation will not be different as in a set of intra-overlays
+  without inter-connection, and corresponds to set the
+  Maximum-Replication-Rate (MRR) to 0.
+
+\item If the purpose of the aggregation is to build a globally
+  distributed information system, each node may declare its resources
+  to a set of intra-overlays it may not belong to. In this last case,
+  the {\tt PUT} operation involves mechanisms very similar to the {\tt
+    GET} operation and the Maximum-Replication-Rate (MRR) different
+  than zero tells how many copies we want to distribute in the
+  inter-overlay. Line $2.04$ computes via the function {\tt
+    distrib\_mrr}\footnote{Please refer to the Synapse web page for
+    more informations.} the required values of MRR for a {\tt PUT}
+  request, starting from both its current value and the number of
+  intra-overlays the request will be forwarded to. Recall that MRR is
+  ignored when the message is not a {\tt PUT} operation. In fact, a
+  node declaring a resource will also seek nodes in the Synapses
+  responsible for their resources. Once such location is found
+  (similarly than for the {\tt GET} operation), the initiator of the
+  request has just to send the value to be stored by the responsible
+  nodes found. This is achieved by
+  lines~\ref{alg:put_code}-\ref{alg:put_code_end}.
+
+\end{itemize}
+
+\subsection{The \texttt{JOIN} and \texttt{INVITE} operations}
+%
+The {\tt JOIN} message is sent by a node entering the network, upon a
+reception of an {\tt INVITE} message. Please refer to
+lines~\ref{alg:join_req}-\ref{alg:join_req_end} for invitation, and to
+lines~\ref{alg:join_req_ok}-\ref{alg:join_req_ok_end} for join. The
+intra-overlays in which a joining node will act can be chosen in
+different ways. A peer receiving an invitation to join a network
+through the {\tt INVITE} message sent by another node can evaluate,
+via the {\tt good\_deal?}  social-based primitive, the relevance of
+this invitation. If the invitation was positively evaluated, it can
+send a {\tt JOIN} message to the peer that launched the
+invitation. Upon receipt of a {\tt JOIN} message, a peer can decide,
+again via the {\tt good\_deal?}  primitive, whether or not this join
+is interesting for it.
+
+
+% \paragraph{The \texttt{leave} operation.}
+%
+% The {\tt leave} operation differs from the others in the sense that
+% no additional code is required, each leaving operation being
+% normally handled by each overlay a node belongs to.
+
+
+\begin{figure*}[!t]
+{\scriptsize
+\begin{alltt}
+\AL \textbf{on receipt of} OPE(code,key,value) \textbf{from} ipsend \textbf{do}\alglabel{alg:ope} \hfill{\rm receive an operation code a key and a value from ipsend}
+\AL  tag = this.new_tag(ipsend);\hfill{\rm create a new unique tag for this lookup}
+\AL  \textbf{send} FIND(code,ttl,mrr,tag,key,value,ipsend) \textbf{to} this.myip;\alglabel{alg:ope_end}\hfill{\rm send a FIND message with code ... ipsend to itself}
+\NA
+\AL \textbf{on receipt of} FIND(code,ttl,mrr,tag,key,value,ipdest)\textbf{from} ipsend \textbf{do}\alglabel{alg:find}
+\hfill{\rm receive a FIND message with code ... ipdest from ipsend}
+\AL   \textbf{if} ttl = 0 or this.game_over?(tag)\hfill{\rm the lookup is aborted because of zero ttl or because of the game over strategy}
+\AL   \textbf{else} this.push_tag(tag); \hfill{\rm push the tag of the query as ``already processed''}
+\AL     next_mrrs = distrib_mrr(mrr,this.net_list);\alglabel{alg:mrr}{\rm fix\,the\,assoc\,list\,splitting\,all\,the mrr\,between\,all\,net\,the\,synapse\,belongs\,to}
+\AL     \textbf{for all} net\( \in \)this.net_list \textbf{do}\hfill{\rm for all net the synapse belongs do}
+\AL       \textbf{if} this.isresponsible?(net,key) \alglabel{alg:test}\hfill{\rm the current synapse is responsible for the key in the net}
+\AL         \textbf{send} FOUND(code,net,mrr,key,value) \textbf{to} ipdest; \alglabel{alg:send_found}\hfill{\rm send a FOUND message with code ... value to ipdest}
+\AL       \textbf{else if} this.good_deal?(net,ipsend)
+\hfill{\rm the net/ipsend is a  ``good'' net/synapse  (left to synapse's strategy)}
+\AL              \textbf{send} FIND(code,ttl-1,next_mrr.get(net),tag,key,value,ipdest) 
+                    \textbf{to} this.next_hop(key);\alglabel{alg:find_end}\hfill{\rm send a FIND msg with ... to ...}
+\NA
+\AL \textbf{on receipt of} FOUND(code,net,mrr,key,value) \textbf{from} ipsend\alglabel{alg:found}\textbf{do}\hfill{\rm\,receive\,a\,FOUND\,message\,with\,code ... value from ipsend}
+\AL   this.good_deal_update(net,ipsend);\hfill{\rm update my good deal tables with net and ipsend}
+\AL   \textbf{match} code
+\AL    code=GET  \alglabel{alg:get_code}\hfill{\rm GET code}
+\AL     \textbf{send} READ_TABLE(net,key) \textbf{to} ipsend \alglabel{alg:get_code_end}
+\hfill{\rm send a READ\_TABLE message (omitted) through the net with key to ipsend}
+\AL    code=PUT \alglabel{alg:put_code}\hfill{\rm PUT code}
+\AL     \textbf{if} mrr < 0 \hfill{\rm stop replication since no inter PUT is allowed}
+\AL     \textbf{else} \textbf{send} WRITE_TABLE(net,key,value) \textbf{to} ipsend \alglabel{alg:put_code_end}
+\hfill{\rm send a WRITE\_TABLE message (omitted) through the net with key and value to ipsend}
+\NA
+\AL \textbf{on receipt of} INVITE(net) \textbf{from} ipsend \textbf{do} \alglabel{alg:join_req}\hfill{\rm receive an invitation to join the net from ipsend}
+\AL   \textbf{if} this.good_deal?(net,ipsend)\hfill{\rm the net/ipsend is a  ``good'' net/synapse (left to peer's strategy)}
+\AL     \textbf{send} JOIN(net) \textbf{to} ipsend; \alglabel{alg:join_req_end} \hfill {\rm send a JOIN message to reach the net to ipsend}
+\NA
+\AL \textbf{on receipt of} JOIN(net) \textbf{from} ipsend\alglabel{alg:join_req_ok}\textbf{do}\hfill{\rm receive a JOIN message to reach the net from ipsend}
+\AL   \textbf{if} this.good_deal?(net,ipsend)\hfill{\rm  the net/ipsend is a  ``good'' net/synapse (left to synapse's strategy)}
+\AL     this.insert_net(net,ipsend);\alglabel{alg:join_req_ok_end}\hfill{\rm the current synapse insert ipsend in the net}
+\end{alltt}}
+\caption{The Synapse white box protocol \label{fig:lookup}}
+\end{figure*}
+
+
+
+% \AL    code=LEAVE\hfill{\rm LEAVE code}
+% \AL    this.references.delete(f,ipsender);\hfill{\rm delete references with ipsender at floor f}
+% \AL    \textbf{send} LEFT!(f) \textbf{to} ipsender;\hfill {\rm  the peer ipsender has left f}
+% \AL    code=INVITE  \alglabel{alg:discover_code}\hfill{\rm INVITE code}
+% \AL    \textbf{if} this.good_deal?(net,ipsend)\hfill{\rm the peer ipsend and the network net are ``good'' (peer's strategy)}
+% \AL    \textbf{send} JOIN(net) \textbf{to} ipsend;\alglabel{alg:discover_code_end}\alglabel{alg:found_end}\hfill {\rm the peer ipsend want to join the network net}
+
+
+\section{``Black box'' Synapse Protocol}
+%
+Figure~\ref{fig:lookup} presents the pseudo-code of the protocol using
+the Black Box paradigm.
+
+\subsection{Accessing blackbox networks}
+%
+The Synapse protocol hereby presented is capable of connecting
+heterogeneous network topologies given the assumption that every node
+is aware of the additions made to existing overlay protocols. The new
+parameters used to handle the game over strategy and replication need
+to be embedded into the existing protocols, so does the unhashed key
+in order to be rehashed when a synapse is met.
+
+Interconnecting existing overlay made of ``blind'' peers, who are not
+aware of the additional parameters, seems one natural evolution for
+the synapse model and it constitutes a problem worth investigating. So
+far a new approach is under studies, who starts from the same funding
+of the message passing paradigm and tries to reproduce the same
+functionality in a Black Box environment.
+
+The assumption is that an overlay can be populated by blind peers
+(\eg\ nodes previously in place) and synapses at the same time.  Both
+interact in the same way in the overlay and exchange the same
+messages; moreover those synapses can be member of several overlays
+independently (thus being able to replicate a request from one overlay
+to another) and can communicate with each other exclusively through a
+dedicated Control Network.
+
+\subsection{Data structure}
+%
+As a general operational model we can imagine a set of entities
+responsible for the interaction with the individual overlays at level
+N that communicate with a Synapse Controller at level N+1 through a
+set of primitives. The Synapse Controller access the routing
+information through the Control Network and is completely agnostic of
+the underlying protocols. The Control Network is basically a set of
+DHTs allowing each node to share routing information with other
+synapses without being aware of the routing of the undergoing
+message. So far the DHTs implemented are the following:
+
+\subsubsection{Key Table.}
+%
+The Key Table is responsible for storing the unhashed keys circulating
+in the underlying overlays.  When a synapse node performs a {\tt PUT}
+or a {\tt GET} that it wishes to be replicated in other networks, it
+makes the unhashed key available to the other synapses through the Key
+Table. The key is stored using an index formed by a networks
+identifier as a prefix and the hashed key itself as a suffix. This way
+every other synapse in the originating network can easily retrieve the
+key in clear using only the information they are aware of.
+
+In order to avoid that its size explodes a mechanism of local FIFO is
+envisioned for the Key Table. Each node of the Control Network should
+treat its part of data as a FIFO of fixed size, treating every new
+access to an item as an insertion thus preserving the items most
+wanted.
+
+\subsubsection{Replication Table.}
+%
+The Replication Table is used to provide the replication of {\tt PUT}
+messages across networks, the table stores the number of times the key
+should be replicated in all the overlays.  When a synapse node
+performs a new {\tt PUT} with replication, it inserts the unencrypted
+key in the Key Table and a new entry in the Replication Table in the
+form
+\begin{center}
+{\tt  [h(key),mrr,ttl,[netid]]}.
+\end{center}
+%
+When another node receives the message to be forwarded, in order to
+perform a {\tt PUT} in the other overlays it first checks if the {\tt
+  mrr} counter $> 0$.  In /case it performs a maximum of {\tt mtt}
+replication of the {\tt PUT} request, and decrements the {\tt mrr}.
+To avoid sending the same request more than once in the same network,
+the Replication table stores a list of networks where the request has
+already been performed. A {\tt ttl}, hardcoded or custom set by the
+synapse, manages the expiration of the entry in the table and avoids
+the risk of having infinite loops due, for example, to an {\tt mrr}
+set much higher than the number of overall networks and therefore
+never getting down to 0.  In case of overlapping {\tt PUT} requests of
+the same key by different synapses, a FIFO criterion is applied and
+the old entry in the table is completely overwritten by the new
+request parameters. However it should be mentioned that the
+replication of {\tt PUT} requests across multiple network is a
+critical point that need further investigation due to the many
+drawbacks, of top of whom is the problem of guaranteeing data
+consistency across networks in case of a new put of an existing key
+(data update).
+
+\subsubsection{Cache Table.}
+%
+The Cache Table is used to implement the replication of get requests,
+cache multiple responses and control the flooding of foreign networks.
+It stores entries in the form of
+%
+\begin{center} 
+{\tt[h(key),ttl,[netids],[cache]]}.
+\end{center}
+%
+In a nutshell: {\tt netid} are optional and used to perform selective
+flooding on specific networks.  When another synapse receives a {\tt
+  GET} requests, it checks if there is an entry in the Key Table (to
+retrieve the unencrypted key), and an entry in the Cache Table; if so,
+it replicates the {\tt GET} in the {\tt [netids]} networks he is
+connected to, or in all his networks if no {\tt [netids]} are
+specified. All the responses are stored in the {\tt [cache]} and only
+one is forwarded back, in order to maintain backward compatibility
+with possible Blind Nodes having performed the same request. As in the
+Replication Table, a {\tt ttl} is specified to manage the cache
+expiration and block the flooding of networks.  When the synapse
+originating the request receives the first response, it can retrieve
+from the Cache Table the rest of the results.  The cached responses
+should be sent back with the associated {\tt netid}. This can allow a
+with time to define a strategy of selective flooding to the networks
+who are better responding to a synapse request.
+
+\subsection{Algorithm}
+%
+Hereby we present the algorithm adopted by the Synapse Controller to
+perform multiple {\tt PUT} or {\tt GET} in a set of network.  The
+different approach to the problem compared to a White box model brings
+some limitations to certain functionality (\eg\ request tagging is not
+possible) but allows on the other hand to implement additional options
+in the requests (\eg\ selective broadcast during a {\tt GET} request).
+The algorithm is described through the primitives exposed by a Synapse
+Controller to the upper and lower level.  For simplicity all the
+operation performed on the Control Network's DHT are represented as
+local map operations.  For example, {\tt KeyTable[key]} correspond to
+as {\tt {\bf send} KeyTableGET(key) {\bf to} ControlNetwork}.  The
+implementation of the Control Network (choice of routing, topology
+\ldots) is not discussed here. To the upper level a Synapse Controller
+exposes the message {\tt SYN\_GET} and {\tt SYN\_PUT}, while to the
+lower level the Synapse Controller can exchange canonical {\tt
+  GET/PUT} messages with the entities responsible of the connection to
+the overlays.
+
+\begin{itemize}
+\item {\tt SYN\_GET} initiate a multiple {\tt GET} operation in all
+  networks. The parameters passed are the key to be searched, the Time
+  To Live for the data in the Cache Table (this represents as well the
+  duration of the flooding across the networks) and optionally a list
+  of specific networks to target.  Before sending the {\tt GET}
+  request to the networks the synapse is connected to, it initialize
+  the Cache Table by adding a new entry with the specified {\tt ttl}
+  and the list of target networks if present. Then multiple requests
+  are dispatched, taking care of storing for each network a copy of
+  the unhashed key in the Key Table.  When all the responses are
+  received, the synapse collects also all the results stored in the
+  cache, representing the responses from network out of direct sight.
+\item {\tt SYN\_PUT} initiate the data in the control network to
+  perform multiple {\tt PUT} requests. To begin with, the request is
+  replicated to the first {\tt mrr} networks to which the synapse is
+  connected to. In case the {\tt mrr} is higher that the number of
+  connected networks (thus needing replication on out of sight
+  networks), a new entry in the replication table is stored (or an old
+  entry for the same key is replaced) with the remaining number of
+  replications to do. Then, as per {\tt SYN\_GET}, the request is
+  dispatched to the underlying networks, taking care of storing for
+  each network a copy of the key in the Key Table.
+\item {\tt GET} represents a {\tt GET} request passing by to be
+  replicated by the synapse. In order to replicate it, the Controller
+  checks first if a copy of the unhashed key is stored in the control
+  network (meaning that the request was initially performed by another
+  synapse). If present, the Cache Table is checked to see if there is
+  an entry corresponding to the requested key. If so, the controller
+  dispatches the request either on the target networks it's connected
+  to (if specified in the Cache Table) or to all its networks. To
+  avoid breaking the compatibility with possible Blind Peers being
+  able to handle only one response per request, only the first result
+  is returned and the rest is stored in the Cache Table for later
+  retrieval.
+\item {\tt PUT} represents a passing {\tt PUT} request to be
+  replicated. As for the {\tt GET}, the algorithm first retrieves the
+  unhashed key for the network and, if present, the corresponding
+  entry in the Replication Table. If there is such entry, the request
+  is replicated in the networks not yet marked in the Network List
+  corresponding to this entry, decrementing {\tt ReplicasLeft} each
+  time until 0 is reached. To avoid performing the request twice in
+  the same network, the network ID is stored in the Network List.
+\end{itemize}
+
+\begin{figure*}[!t]
+{\scriptsize
+\begin{alltt}
+\AL \textbf{on receipt of} SYN_GET(key,cacheTTL,[targetNetworks]) \textbf{from} ipsend \textbf{do}\alglabel{alg:get}\hfill{\rm a GET request is instantiated by a synapse}
+\AL CacheTable[key].TimeToLive = cacheTTL; \hfill{\rm init the control data}
+\AL CacheTable[key].targetedNetworks = [targetNetworks];\hfill{\rm specify the networks to target if any specific}  
+\AL \textbf{if} not (targetNetworks) \hfill{}
+\AL  targetNetworks = this.networks; \hfill{}
+\AL \textbf{for each} network \textbf{in} (this.networks \(\cap\) targetNetworks) \hfill{}
+\AL  KeyTable[network.ID|network.hash(key)] = key; \hfill{\rm store the unhashed key in the KeyTable}  
+\AL  result_array += network.get(network.hash(key)); \hfill{\rm retrieve the result from each network}
+\AL  result_array += CacheTable[key].cachedResults; \hfill{\rm retrieve the cache content for further results from networks out of sight}
+\AL  \textbf{send} SYN_FOUND(key,result_array) \textbf{to} ipsend;
+\NA
+\AL \textbf{on receipt of} SYN_PUT(key,value,mrr) \textbf{from} ipsend \textbf{do}\alglabel{alg:put}\hfill{\rm a PUT request is instantiated by a synapse}
+\AL \textbf{if} (mrr > this.networks.size) \hfill{\rm if a value for the mrr has been specified}
+\AL   mrrOutOfSight = mrr-this.networks.size;
+\AL   mrrInSight = this.network.size;
+\AL   delete ReplicationTable[key];
+\AL   ReplicationTable[key].ReplicasLeft = mrrOutOfSight; \hfill{\rm and update with the new mrr value}
+\AL \textbf{else}
+\AL   mrrInSight = mrr;
+\AL \textbf{for} i = [1:mrrInSight]
+\AL   KeyTable[this.networks[i].ID|this.networks[i].hash(key)] = key; \hfill{\rm store the unhashed key in the KeyTable}
+\AL   this.network[i].put(this.networks[i].hash(key),value);\alglabel{alg:ope_end}\hfill{\rm perform the put as if we were forwarding a coming request}
+\NA
+\AL \textbf{on receipt of} PUT(hashKey,value) \textbf{from} this.network[i] \textbf{do}\alglabel{alg:forward_put}\hfill{\rm a synapse node receives a PUT to be forwarded}
+\AL key = KeyTable[network.ID|hashKey]; \hfill{\rm get the unhashed key from the Key Table}
+\AL \textbf{if} (ReplicationTable[key] exists) \hfill{\rm if there is an entry in the Replication Table for the key}
+\AL  \textbf{for each} replicaNetwork \textbf{in} this.connectedNetworks
+\AL   \textbf{if} (ReplicationTable[key].ReplicasLeft > 0)  \hfill{\rm if there are still some replicas to be done}
+\AL    \textbf{and not}  (ReplicationTable[key].hasNetwork?(replicaNetwork.ID)) \hfill{\rm and the network hasn't had a PUT already}
+\AL    KeyTable[replicaNetwork.ID|replicaNetwork.hash(key)] = key;\hfill{\rm add the entry in the Key Table for the new network}
+\AL    ReplicationTable[key].addNetwork(replicaNetwork.ID);\hfill{\rm add the target network ID to the already targeted network list}
+\AL    ReplicationTable[key].ReplicasLeft--; \hfill{\rm decrement the number of replicas to be done}
+\AL    replicaNetwork.forward_put(); \hfill{\rm forward the message in the foreign network}
+\AL \textbf{else}
+\AL  network[i].put(hashKey,value);\alglabel{alg:forward_put_end} \hfill{\rm if there is no entry just forward in the current network}
+\NA
+\AL \textbf{on receipt of} GET(hashKey) \textbf{from} this.networks[i] \textbf{do}\alglabel{alg:forward_get}\hfill{\rm a synapse node receives a GET to be forwarded}
+\AL key = KeyTable[network.ID|hashKey]; \hfill{\rm get the unhashed key from the Key Table}
+\AL \textbf{if} (CacheTable[key] exists) \hfill{\rm if there is an entry in the Cache Table for the key}
+\AL  \textbf{if} (CacheTable[key].targetedNetworks is empty) \hfill{\rm if no target networks are specified}
+\AL   targetNetworks  = this.networks; \hfill{\rm we target all the networks to which the synapse is connected}
+\AL   replicaNetworks = CacheTable[key].targetedNetworks \(\cap\) this.connectedNetworks; 
+\AL  \textbf{for each} replicaNetwork \textbf{in} replicaNetworks \textbf{do}
+\AL   KeyTable[replicaNetwork.ID|replicaNetwork.hash(key)] = key; \hfill{\rm add the entry in the Key Table for the new network}
+\AL   results += replicaNetwork.forward_get(replicaNetwork.hash(key));\hfill{\rm\!append\,the\,new\,result\,for\,the\,targeted\,network}
+\AL  CacheTable[key].cachedResults += results; \hfill{\rm store the collected results in the Cache Table}
+\AL  \textbf{return} results[1]; \hfill{\rm return only the first result}
+\AL \textbf{else}
+\AL  \textbf{return} network[i].get(hashKey);\alglabel{alg:forward_get_end} \hfill{\rm if there is no entry just forward in the current network}
+\end{alltt}}
+\caption{The Synapse blackbox protocol \label{fig:lookupBB}}
+\end{figure*}
+
+

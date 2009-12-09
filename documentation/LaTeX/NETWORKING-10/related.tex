@@ -2,31 +2,34 @@
 
 %% Identifying future trends Independantly, authors
 
-In \cite{siekkinen_beyondfuture_2007}
-and~\cite{fonte_interdomain_2008}, authors have recently presented
-some architectural issues with the Internet and identified some future
-trends, one of which is the inter-communication of
-\emph{realms}\footnote{A realm is a term authors use in order to
-  identify a network instance.}. They emphasise on the
-inter-communication of logical networks, and discuss various ways to
-do so. In particular, they point out that co-existing realms should
-share nodes in some cases and should not in some others. For instance,
-networks may deliberately behave selfishly only aiming at the
-improvement of their application-level QoS by taking advantage of
-dedicated paths to other networks, \ie\ using \textit{gateways},
-acting as dedicated bridges between networks. But in many cases they
-argue that it is more natural to take advantage of nodes that are
-already part of multiple overlay networks, \ie\ using \emph{co-located
-  nodes}.
+% In \cite{siekkinen_beyondfuture_2007}
+% and~\cite{fonte_interdomain_2008}, authors have recently presented
+% some architectural issues with the Internet and identified some
+% future trends, one of which is the inter-communication of
+% \emph{realms}\footnote{A realm is a term authors use in order to
+%   identify a network instance.}. They emphasise on the
+% inter-communication of logical networks, and discuss various ways to
+% do so. In particular, they point out that co-existing realms should
+% share nodes in some cases and should not in some others. For
+% instance, networks may deliberately behave selfishly only aiming at
+% the improvement of their application-level QoS by taking advantage
+% of dedicated paths to other networks, \ie\ using \textit{gateways},
+% acting as dedicated bridges between networks. But in many cases they
+% argue that it is more natural to take advantage of nodes that are
+% already part of multiple overlay networks, \ie\ using
+% \emph{co-located nodes}.
 
-\subsection{Cooperation through hierarchy}
+%\subsection{Cooperation through hierarchy}
 %% Hierarchical
-Pointing out the limits of a unique global structured overlay network
+
+\noindent{\bf Cooperation through hierarchy.} 
+%
+While pointing out the limits of a unique global structured overlay network
 (rigidity, maintenance cost, security, etc.), several propositions
 have been made over the years to build alternate topologies based on
-the coexistence of smaller local overlay networks. A first approach
-has been based on hierarchical systems \cite{Biersack,XuMH03}, some
-elected super-peers being promoted to a top-level overlay network,
+the coexistence of smaller local overlay networks. The first approach
+has been based on hierarchical systems \cite{Biersack,XuMH03}, where some
+elected super-peers being are promoted to a top-level overlay network,
 leading to the requirement of costly merging mechanisms to ensure a
 high level of exhaustiveness. In a more general view, merging several
 co-existing structured overlay networks has been shown to be a very
@@ -42,33 +45,32 @@ it. Ariwheels provides an efficient mapping between physical devices
 in the wireless underlay network and virtual entities in the overlay
 network.
 
-\subsection{Cooperation through gateways}
-
-Authors in~\cite{cheng2006tdh} presented two models for two overlays
+%\subsection{Cooperation through gateways}
+%
+\noindent{\bf Cooperation through gateways.}.
+%
+Authors in~\cite{cheng2006tdh} present two models for two overlays
 to be (de)composed, known as \textit{absorption} (a sort of merging)
 and \textit{gatewaying}.  Their protocol enables a CAN-network to be
 completely absorbed into another one (in the case of the absorption),
-and also provide a mechanism to create bridges between DHTs (in the
+and also to provide a mechanism to create bridges between DHTs (in the
 case of the gatewaying). They do not specifically take advantage of a
-simple assumption that nodes can be part of multiple overlays in the
+simple assumption that nodes can be part of multiple overlays at  the
 same time, thus playing the role of natural bridges.
 
 More recently, authors in \cite{cheng_bridging_2007} propose a novel
-information retrieval protocol, based on gateways called
+information retrieval protocol, based on gateways, called
 \emph{DHT-gatewaying}, which is scalable and efficient across
-homogeneous\footnote{Same implementation and same keysize (ex. Two
-  160-bit Chord DHTs).}, heterogeneous\footnote{Same implementation
-  and different keysize (ex. One 160-bit Chord and one 256-bit Chord
-  DHTs).}  and assorted\footnote{Different implementation and/or
-  different keysize (ex. One 160-bit Chord and one 256-CAN DHTs).}
-co-existing structured overlay networks. They argue that there is not
-a preferred structured overlay network implementation, and that peers
+homogeneous, heterogeneous and assorted co-existing structured overlay
+networks\footnote{Ex.  Two 160-bit Chord, or two 160/256-bit Chord, or
+  one 160-bit Chord and one 256-CAN.}.  They argue that there is not one
+preferred structured overlay network implementation, and that peers
 are members of co-existing DHTs. Their assumptions are $(i)$ only some
 peers support the implementations of different DHTs and $(ii)$ some
 peers are directly connected to peers that are members of other DHTs,
 and are called \textit{Virtual Gateways (VG))}. When a request is sent
-in one overlay, and no result was found, the requester can decide to
-widen his search by forwarding its original search request to nodes
+in one overlay, and no result was found, the requester can opt to
+widen his search by forwarding the original search request to nodes
 which belong to other structured overlay networks (mapping the search
 to the format supported by their relative overlay). A TTL value is
 added to the original search in order to avoid cycles; this value is
@@ -82,32 +84,33 @@ details and precision. It is unclear how they evaluate their protocol.
 %also introduced self-organizing \emph{gateways pointers} whose roles
 %are to keep track of VGs where-abouts.
 
-
 %% Synergy: co-located nodes are good candidates
 %% compare hierarchy and gateway to our approach
 %% and state why co-located nodes are a more
 %% natural choice
-\subsection{Cooperation through co-located nodes}
+%\subsection{Cooperation through co-located nodes}
 %% Cooperation: more hints
 
+\noindent{\bf Cooperation through co-located nodes.}
+%
 Authors in \cite{kwon_synergy:overlay_2005} present Synergy, an
-overlay inter-networking architecture which improves the routing
+overlay inter-networking architecture which improves routing
 performance in terms of delay, throughput and packet loss by providing
 cooperative forwarding of flows between networks. Authors suggest that
 co-located nodes are good candidates for enabling inter-overlay
-routing and that they reduce traffic. Our approach can be also seen as
+routing and that they reduce traffic. Our approach can also be seen as
 a deeper study of their concepts.
 
 On the way of designing inter-overlay networking based on co-located
 nodes, authors in~\cite{junjiro_design_2006} present algorithms which
-enable the symbiosis between different overlays networks with a
+enable a symbiosis between different overlays networks with a
 specific application in mind: file sharing. They propose mechanisms
-for hybrid P2P networks cooperation and investigates the influence of
-system conditions such as the numbers of peers and the number of
+for hybrid P2P networks cooperation and investigate the influence of
+system conditions, such as the numbers of peers and the number of
 meta-information a peer has to keep. They provide interesting
 observations on how to join a candidate network, cooperative peers'
 selection, how to find other P2P networks, when to start cooperation,
-by taking into account the size of the network (for instance a very
+by taking into account the size of the network (for instance, a very
 large network will not really benefit from a cooperation with a small
 network), so on and so forth. Again, a more comprehensive
 understanding of this approach is missing.
@@ -120,42 +123,40 @@ understanding of this approach is missing.
 %faster search).
 
 %% Focus on internetwork routing policies
-
 Authors in \cite{furtado_multiple_2007} consider multiple spaces with
 some degree of intersection between spaces, \ie\ with co-located
-nodes. They focused on different potential strategies to find a path
+nodes. They focus on different potential strategies to find a path
 to another overlay from a given overlay, \ie\ how requests can be
 efficiently routed from one given overlay to another one. They
-compared various inter-space routing policies by analyzing which
+compare various inter-space routing policies by analyzing which
 trade-offs, in terms of state overhead, would give the best results,
 in terms of the number of messages generated and routed, the number of
 hops it takes to find a result and the state overhead (\ie\ the number
 of fingers a node has to keep). They provide a comparative analytical
-study of the different policies. They showed that with some dynamic
+study of the different policies. They showe that with some dynamic
 finger caching and with multiple gateways (in order to avoid
 bottlenecks and single points of failures) which are tactfully laid
-out, they attain pretty good performances. Their protocol focus on
-DHTs interconnection, we extend it to any kind of overlays.
+out, they obtain pretty good performances. Their protocol focuses on the 
+interconnection of DHTs, while we extend it to any kind of overlays.
 
-%% Babelchord
-In our previous preliminary work \cite{LTB09}, we introduced
-BabelChord, a protocol for inter-connecting Chord overlay networks
-using co-located nodes that are part of multiple Chord
-``floors''. These nodes connect, in an unstructured fashion, several
-Chord overlays together The simulations showed that we could achieve
-pretty high exhaustivity with a small amount of those co-located
-nodes. Our current paper, in turn, focuses on the co-located nodes
-heuristic in far more details than the aforementioned work by
-providing not only a more generic protocol which enables inter-overlay
-routing that can in principle be applied to connect arbitrary
-heterogeneous overlays, but also more simulations to show the
-behaviours of such networks as well as a real implementations and live
-experiments.
+% %% Babelchord
+% In our previous preliminary work \cite{LTB09}, we introduced
+% BabelChord, a protocol for inter-connecting Chord overlay networks
+% using co-located nodes that are part of multiple Chord
+% ``floors''. These nodes connect, in an unstructured fashion, several
+% Chord overlays together The simulations showed that we could achieve
+% pretty high exhaustivity with a small amount of those co-located
+% nodes. Our current paper, in turn, focuses on the co-located nodes
+% heuristic in far more details than the aforementioned work by
+% providing not only a more generic protocol which enables inter-overlay
+% routing that can in principle be applied to connect arbitrary
+% heterogeneous overlays, but also more simulations to show the
+% behaviours of such networks as well as a real implementations and live
+% experiments.
 
 
 
 % \subsection{Most related works }
-
 % The most related works that can be compared to the current paper are:
 % \cite{cheng_bridging_2007,kwon_synergy:overlay_2005,furtado_multiple_2007,
 % junjiro_design_2006,LTB09}.
@@ -213,13 +214,16 @@ experiments.
 % simulations but also live deployments.
 
 
-%% add a proper conclusion
-
 \begin{comment}
   In this sense, and in response to overlay detractors, we argue
   %% list some coherent responses for their comments that ON are not
   %% suited for interconnecting domains
-  that works like \cite{XuMK03}, \cite{EURECOM+1205} and \cite{zhou_balancing_2003} show efficient method for constructing an overlay network while taking into account the underlying topology. Therefore we can say with confidence that we do have mechanisms in order to ensure that the paths the packets traverse are not using duplicate physical links.
+  that works like \cite{XuMK03}, \cite{EURECOM+1205} and
+  \cite{zhou_balancing_2003} show efficient methods for constructing an
+  overlay network while taking into account the underlying
+  topology. Therefore, we can say with confidence that we do have
+  mechanisms in order to ensure that the paths the packets traverse
+  are not using duplicate physical links.
 \end{comment}
 
 

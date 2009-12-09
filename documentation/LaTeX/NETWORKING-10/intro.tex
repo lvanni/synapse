@@ -1,182 +1,235 @@
-
 % intro.tex
 
-%% Context/small intro on overlays
-\subsection{Context}
+%\subsection{Context}
+%
+\noindent {\bf Context.}
+%
 The inter-connection of overlay networks has been recently identified
 as a promising model to cope with today's Internet issues such as
-scalability, failure recovery or routing efficiency, in particular in
-the context of information retrieval. Some recent researches have
-focused on the design of mechanisms for building bridges between
-heterogeneous overlay networks in the purpose of improving cooperation
-between networks that have different routing mechanisms, logical
-topologies and maintenance policies.
-
-However, more comprehensive approaches of such inter-connections for
-information retrieval and both quantitative and experimental studies
-of its key metrics such as satisfaction rate or routing length are
-still missing. During the last decade, different overlay networks were
-specifically designed to answer well-defined needs such as content
-distribution through unstructured overlay networks such as Kazaa or
-through structured networks, mainly under the shape of Distributed
-Hash Tables~\cite{CAN,Chord,Pastry,symphony},
+scalability, resource discovery, failure recovery or routing
+efficiency, in particular in the context of information
+retrieval. Some recent researches have focused on the design of
+mechanisms for building bridges between heterogeneous overlay networks
+for the purpose of improving cooperation between networks that have
+different routing mechanisms, logical topologies and maintenance
+policies. However, more comprehensive approaches of such
+inter-connections for information retrieval and both quantitative and
+experimental studies of its key metrics, such as satisfaction rate or
+routing length, are still missing. During the last decade, different
+overlay networks were specifically designed to answer well-defined
+needs such as content distribution through unstructured overlay
+networks such as Kazaa or through structured networks, mainly under
+the shape of Distributed Hash Tables~\cite{CAN,Chord,Pastry},
 publish/subscribe systems~\cite{castro_scribe:large-scale_2002,
-  LBCC08,CCL08}, networked virtual
-environment~\cite{knutsson_peer-to-peer_2004}, transactional key/value
-store~\cite{schtt_scalaris:_2008}, or video
-streaming~\cite{xinyan_zhang_coolstreaming/donet:data-driven_2005}.
+  LBCC08}.
+% , networked virtual environment~\cite{knutsson_peer-to-peer_2004}.
 
-Overlay networks' topologies span over structured, unstructured or
-even hybrid ones: they have completely different properties in terms
-of routing efficiency, exhaustivity, scalability, and reliability
-(refer to~\cite{P2PBOOK} for a survey).
+% , transactional key/value store~\cite{schtt_scalaris:_2008}, or
+% video
+% streaming~\cite{xinyan_zhang_coolstreaming/donet:data-driven_2005}.
+% Overlay networks' topologies span over structured, unstructured or
+% even hybrid ones: they have completely different properties in terms
+% of routing efficiency, exhaustivity, scalability, and reliability
+% (refer to~\cite{P2PBOOK} for a survey).
 
-\subsection{Problematic}
+%\subsection{Problem}
 %
+\noindent {\bf An overview of the current problem.} 
 Many disparate overlay networks may not only simultaneously co-exist
 in the Internet but also compete for the same resources on shared
 nodes and underlying network links. One of the problems of the overlay
-networking area is how heterogeneous overlays networks may interact
-and cooperate with each others. Overlay networks are heterogeneous and
-basically unable to cooperate each other in an effortless way, without
-merging, an operation which is very costly and not suitable in many
-cases (security, performance, etc.).
+networking area is how heterogeneous overlay networks may
+\emph{interact} and \emph{cooperate} with each other. Overlay networks
+are heterogeneous and basically unable to coo\-perate each other in an
+effortless way, without merging, an operation which is very costly
+since it not scalable and not suitable in many cases for security
+reasons.  However, in many situations, distinct overlay networks could
+take advantage of cooperating for many purposes: collective
+performance enhancement, larger shared information, better resistance
+to loss of connectivity (network partitions), improved routing
+performance
+in\,terms\,of\,delay,\,throughput\,and\,packets\,loss,\,by,\,for
+instance,\,cooperative\,forwarding\,of flows.
 
-However, in many contexts, distinct overlay networks could take
-advantage af cooperating for many purposes: collective performance
-enhancement, larger shared information, better resistance to loss of
-connectivity (network partitions), improved routing performance in
-terms of delay, throughput and packets loss, for instance by
-cooperative forwarding of flows. In the context of large scale
-information retrieval, several overlays may want to offer an
-aggregation of their information/data to their potential common users
-without losing the control of it (imagine two companies wishing to
-share or aggregate the information contained in their database,
-obviously while keeping the exclusive write to update it). Finally, in
-terms of fault-tolerance, cooperation can really increase the
-availability of the system, if one overlay becomes unavailable, the
-global network will only undergo partial failure as other distinct
-resources will be usable.
+As a basic example, let us consider two distant databases. One node of
+the first database stores one $(key, value)$ pair which is searched by
+a node of the second one. Without network cooperation those two nodes
+will never communicate together.  As another example, we have an
+overlay network where a number of nodes got isolated by an overlay
+network failure, leading to a partition: if some or all of those nodes
+can be reached via an alternative overlay network, than the partition
+``could'' be recovered via an alternative routing.
 
-% DEJA DIT !!!
-% Recent research has focused on the design of network inter-connection
-% mechanisms building bridges between heterogeneous overlay networks for
-% cooperation, but simple protocols describing this cooperation, and
-% comprehensive quantitative and empirical studies of metrics such as
-% satisfaction rate or routing length in the context of scalable
-% information retrieval are still missing.
+In the context of large scale information retrieval, several overlays
+may want to offer an aggregation of their information/data to their
+potential common users without losing control of it. Imagine two
+companies wishing to share or aggregate information contained in their
+distributed databases, obviously while keeping their proprietary
+routing and their exclusive right to update it.  Finally, in terms of
+fault-tolerance, cooperation can increase the availability of the
+system, if one overlay becomes unavailable\,the
+global\,network\,will\,only\,undergo\,partial\,failure\,as\,other\,distinct\,resources\,will\,be\,usable.
 
-%\subsection{Applications}
-%\Lu{FIX. social networks in p2p, interconnecting distributed data
-%  bases in R or RW from other databases, anti censorship apps, routing
-%  over sw/hw barriers, brain simulations.....}
+We consider the tradeoff of having one \vs\ many overlays as a
+conflict without a cause: having a single global overlay has many
+obvious advantages and is the \textit{de facto} most natural solution,
+but it appears unrealistic in the actual setting. In some optimistic
+case, different overlays are suitable for collaboration by opening
+their proprietary protocols in order to build an open standard; in
+many other pessimistic cases, this opening is simply unrealistic for
+many different reasons (backward compatibility, security, commercial,
+practical, etc.). As such, studying protocols to interconnect
+collaborative (or competitive) overlay networks is an interesting
+research vein.% that is worth pursuing.
 
+% Recent research has focused on the design of network
+% inter-connection mechanisms building bridges between heterogeneous
+% overlay networks for cooperation, but simple protocols describing
+% this cooperation, and comprehensive quantitative and empirical
+% studies of metrics such as satisfaction rate or routing length in
+% the context of scalable information retrieval are still missing.
 
-\medskip
-\subsection{Contribution}
-%% Contributions/what we do
-The main contribution of this paper is to introduce, simulate and
-experiment \emph{Synapse}, a scalable protocol for information
-retrieval over the inter-connection of heterogeneous overlay
-networks. Synapse is based on co-located nodes, also called
-\emph{synapses}, serving as low-cost natural candidates for
-inter-overlay bridges.
+% \subsection{Applications}
+% ... social networks in p2p, interconnecting distributed data bases
+% in R or RW from other databases, anti censorship apps, routing over
+% sw/hw barriers, brain simulations....
 
-% The idea in a nutshell
-In a nutshell, every message received by a co-located node can be
-forwarded to other overlays the node belongs to. In other words, upon
-receipt of a search query, in addition to its forwarding to the next
-hop in the current overlay (according to the routing policy of the
-overlay, the node can possibly start a new search, according to some
-given social-based strategy, in some or all other overlay networks it
-belongs to. This obviously implies to provide a Time-To-Live value and
-detection of already processed queries to avoid infinite loop in the
-network, as in unstructured peer-to-peer systems. Another novelty of
-our design is the explicit possibility to rely on \emph{social}
-primitives to build these bridges between distinct overlays. A node
-can \emph{invite} another node to join its own overlay, based on some
-particular strategy.
+%\subsection{Contribution}
+%
+\noindent {\bf Contribution. } The main contribution of this paper is
+to introduce, simulate and experiment with \emph{Synapse}, a scalable
+protocol for information retrieval over the inter-connection of
+heterogeneous overlay networks. The protocol is based on co-located
+nodes, also called \emph{synapses}, serving as low-cost natural
+candidates for inter-overlay bridges.  In the simplest case (where
+overlays to be interconnected are ready to adapt their protocols to
+the requirements of interconnection), every message received by a
+co-located node can be forwarded to other overlays the node belongs
+to. In other words, upon receipt of a search query, in addition to its
+forwarding to the next hop in the current overlay (according to their
+routing policy), the node can possibly start a new search, according
+to some given strategy, in some or all other overlay networks it
+belongs to. This obviously implies to providing a Time-To-Live value
+and detection of already processed queries, to avoid infinite loop in
+the network, as in unstructured peer-to-peer systems.
 
-% Hexaustivity vs non hexaustivity : TTL
+% % social issues dropped for the moment ...
+% social issues We also study interconnection policies as the explicit
+% possibility to rely on \emph{social} based strategies to build these
+% bridges between distinct overlays; nodes can invite or can be
+% invited.
+
+In case of concurrent overlay networks, inter-overlay routing becomes
+harder, as intra-overlays are provided as some black boxes: a
+\emph{control} overlay-network made of co-located nodes maps one
+hashed key from one overlay into the original key that, in turn, will
+be hashed and routed in other overlays in which the co-located node
+belongs to. This extra structure is unavoidable to route queries along
+closed overlays and to prevent routing loops.
+ 
+
+% % Hexaustivity vs non hexaustivity : TTL
 % This simple move implies, for example, that if a routing inside a
 % structured overlay network is exhaustive, the corresponding routing
 % toward a set of structured overlay networks via the Synapse protocol
-% is not; therefore a Time-To-Live (TTL) mechanism recording the number
-% of physical hops must be introduced to avoid the undelivered packets
-% keeps circulating forever in the inter-network.
+% is not; therefore a Time-To-Live (TTL) mechanism recording the
+% number of physical hops must be introduced to avoid the undelivered
+% packets keeps circulating forever in the inter-network.
+
 % % Game over
-% Another optimization strategy (the ``game over'' strategy) in Synapse
-% allows to cut replicated routing in case a lookup will pass twice on
-% the same node.
+% Another optimization strategy (the ``game over'' strategy) in
+% Synapse allows to cut replicated routing in case a lookup will pass
+% twice on the same node.
 
 % % Social issues
-% Another novelty of Synapse is the inclusion of built-in primitives to
-% deal with social networking in order to give an incentive for
+% Another novelty of Synapse is the inclusion of built-in primitives
+% to deal with social networking in order to give an incentive for
 % cooperation between nodes. Every node can set a personal strategy to
 % maximise successful routing for him and for all the citizens of its
-% network. To this concern two operations are available: a node can join
-% another network or can invite another node to join the current
+% network. To this concern two operations are available: a node can
+% join another network or can invite another node to join the current
 % network, according to a peculiar strategy that gives a ``score'' to
 % nodes and to networks performances.
 
 % Consequences
-
-% Our experiments and simulations show that a small number of
-% well-connected synapses is enough to achieve almost exhaustive
-% searches in a ``synapsed'' network of structured overlay networks. We
-% believe that Synapse can give an answer to circumvent network
-% partitions; the rationale is simple: as many logical links a node can
-% have, as many alternative physical routes through these overlay we can
-% best dispose. This feature is achieved in Synapse at the cost of some
-% additional data structures and in an ortogonal way to ordinary
-% techniques of caching and replication.
-
-Our contributions are the following:
+Our experiments and simulations show that a small number of
+well-connected sy\-napses is sufficient in order to achieve almost
+exhaustive searches in a ``synapsed'' network of structured overlay
+networks. We believe that Synapse can give an answer to circumventing
+network partitions; the key points being that:
 %
-\begin{itemize}
+%\begin{itemize}
+%\item 
+$(i)$ several logical links for one node leads to as many alternative
+physical routes through these overlay, and
+%\item 
+$(ii)$ a synapse can retrieve keys from overlays that it doesn't even know
+simply by forwarding their query to another synapse that, in turn, is
+better connected.
+%\end{itemize}
 %
-\item the introduction of \emph{Synapse}, a generic protocol, which is
-  suitable for inter-connecting heterogeneous overlay networks without
-  relying on merging;
+Those features are achieved in Synapse at the cost of some additional
+data structures and in an orthogonal way to ordinary techniques of
+caching and replication.  Moreover, being a synapse can allow for the
+retrieval of extra information from many other overlays even if we are
+not connected with.  We summarize our contributions with the
+following:
 %
-\item extensive simulations in the case of the interconnection of
-  structured overlay networks to capture the real behavior of such
-  platforms in the context of information retrieval, identify their
-  main advantages and drawbacks;
-
+%\begin{itemize}
 %
-\item the deployment of a lightweight prototype of Synapse, called
-  \texttt{JSynapse} on the Grid'5000 platform\footnote{{\sf
-      http://www.grid5000.fr.}} along with some real deployments
-  showing the viability of such an approach while validating the
-  software itself;
+%\item 
+$(i)$ the introduction of \emph{Synapse}, a generic protocol, which is
+suitable for inter-connecting heterogeneous overlay networks without
+relying on merging in presence of open/collaborative or
+closed/competitive networks;
 %
-\item finally, on the basis of the previous item, the description of a
-  real open source prototype, called \texttt{open-Synapse}, based on
-  the \texttt{open-Chord} implementation of Chord\footnote{{\sf
-      http://open-chord.sourceforge.net.}}, inter-connecting an
-  arbitrary number of Chord networks.
-
-\end{itemize}
+%\item 
+$(ii)$ extensive simulations in the case of the interconnection of
+structured overlay networks to capture the real behavior of such
+platforms in the context of information retrieval, identify their main
+advantages and drawbacks;
+%
+%\item 
+$(iii)$ the deployment of a lightweight prototype of Synapse, called
+\texttt{JSynapse} on the Grid'5000 platform\footnote{{\sf
+    http://www.grid5000.fr} and {\sf
+    http://open-chord.sourceforge.net}.} along with some real
+deployments showing the viability of such an approach while validating
+the software itself;
+%
+%\item 
+$(iv)$ finally, on the basis of the previous item, the description and
+the deployement on the Grid'5000 platform of a open source prototype,
+called \texttt{open-Synapse}, based on the \texttt{open-Chord}$^4$
+implementation of Chord
+% \footnote{{\sf http://open-chord.sourceforge.net.}},
+  inter-connecting an arbitrary number of Chord networks.
+%\end{itemize}
 %
 The final goal is to grasp the complete potential that co-located
-nodes offer and to deepen the study of overlay networks'
+nodes have to offer, and to deepen the study of overlay networks'
 inter-connection using these types of nodes.
 
-\subsection{Outline}
-%% Outline
-The remainder of the paper is organized as follows: In
-Section~\ref{sec:relatedwork}, we summarize the mechanisms proposed in
-the literature related to the overlay networks' cooperation. In
-Section~\ref{sec:protocol}, we introduce our Synapse protocol, by
-means of example and pseudocode. In Section~\ref{sec:simulations}, we
-present the results of our simulations of the Synapse protocol to
-capture the behavior of key metrics traditionally used to measure the
-efficiency of information retrieval. In Section~\ref{sec:deployement},
-we describe a deployment of a client prototype\footnote{Freely
-  available
-  at~{\sf http://www-sop.inria.fr/teams/lognet/synapse}.} over the
-Grid'5000 platform. Conclusions and further work conclude.
+% \subsection{Outline}
+%
+\noindent {\bf Outline.} The remainder of the paper is organized as
+follows: In Section~\ref{sec:protocol}, we introduce our Synapse
+protocol, declined for open/collaborative overlays (\emph{white box})
+viz. closed/com\-petitive (\emph{black box}) overlays. We provide
+examples.
+% 
+% and pseudocode. 
+In Section~\ref{sec:simulations}, we present the results of our
+simulations of the Synapse protocol to capture the behavior of key
+metrics traditionally used to measure the efficiency of information
+retrieval. In Section~\ref{sec:deployement}, we describe a deployment
+of a client prototype\footnote{Code and web appendix are available
+  at~{\sf http://www-sop.inria.fr/teams/lognet/synapse}.}  over the
+Grid'5000 platform. Section~\ref{sec:relatedwork}, we summarize the
+mechanisms proposed in the literature related to the overlay networks'
+cooperation.  Conclusions and further work conclude.  Due to lack of
+space, the protocol pseudocode is presented in a separate web
+appendix$^5$. 
 
 
 
