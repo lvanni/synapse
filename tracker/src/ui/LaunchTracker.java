@@ -33,6 +33,7 @@ public class LaunchTracker {
 			while(true){
 				try{
 					System.out.println("\n\n1) print status");
+					System.out.println("2) clear history");
 					System.out.println("0) exit");
 					System.out.print("---> ");
 					int chx = Integer.parseInt(input.readLine().trim());
@@ -47,6 +48,9 @@ public class LaunchTracker {
 								System.out.println("\t" + n);
 							}
 						}
+						break;
+					case 2 :
+						tracker.getPeerSet().clear();
 						break;
 					default : break;
 					}

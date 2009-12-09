@@ -4,9 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import core.experiments.networks2010.tools.InfoConsole;
+import core.experiments.tools.InfoConsole;
 import core.mytansport.MyTransport;
-import core.mytansport.MyTransport.OverlayID;
+import core.mytansport.plugins.MyConcert;
+import core.mytansport.plugins.MyFoot;
 import core.protocols.p2p.IOverlay;
 
 public class LaunchMyTransport {
@@ -61,7 +62,11 @@ public class LaunchMyTransport {
 								hostToJoin = input.readLine();
 								System.out.print("\tMyConcert port to join = ");
 								portToJoin = Integer.parseInt(input.readLine());
-								myTransport.join(OverlayID.MYCONCERT, port, hostToJoin, portToJoin);
+								MyConcert myConcert = new MyConcert(ip, 0, myTransport);
+								new Thread(myConcert).start();
+								Thread.yield();
+								myConcert.join(hostToJoin, portToJoin);
+								myTransport.getNetworks().add(myConcert);
 								break;
 							case 2:
 								System.out.print("\tchoose a port number to start MyFoot: ");
@@ -70,7 +75,11 @@ public class LaunchMyTransport {
 								hostToJoin = input.readLine();
 								System.out.print("\tMyFoot port to join = ");
 								portToJoin = Integer.parseInt(input.readLine());
-								myTransport.join(OverlayID.MYFOOT, port, hostToJoin, portToJoin);
+								MyFoot myFoot = new MyFoot(ip, 0, myTransport);
+								new Thread(myFoot).start();
+								Thread.yield();
+								myFoot.join(hostToJoin, portToJoin);
+								myTransport.getNetworks().add(myFoot);
 								break;
 							case 3:
 							default: break;

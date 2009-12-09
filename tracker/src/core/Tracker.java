@@ -24,7 +24,7 @@ public class Tracker implements Runnable{
 	public final static int REMOVENODE 		= 1;
 	public final static int GETCONNECTION  	= 2;
 
-	/** peerSet<networkID, <id, address>>*/
+	/** peerSet<networkID, List<Node>>*/
 	private Map<String, List<Node>> peerSet;
 
 	private ITransport transport;
@@ -81,6 +81,11 @@ public class Tracker implements Runnable{
 				break;
 			case GETCONNECTION :
 				result = getJoinEntry(args[1]);
+				break;
+			case REMOVENODE :
+				Node n = new Node(args[2], Integer.parseInt(args[3]), Integer.parseInt(args[4]));
+				System.out.println("remove " + n);
+				peerSet.get(args[1]).remove(n);
 				break;
 			default: break;
 			}

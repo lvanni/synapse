@@ -139,6 +139,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 			new Thread(new Get(key, o, this)).start();
 		}
 		while(true){
+//			System.out.println("wait for responses");
 			if(nbResponse >= networks.size()){
 				break;
 			}

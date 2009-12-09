@@ -8,13 +8,13 @@ import core.tools.HashFunction;
 
 public class Foot extends Concert implements Runnable{
 
-	public static String overlayIntifier = "Foot"; // use an unique ID is possible
+	public static String OVERLAY_IDENTIFIER = "Foot"; // use an unique ID is possible
 	
 	/** Hash function */
 	private HashFunction h;
 	
 	public Foot(String ip, int port) {
-		this.h = new HashFunction(overlayIntifier);
+		this.h = new HashFunction(OVERLAY_IDENTIFIER);
 		int id = h.SHA1ToInt(ip+port+time);
 		try {
 			transport = new SocketImpl(port);
@@ -26,7 +26,7 @@ public class Foot extends Concert implements Runnable{
 	}
 	
 	public String getIdentifier() {
-		return overlayIntifier;
+		return OVERLAY_IDENTIFIER;
 	}
 	
 	public int keyToH(String key){          // A CHANGER!

@@ -23,6 +23,14 @@ public class Node {
 			port = Integer.parseInt(args[2]);
 		} 
 	}
+	
+	public boolean equals(Object obj) {
+		if(obj instanceof Node){
+			Node n = (Node) obj;
+			return n.getId() == id && n.getPort() == port && n.getIp().equals(ip);
+		}
+		return false;
+	}
 
 	public String toString(){
 		return ip + "," + id + "," + port;

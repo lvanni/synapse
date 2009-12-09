@@ -4,11 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import core.experiments.networks2010.tools.InfoConsole;
+import core.experiments.tools.InfoConsole;
 import core.overlay.concert.Concert;
-
-
-
 
 public class LaunchConcert {
 	public static void main(String[] args){

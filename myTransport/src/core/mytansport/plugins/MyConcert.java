@@ -19,12 +19,12 @@ public class MyConcert extends Concert{
 		}
 		String[] args = code.split(",");
 		String result = "";
-		if(args[0].equals(overlayIntifier)){
+		if(args[0].equals(OVERLAY_IDENTIFIER)){
 			int f = Integer.parseInt(args[1]);
 			switch(f){
 			case IChord.PUT :
 				// get back the clean key
-				String cleanKey = myTransport.getCleanKey(args[2]+overlayIntifier);
+				String cleanKey = myTransport.getCleanKey(args[2]+OVERLAY_IDENTIFIER);
 				if(cleanKey != null && !cleanKey.equals("null") && !cleanKey.equals("")){ // it's a synapse request
 					String[] keys = cleanKey.split(":");
 					cleanKey = keys[1];
@@ -37,7 +37,7 @@ public class MyConcert extends Concert{
 				break;
 			case IChord.GET :
 				// get back the clean key
-				cleanKey = myTransport.getCleanKey(args[2]+overlayIntifier);
+				cleanKey = myTransport.getCleanKey(args[2]+OVERLAY_IDENTIFIER);
 				if(cleanKey != null && !cleanKey.equals("null") && !cleanKey.equals("")){ // it's a synapse request
 					String[] keys = cleanKey.split(":");
 					cleanKey = keys[1];

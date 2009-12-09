@@ -1,4 +1,4 @@
-package core.experiments.networks2010.tools;
+package core.experiments.tools;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;

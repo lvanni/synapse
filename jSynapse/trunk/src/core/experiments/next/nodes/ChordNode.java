@@ -1,4 +1,4 @@
-package core.overlay.concert;
+package core.experiments.next.nodes;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -19,15 +19,14 @@ import core.protocols.transport.socket.SocketImpl;
 import core.tools.HashFunction;
 import core.tools.Range;
 
-public class Concert extends AbstractChord implements Runnable{
-
+public class ChordNode extends AbstractChord implements Runnable{
 	// /////////////////////////////////////////// //
 	//                 ATTRIBUTES                  //
 	// /////////////////////////////////////////// //
 	/** name of the service*/
 	private static SimpleDateFormat formater = new SimpleDateFormat( "dd/MM/yy_H:mm:ss" );
 	protected static String time = formater.format( new Date() );
-	public static String OVERLAY_IDENTIFIER = "Concert"; // use an unique ID is possible
+	public String overlayIntifier = "chord"; // use an unique ID is possible
 
 	/** Transport protocol */
 	protected ITransport transport;
@@ -41,10 +40,12 @@ public class Concert extends AbstractChord implements Runnable{
 	// /////////////////////////////////////////// //
 	//                CONSTRUCTOR                  //
 	// /////////////////////////////////////////// //
-	protected Concert(){}
-
-	public Concert(String ip, int port) {
-		this.h = new HashFunction(OVERLAY_IDENTIFIER);
+	public ChordNode(String ip, int port){
+		this(ip, port, "<"+ip+port+">");
+	}
+	public ChordNode(String ip, int port, String overlayIntifier) {
+		this.overlayIntifier = overlayIntifier;
+		this.h = new HashFunction(overlayIntifier);
 		int id = h.SHA1ToInt(ip+port+time);
 		try {
 			transport = new SocketImpl(port);
@@ -63,7 +64,7 @@ public class Concert extends AbstractChord implements Runnable{
 		res = transport.forward(getIdentifier() + "," + message, destination);
 		if(res == null || res.equals(""))
 			res = getThisNode().toString(); // <================== A REVOIR
-		return res;		
+		return res;
 	}
 
 	public void join(String host, int port) {
@@ -84,7 +85,7 @@ public class Concert extends AbstractChord implements Runnable{
 			} else {
 				table.put(hKey, value);
 			}
-			System.out.println("New entry in the hash table...");
+//			System.out.println("New entry in the hash table...");
 		} else {
 			forward(IChord.PUT + "," + hKey + "," + value, findSuccessor(hKey));
 		}
@@ -110,6 +111,7 @@ public class Concert extends AbstractChord implements Runnable{
 	 * For the transport protocol
 	 */
 	public String doStuff(String code){
+		System.out.println("doStuff: " + code);
 		if(debugMode){
 			System.out.println("\n** DEBUG: doStuff\n*\tcode: " + code);
 		}
@@ -119,34 +121,42 @@ public class Concert extends AbstractChord implements Runnable{
 			int f = Integer.parseInt(args[1]);
 			switch(f){
 			case IChord.GETPRED :
+//				System.out.println("*\taction: getPredecessor()");
 				if(getPredecessor() != null)
 					result = getPredecessor().toString();
 				break;
 			case IChord.FINDSUCC :
+//				System.out.println("*\taction: findSuccessor(" + args[2] + ")");
 				result = findSuccessor(Integer.parseInt(args[2])).toString();
 				break;
 			case IChord.NOTIF :
+//				System.out.println("*\taction: notify(" + args[3] + ")");
 				notify(new Node(args[2], Integer.parseInt(args[3]), Integer.parseInt(args[4])));
 				break;
 			case IChord.JOIN :
+//				System.out.println("*\taction: join(" + args[3] + ")");
 				getObjectOnJoin(new Node(args[2], Integer.parseInt(args[3]), Integer.parseInt(args[4])));
 				break;
 			case IChord.PUT :
+//				System.out.println("*\taction: put(" + args[2] + "," + args[3] + ")");
 				put(Integer.parseInt(args[2]), args[3]);
 				break;
 			case IChord.GET :
+//				System.out.println("*\taction: get(" + args[2] + ")");
 				result = get(Integer.parseInt(args[2]));
 				break;
 			case IChord.SETSUCC :
+//				System.out.println("*\taction: setSuccessor(" + args[3] + ")");
 				setSuccessor(new Node(args[2], Integer.parseInt(args[3]), Integer.parseInt(args[4])));
 				break;
 			case IChord.SETPRED :
+//				System.out.println("*\taction: setPredecessor(" + args[3] + ")");
 				setPredecessor(new Node(args[2], Integer.parseInt(args[3]), Integer.parseInt(args[4])));
 				break;
 			default: break;
 			}
-		} else {
-			System.err.println("!!! " + code + " FAIL !!!");
+		} else if(args[0].equals("getIdentifier")){
+			return getIdentifier();
 		}
 		if(debugMode){
 			System.out.println("*\tresult: " + result + "\n************************************");
@@ -175,13 +185,14 @@ public class Concert extends AbstractChord implements Runnable{
 					if((soc = serverSocket.accept()) != null){
 						pin  = new BufferedReader(new InputStreamReader(soc.getInputStream()));
 						pout = new PrintWriter(new BufferedWriter(
-								new OutputStreamWriter(soc.getOutputStream())), 
+								new OutputStreamWriter(soc.getOutputStream())),
 								true);
 						String message = pin.readLine(); // receive a message
 						String response = "";
 						if(message != null)
 							response = this.doStuff(message);
 						pout.println(response);// sending a response <IP>,<ID>,<Port>
+						pout.flush();
 					}
 				} catch (IOException e) {
 					continue ACCEPT;
@@ -198,11 +209,10 @@ public class Concert extends AbstractChord implements Runnable{
 	}
 
 	public String getIdentifier() {
-		return OVERLAY_IDENTIFIER;
+		return overlayIntifier;
 	}
 
 	public int keyToH(String key){          // A CHANGER!
 		return h.SHA1ToInt(key);
 	}
 }
-

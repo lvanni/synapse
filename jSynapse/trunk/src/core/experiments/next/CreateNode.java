@@ -1,84 +1,12 @@
-package core.experiments.networks2010;
+package core.experiments.next;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-import core.experiments.networks2010.nodes.ChordNode;
+import core.experiments.next.nodes.ChordNode;
 import core.experiments.tools.InfoConsole;
 import core.protocols.p2p.Node;
 import core.protocols.transport.socket.SocketImpl;
-
-//public class CreateNode implements Runnable{
-
-//	private ChordNode node;
-//	protected ITransport transport;
-//
-//	public CreateNode(ChordNode node, int port){
-//		this.node = node;
-//		try{
-//			this.transport = new SocketImpl(port);
-//		} catch(Exception e){
-//			System.out.println("port" + port + " already in use: exit(1)");
-//			node.kill();
-//			try {
-//				Thread.sleep(1000);
-//			} catch (InterruptedException e1) {
-//				e1.printStackTrace();
-//			}
-//		}
-//	}
-//
-//	public void put(String key, String value) {
-//		node.put(key, value);
-//	}
-//
-//	public String get(String key) {
-//		return node.get(key);
-//	}
-//
-//	public String doStuff(String code){
-//		String[] args = code.split(",");
-//		String result = "";
-//		if(args[0].equals("put")){
-//			put(args[1], args[2]);
-//		} else if(args[0].equals("get")){
-//			return get(args[1]);
-//		}  else if(args[0].equals("kill")){
-//			node.kill();
-//		}
-//		return result;
-//	}
-//
-//	public void run() {
-//		ServerSocket serverSocket = null;
-//		BufferedReader pin = null;
-//		PrintWriter pout = null;
-//
-//		serverSocket = ((SocketImpl)transport).getServerSocket();
-//		Socket soc = null;
-//		ACCEPT:
-//			while(true){
-//				try {
-//					if((soc = serverSocket.accept()) != null){
-//						pin  = new BufferedReader(new InputStreamReader(soc.getInputStream()));
-//						pout = new PrintWriter(new BufferedWriter(
-//								new OutputStreamWriter(soc.getOutputStream())),
-//								true);
-//						String message = pin.readLine(); // receive a message
-//						String response = "";
-//						if(message != null)
-//							response = this.doStuff(message);
-//						pout.println(response);// sending a response <IP>,<ID>,<Port>
-//					}
-//				} catch (IOException e) {
-//					continue ACCEPT;
-//				}
-//			}
-//	}
-//
-//	public ITransport getTransport() {
-//		return transport;
-//	}
 
 public class CreateNode {
 
@@ -95,9 +23,6 @@ public class CreateNode {
 					hostToJoin = args[i+1];
 					portToJoin = Integer.parseInt(args[i+2]);
 				}
-//				if(args[i].equals("-l")){
-//					portToListen = Integer.parseInt(args[i+1]);
-//				}
 			}
 
 			// BUILD NODE
@@ -112,12 +37,8 @@ public class CreateNode {
 			} else {
 				node = new ChordNode(InfoConsole.getIp(), Integer.parseInt(args[0]));
 				new Thread(node).start();
+				Thread.yield();
 			}
-
-			// BUILD LISTENING
-//			CreateNode cn = new CreateNode(node, portToListen);
-//			new Thread(cn).start();
-//			do{} while(cn.getTransport() == null);
 
 			// STAND-BY
 			BufferedReader input = new BufferedReader(new InputStreamReader(System.in));

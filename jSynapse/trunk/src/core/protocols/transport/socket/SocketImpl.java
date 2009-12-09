@@ -15,7 +15,7 @@ import core.protocols.transport.ITransport;
 public class SocketImpl implements ITransport{
 
 	private int serverPort;
-	private ServerSocket serverSocket = null; 
+	private ServerSocket serverSocket = null;
 
 	// /////////////////////////////////////////// //
 	//                 CONSTRUCTOR                 //
@@ -26,6 +26,7 @@ public class SocketImpl implements ITransport{
 		do{
 			serverSocket = new ServerSocket(port);
 		} while(serverSocket == null);
+		serverSocket.setSoTimeout(2000);
 		serverPort = serverSocket.getLocalPort();
 	}
 
@@ -39,11 +40,8 @@ public class SocketImpl implements ITransport{
 		PrintWriter pout = null;
 		try{
 			while(socket == null){
-				try{
-					socket = new Socket(destination.getIp(), destination.getPort());
-				} catch (Exception e){}
+				socket = new Socket(destination.getIp(), destination.getPort());
 			}
-			socket.setSoTimeout(2000); // TO NOT BLOCK THE READ OPERATION
 			pin = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			pout = new PrintWriter(
 					new BufferedWriter(
@@ -52,17 +50,20 @@ public class SocketImpl implements ITransport{
 
 			// SENDING A MESSAGE
 			pout.println(message); 
+			pout.flush();
 
 			// WAIT FOR A RESPONSE
 			String res = pin.readLine();
+
 			return  res;
 		} catch(IOException e){
+			e.printStackTrace();
 			return "";
 		} finally {
 			try{
 				socket.close();
-				pin.close();
 				pout.close();
+				pin.close();
 			} catch(IOException  e){
 				e.printStackTrace();
 			}

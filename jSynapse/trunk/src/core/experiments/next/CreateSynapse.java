@@ -1,94 +1,16 @@
-package core.experiments.networks2010;
+package core.experiments.next;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-import core.experiments.networks2010.synapse.Synapse;
-import core.experiments.networks2010.synapse.plugins.ChordNodePlugin;
+import core.experiments.next.synapse.Synapse;
+import core.experiments.next.synapse.plugins.ChordNodePlugin;
 import core.experiments.tools.InfoConsole;
 import core.protocols.p2p.Node;
-import core.protocols.transport.ITransport;
 import core.protocols.transport.socket.SocketImpl;
 
-//public class CreateSynapse implements Runnable{
-//
-//	private Synapse node;
-//	protected ITransport transport;
-//
-//	public CreateSynapse(Synapse node, int port){
-//		this.node = node;
-//		try {
-//			this.transport = new SocketImpl(port);
-//		} catch (IOException e) {
-//			System.out.println("port" + port + " already in use: exit(1)");
-//			node.kill();
-//			try {
-//				Thread.sleep(1000);
-//			} catch (InterruptedException e1) {
-//				e1.printStackTrace();
-//			}
-//		}
-//	}
-//
-//	public void put(String key, String value) {
-//		node.put(key, value);
-//	}
-//
-//	public String get(String key) {
-//		return node.get(key);
-//	}
-//
-//	public String doStuff(String code){
-//		String[] args = code.split(",");
-//		String result = "";
-//		if(args[0].equals("put")){
-//			put(args[1], args[2]);
-//		} else if(args[0].equals("get")){
-//			return get(args[1]);
-//		} else if(args[0].equals("kill")){
-//			node.kill();
-//		}
-//		return result;
-//	}
-//
-//	public void run() {
-//		ServerSocket serverSocket = null;
-//		BufferedReader pin = null;
-//		PrintWriter pout = null;
-//
-//		serverSocket = ((SocketImpl)transport).getServerSocket();
-//		Socket soc = null;
-//		ACCEPT:
-//			while(true){
-//				try {
-//					if((soc = serverSocket.accept()) != null){
-//						pin  = new BufferedReader(new InputStreamReader(soc.getInputStream()));
-//						pout = new PrintWriter(new BufferedWriter(
-//								new OutputStreamWriter(soc.getOutputStream())),
-//								true);
-//						String message = pin.readLine(); // receive a message
-//						String response = "";
-//						if(message != null)
-//							response = this.doStuff(message);
-//						pout.println(response);// sending a response <IP>,<ID>,<Port>
-//					}
-//				} catch (IOException e) {
-//					continue ACCEPT;
-//				}
-//			}
-//	}
-//
-//	public ITransport getTransport() {
-//		return transport;
-//	}
 
 public class CreateSynapse {
 
@@ -112,9 +34,6 @@ public class CreateSynapse {
 						l.add(new NewNode(Integer.parseInt(args[i+1])));
 					}
 				} 
-//				if (args[i].equals("-l")){
-//					portToListen = Integer.parseInt(args[i+1]);
-//				}
 			}
 
 			// BUILD SYNAPSE
@@ -124,11 +43,6 @@ public class CreateSynapse {
 			if(join){
 				synapse.join(hostToJoin, portToJoin);
 			}
-
-			// BUILD LISTENING
-//			CreateSynapse cn = new CreateSynapse(synapse, portToListen);
-//			new Thread(cn).start();
-//			do{} while(cn.getTransport() == null);
 
 			// ADDING PLUGIN
 			for(NewNode n : l){
@@ -143,6 +57,7 @@ public class CreateSynapse {
 				} else {
 					plugin = new ChordNodePlugin(InfoConsole.getIp(), n.getPort(), synapse);
 					new Thread(plugin).start();
+					Thread.yield();
 				}
 				synapse.getNetworks().add(plugin);
 			}
