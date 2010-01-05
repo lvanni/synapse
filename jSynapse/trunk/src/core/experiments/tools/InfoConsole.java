@@ -25,7 +25,7 @@ public class InfoConsole {
 			System.out.println("pas de carte reseau");
 			e.printStackTrace();
 		}
-		return "";
+		return "localhost";
 	}
 
 	public static void clearScreen(){

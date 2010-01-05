@@ -4,10 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import core.experiments.next.nodes.ChordNode;
+import core.ITracker;
+import core.experiments.next.node.ChordNode;
 import core.experiments.next.synapse.Synapse;
-import core.experiments.next.synapse.plugins.ChordNodePlugin;
-import core.experiments.tools.ITracker;
+import core.experiments.next.synapse.plugin.ChordNodePlugin;
 import core.experiments.tools.InfoConsole;
 import core.protocols.p2p.IOverlay;
 import core.protocols.p2p.Node;

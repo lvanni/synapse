@@ -3,8 +3,8 @@ package core;
 public interface ITracker {
 	
 	/** Address of tracker */
-	public final static String HOST  		= "smart5.inria.fr";
-	public final static int PORT  			= 8000;
+	public final static String 	TRACKER_HOST  		= "localhost";
+	public final static int		TRACKER_PORT  		= 8000;
 	
 	/** Code for the transport */
 	public final static int ADDNODE  		= 0;

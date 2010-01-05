@@ -188,7 +188,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse{
 		if(Range.inside(hKey, getPredecessor().getId() + 1, getThisNode().getId())){
 			return cacheTable.get(hKey).getTtl() + "";
 		} else {
-			return forward(ISynapse.GETTTL + "," + hKey, findSuccessor(hKey));
+			return forward(ISynapse.SETTTL + "," + hKey, findSuccessor(hKey));
 		}
 	}
 

@@ -1,0 +1,51 @@
+export CURRENT_PATH=`pwd`
+
+echo "--------------------------------------"
+echo "|      generate jSynapse library     |"
+echo "--------------------------------------" 
+echo ""
+cd $SYNAPSE_HOME/jSynapse/trunk/bin
+echo "jar -cfv $SYNAPSE_HOME/jSynapse/trunk/dist/lib/jSynapse.jar $SYNAPSE_HOME/jSynapse/trunk/bin/*"
+sleep 2
+jar -cfv $SYNAPSE_HOME/jSynapse/trunk/dist/lib/jSynapse.jar *
+
+sleep 1
+echo ""
+echo "--------------------------------------"
+echo "|       deploy jSynapse library      |"
+echo "--------------------------------------"
+echo ""
+echo "cp $SYNAPSE_HOME/jSynapse/trunk/dist/lib/jSynapse.jar $SYNAPSE_HOME/myTransport/lib/"
+cp $SYNAPSE_HOME/jSynapse/trunk/dist/lib/jSynapse.jar $SYNAPSE_HOME/myTransport/lib/
+sleep 1
+echo "cp $SYNAPSE_HOME/jSynapse/trunk/dist/lib/jSynapse.jar $SYNAPSE_HOME/tracker/lib/"
+cp $SYNAPSE_HOME/jSynapse/trunk/dist/lib/jSynapse.jar $SYNAPSE_HOME/tracker/lib/
+
+sleep 1
+echo ""
+echo "--------------------------------------"
+echo "|      generate tracker library      |"
+echo "--------------------------------------"
+echo ""
+cd $SYNAPSE_HOME/tracker/bin
+echo "jar -cfv $SYNAPSE_HOME/tracker/dist/lib/tracker.jar $SYNAPSE_HOME/tracker/bin/*"
+sleep 2
+jar -cfv $SYNAPSE_HOME/tracker/dist/lib/tracker.jar *
+
+sleep 1
+echo ""
+echo "--------------------------------------"
+echo "|       deploy tracker library       |"
+echo "--------------------------------------"
+echo ""
+echo "cp $SYNAPSE_HOME/tracker/dist/lib/tracker.jar $SYNAPSE_HOME/myTransport/lib/"
+cp $SYNAPSE_HOME/tracker/dist/lib/tracker.jar $SYNAPSE_HOME/myTransport/lib/
+sleep 1
+echo "cp $SYNAPSE_HOME/tracker/dist/lib/tracker.jar $SYNAPSE_HOME/jSynapse/trunk/lib/"
+cp $SYNAPSE_HOME/tracker/dist/lib/tracker.jar $SYNAPSE_HOME/jSynapse/trunk/lib/
+
+sleep 1
+echo ""
+echo "done."
+
+cd $CURRENT_PATH
