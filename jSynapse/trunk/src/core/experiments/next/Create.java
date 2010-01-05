@@ -90,7 +90,13 @@ public class Create {
 					case 2 :
 						System.out.print("\nkey = ");
 						key = input.readLine();
-						System.out.println("found: " + overlay.get(key));
+						String found = "";
+						if(overlay instanceof Synapse){
+							found = ((Synapse)overlay).get(key, 3); // 3 = TTL
+						} else {
+							found = overlay.get(key);
+						}
+						System.out.println("found: " + found);
 						break;
 					case 3:
 						if(overlay instanceof Synapse){
