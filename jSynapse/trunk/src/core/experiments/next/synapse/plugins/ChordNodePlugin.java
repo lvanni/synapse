@@ -25,25 +25,11 @@ public class ChordNodePlugin extends ChordNode{
 		if(args[0].equals(overlayIntifier)){
 			int f = Integer.parseInt(args[1]);
 			switch(f){
-			case IChord.PUT :
-				// get back the clean key
-				String cleanKey = synapse.getCleanKey(args[2]+"|"+overlayIntifier);
-				if(cleanKey != null && !cleanKey.equals("null") && !cleanKey.equals("")){ // it's a synapse request
-//					System.out.println("PUT: clean key found: " + cleanKey + " \nsynapse routing begin...");
-					synapse.put(cleanKey, args[3]);
-				} else {
-//					System.out.println("PUT: unknown key, no synapse routing...");
-					super.doStuff(code);
-				}
-				break;
 			case IChord.GET :
-				// get back the clean key
-				cleanKey = synapse.getCleanKey(args[2]+"|"+overlayIntifier);
-				if(cleanKey != null && !cleanKey.equals("null") && !cleanKey.equals("")){ // it's a synapse request
-//					System.out.println("GET: clean key found: " + cleanKey + " \nsynapse routing begin...");
+				String cleanKey = synapse.getInCleanTable(args[2]+"|"+overlayIntifier);
+				if(cleanKey != null && !cleanKey.equals("null") && !cleanKey.equals("")){
 					result = synapse.get(cleanKey);
 				} else {
-//					System.out.println("GET: unknown key, no synapse routing...");
 					result = super.doStuff(code);
 				}
 				break;

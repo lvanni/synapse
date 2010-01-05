@@ -22,20 +22,20 @@ public class MyFoot extends Foot{
 		if(args[0].equals(OVERLAY_IDENTIFIER)){
 			int f = Integer.parseInt(args[1]);
 			switch(f){
-			case IChord.PUT :
-				// get back the clean key
-				String cleanKey = myTransport.getCleanKey(args[2]+"|"+OVERLAY_IDENTIFIER);
-				if(cleanKey != null && !cleanKey.equals("null") && !cleanKey.equals("")){ // it's a synapse request
-//					System.out.println("clean key found: " + cleanKey + " \nsynapse routing begin...");
-					myTransport.put(cleanKey, args[3]);
-				} else {
-//					System.out.println("unknown key, no synapse routing...");
-					super.doStuff(code);
-				}
-				break;
+//			case IChord.PUT :
+//				// get back the clean key
+//				String cleanKey = myTransport.getInCleanTable(args[2]+"|"+OVERLAY_IDENTIFIER);
+//				if(cleanKey != null && !cleanKey.equals("null") && !cleanKey.equals("")){ // it's a synapse request
+////					System.out.println("clean key found: " + cleanKey + " \nsynapse routing begin...");
+//					myTransport.put(cleanKey, args[3]);
+//				} else {
+////					System.out.println("unknown key, no synapse routing...");
+//					super.doStuff(code);
+//				}
+//				break;
 			case IChord.GET :
 				// get back the clean key
-				cleanKey = myTransport.getCleanKey(args[2]+"|"+OVERLAY_IDENTIFIER);
+				String cleanKey = myTransport.getInCleanTable(args[2]+"|"+OVERLAY_IDENTIFIER);
 				if(cleanKey != null && !cleanKey.equals("null") && !cleanKey.equals("")){ // it's a synapse request
 //					System.out.println("clean key found: " + cleanKey + " \nsynapse routing begin...");
 					result = myTransport.get(cleanKey);

@@ -26,7 +26,7 @@ public class ChordNodePlugin extends ChordNode{
 			switch(f){
 			case IChord.PUT :
 				// get back the clean key
-				String cleanKey = synapse.getCleanKey(args[2]+overlayIntifier);
+				String cleanKey = synapse.getInCleanTable(args[2]+overlayIntifier);
 				if(cleanKey != null && !cleanKey.equals("null") && !cleanKey.equals("")){ // it's a synapse request
 					String[] keys = cleanKey.split(":");
 					cleanKey = keys[1];
@@ -39,7 +39,7 @@ public class ChordNodePlugin extends ChordNode{
 				break;
 			case IChord.GET :
 				// get back the clean key
-				cleanKey = synapse.getCleanKey(args[2]+overlayIntifier);
+				cleanKey = synapse.getInCleanTable(args[2]+overlayIntifier);
 				if(cleanKey != null && !cleanKey.equals("null") && !cleanKey.equals("")){ // it's a synapse request
 					String[] keys = cleanKey.split(":");
 					cleanKey = keys[1];

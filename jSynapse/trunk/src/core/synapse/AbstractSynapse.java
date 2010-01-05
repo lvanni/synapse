@@ -11,7 +11,9 @@ import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import core.protocols.p2p.IOverlay;
 import core.protocols.p2p.Node;
@@ -41,11 +43,18 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 
 	/* just for the dev */
 	public static boolean debugMode = false;
+	
+	/** key table*/
+	private Map<Integer, String> keyTable;
+	
+	/** cache table */
+	private Map<Integer, List<String>> cacheTable;
 
 	// /////////////////////////////////////////// //
 	//                 CONSTRUCTOR                 //
 	// /////////////////////////////////////////// //
 	public AbstractSynapse(){}
+	
 	public AbstractSynapse(String ip, int port, String identifier) {
 		this.identifier = identifier;
 		this.h = new HashFunction(identifier);
@@ -58,6 +67,8 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 		} // TRANSPORT CHOICE
 		initialise(ip, id, transport.getPort());
 		networks = new ArrayList<IOverlay>();
+		keyTable = new HashMap<Integer, String>();
+		cacheTable = new HashMap<Integer, List<String>>();
 	}
 
 	// /////////////////////////////////////////// //
@@ -82,24 +93,37 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 	// /////////////////////////////////////////// //
 	//                     PUT                     //
 	// /////////////////////////////////////////// //
+	@Deprecated /* multiPut */
 	public void put(final String key, final String value){
 		for(final IOverlay o : networks){
 			new Thread(new Runnable() {
 				public void run() {
 					int hKey = keyToH(o.keyToH(key)+"|"+o.getIdentifier()); // h(key)|IDENT
-					put(hKey, key);     // SAVE THE CLEAN KEY
+					putInCleanTable(hKey, key);     // SAVE THE CLEAN KEY
 					o.put(key, value);  // MULTIPUT	
 				}
 			}).start();
 		}
 	}
 
-	public void put(int hKey, String value){
+	/* Clean table Put*/
+	public void putInCleanTable(int hKey, String value){
 		if(Range.inside(hKey, getPredecessor().getId() + 1, getThisNode().getId())){
-			table.put(hKey, value); // SAVE THE CLEAN KEY
-			//			System.out.println("New entry in the hash table...");
+			keyTable.put(hKey, value);
 		} else {
-			forward(IChord.PUT + "," + hKey + "," + value, closestPrecedingNode(hKey));
+			forward(ISynapse.PUTClean + "," + hKey + "," + value, closestPrecedingNode(hKey));
+		}
+	}
+	
+	/* Cache table Put*/
+	public void putInCacheTable(int hKey, String value){
+		if(Range.inside(hKey, getPredecessor().getId() + 1, getThisNode().getId())){
+			if(!cacheTable.containsKey(hKey)){
+				cacheTable.put(hKey, new ArrayList<String>());
+			}
+			cacheTable.get(hKey).add(value);
+		} else {
+			forward(ISynapse.PUTCache + "," + hKey + "," + value, closestPrecedingNode(hKey));
 		}
 	}
 
@@ -116,20 +140,19 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 			this.o = o;
 		}
 		public void run() {
-			int hKey = keyToH(o.keyToH(key)+"|"+o.getIdentifier()); // h(key)|IDENT
-			put(hKey, key);     // SAVE THE CLEAN KEY
+			// CLEAN TABLE
+			int hCleanKey = keyToH(o.keyToH(key)+"|"+o.getIdentifier()); // h(key)|IDENT
+			putInCleanTable(hCleanKey, key);
+			
+			// CACHE TABLE
+			int hChacheKey = keyToH(key);
+			putInCacheTable(hChacheKey, key);
+			
+			// RESULT
 			String res = o.get(key);
 			s.concatResult(res == null ? "null" : res);  // MULTIGET
 			nbResponse++;
 		}
-	}
-
-	public String getCleanKey(String key){
-		int hKey;
-		String message = "";
-		hKey = h.SHA1ToInt(key);
-		message = get(hKey);
-		return message;
 	}
 
 	public String get(String key){
@@ -139,7 +162,6 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 			new Thread(new Get(key, o, this)).start();
 		}
 		while(true){
-//			System.out.println("wait for responses");
 			if(nbResponse >= networks.size()){
 				break;
 			}
@@ -151,10 +173,13 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 		}
 		return result;
 	}
-
-	public String get(int hKey){
+	
+	/* Clean table Get*/
+	public String getInCleanTable(String key){
+		int hKey;
+		hKey = h.SHA1ToInt(key);
 		if(Range.inside(hKey, getPredecessor().getId() + 1, getThisNode().getId())){
-			return table.get(hKey);
+			return keyTable.get(hKey);
 		} else {
 			return forward(IChord.GET + "," + hKey, closestPrecedingNode(hKey));
 		}
@@ -196,17 +221,17 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 			case IChord.JOIN :
 				getObjectOnJoin(new Node(args[2], Integer.parseInt(args[3]), Integer.parseInt(args[4])));
 				break;
-			case IChord.PUT :
-				put(Integer.parseInt(args[2]), args[3]);
-				break;
-			case IChord.GET :
-				result =  get(Integer.parseInt(args[2]));
-				break;
 			case IChord.SETSUCC :
 				setSuccessor(new Node(args[2], Integer.parseInt(args[3]), Integer.parseInt(args[4])));
 				break;
 			case IChord.SETPRED :
 				setPredecessor(new Node(args[2], Integer.parseInt(args[3]), Integer.parseInt(args[4])));
+				break;
+			case PUTClean :
+				putInCleanTable(Integer.parseInt(args[2]), args[3]);
+				break;
+			case GETClean :
+				result =  getInCleanTable(args[2]);
 				break;
 			default: break;
 			}
