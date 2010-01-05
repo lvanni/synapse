@@ -24,10 +24,8 @@ public class MyFoot extends Foot{
 			switch(f){
 			case IChord.PUT :
 				// get back the clean key
-				String cleanKey = myTransport.getCleanKey(args[2]+OVERLAY_IDENTIFIER);
+				String cleanKey = myTransport.getCleanKey(args[2]+"|"+OVERLAY_IDENTIFIER);
 				if(cleanKey != null && !cleanKey.equals("null") && !cleanKey.equals("")){ // it's a synapse request
-					String[] keys = cleanKey.split(":");
-					cleanKey = keys[1];
 //					System.out.println("clean key found: " + cleanKey + " \nsynapse routing begin...");
 					myTransport.put(cleanKey, args[3]);
 				} else {
@@ -37,10 +35,8 @@ public class MyFoot extends Foot{
 				break;
 			case IChord.GET :
 				// get back the clean key
-				cleanKey = myTransport.getCleanKey(args[2]+OVERLAY_IDENTIFIER);
+				cleanKey = myTransport.getCleanKey(args[2]+"|"+OVERLAY_IDENTIFIER);
 				if(cleanKey != null && !cleanKey.equals("null") && !cleanKey.equals("")){ // it's a synapse request
-					String[] keys = cleanKey.split(":");
-					cleanKey = keys[1];
 //					System.out.println("clean key found: " + cleanKey + " \nsynapse routing begin...");
 					result = myTransport.get(cleanKey);
 				} else {

@@ -86,8 +86,8 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 		for(final IOverlay o : networks){
 			new Thread(new Runnable() {
 				public void run() {
-					int hKey = keyToH(o.keyToH(key)+o.getIdentifier()); // h(key)|IDENT
-					put(hKey, "[" + o.keyToH(key) + "|" + o.getIdentifier()+"]:"+key);     // SAVE THE CLEAN KEY
+					int hKey = keyToH(o.keyToH(key)+"|"+o.getIdentifier()); // h(key)|IDENT
+					put(hKey, key);     // SAVE THE CLEAN KEY
 					o.put(key, value);  // MULTIPUT	
 				}
 			}).start();
@@ -116,8 +116,8 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 			this.o = o;
 		}
 		public void run() {
-			int hKey = keyToH(o.keyToH(key)+o.getIdentifier()); // h(key)|IDENT
-			put(hKey, "[" + o.keyToH(key) + "|" + o.getIdentifier()+"]:"+key);     // SAVE THE CLEAN KEY
+			int hKey = keyToH(o.keyToH(key)+"|"+o.getIdentifier()); // h(key)|IDENT
+			put(hKey, key);     // SAVE THE CLEAN KEY
 			String res = o.get(key);
 			s.concatResult(res == null ? "null" : res);  // MULTIGET
 			nbResponse++;
