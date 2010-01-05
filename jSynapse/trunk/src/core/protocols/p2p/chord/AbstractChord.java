@@ -144,7 +144,7 @@ public abstract class AbstractChord implements IChord {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		System.exit(0);
+//		System.exit(0);
 	}
 
 	public void checkStable() {

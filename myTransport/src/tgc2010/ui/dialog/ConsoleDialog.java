@@ -27,13 +27,10 @@ public class ConsoleDialog extends Dialog{
 	private Shell shell;
 	private Display display;
 	private StyledText console;
-	private AbstractChord concert;
 
 	public ConsoleDialog(Shell parent, final AbstractChord concert) {
 		super(parent);
 		display = getParent().getDisplay();
-
-		this.concert = concert;
 
 		/* Init the shell */
 		shell = new Shell(getParent(), SWT.BORDER | SWT.CLOSE);
@@ -63,7 +60,7 @@ public class ConsoleDialog extends Dialog{
 		command.setBackground(black);
 		command.setForeground(green);
 		FormData commandTextFormData = new FormData();
-		commandTextFormData.width = 458;
+		commandTextFormData.width = 373;
 		commandTextFormData.top = new FormAttachment(console, 3);
 		commandTextFormData.left = new FormAttachment(0, 0);
 		command.setLayoutData(commandTextFormData);
@@ -107,25 +104,20 @@ public class ConsoleDialog extends Dialog{
 		okFormData.left = new FormAttachment(command, 5);
 		okButton.setLayoutData(okFormData);
 		shell.setDefaultButton(okButton);
-	}
-
-	public void checkConsole(){
-		new Thread(new Runnable() {
-			public void run() {
-				while(!shell.isDisposed()){
-					try {
-						shell.getDisplay().asyncExec(new Runnable() {
-							public void run() {
-								console.setText(concert.toString());
-							}
-						});
-						Thread.sleep(500);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
+		
+		// button "Refresh"
+		final Button refreshButton = new Button(shell, SWT.PUSH);
+		refreshButton.setText("Refresh");
+		refreshButton.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				console.setText(concert.toString());
 			}
-		}).start();
+		});
+		FormData refreshButtonFormData = new FormData();
+		refreshButtonFormData.width = 80;
+		refreshButtonFormData.top = new FormAttachment(console, 2);
+		refreshButtonFormData.left = new FormAttachment(okButton, 5);
+		refreshButton.setLayoutData(refreshButtonFormData);
 	}
 
 	public void start(){

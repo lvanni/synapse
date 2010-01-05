@@ -17,6 +17,8 @@ public class Tracker implements ITracker, IRequestHandler {
 	private Map<String, List<Node>> peerSet;
 
 	private ITransport transport;
+	
+	private List<Invitation> invitations = new ArrayList<Invitation>();
 
 	public Tracker() {
 		transport = new SocketImpl(TRACKER_PORT, 10, RequestHandler.class.getName(),
@@ -75,8 +77,21 @@ public class Tracker implements ITracker, IRequestHandler {
 		case REMOVENODE:
 			Node n = new Node(args[2], Integer.parseInt(args[3]), Integer
 					.parseInt(args[4]));
-			System.out.println("remove " + n);
 			peerSet.get(args[1]).remove(n);
+			break;
+		case JOIN:
+			System.out.println("receive a join");
+			result = "null";
+			Invitation toRemove = null;
+			for(Invitation i : invitations){
+				if(i.getAccessPass().equals(args[1])){
+					result = i.getNetworkID() + "," + getJoinEntry(i.getNetworkID());
+					toRemove = i;
+					break;
+				}
+			}
+			if(toRemove != null)
+				invitations.remove(toRemove);
 			break;
 		default:
 			break;
@@ -105,5 +120,13 @@ public class Tracker implements ITracker, IRequestHandler {
 
 	public void setTransport(ITransport transport) {
 		this.transport = transport;
+	}
+	
+	public synchronized void addInvitation(String networkID, String accessPass){
+		invitations.add(new Invitation(networkID, accessPass));
+	}
+
+	public List<Invitation> getInvitations() {
+		return invitations;
 	}
 }

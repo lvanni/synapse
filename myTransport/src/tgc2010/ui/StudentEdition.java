@@ -32,7 +32,7 @@ import core.experiments.tools.InfoConsole;
 import core.protocols.p2p.IOverlay;
 import core.protocols.p2p.Node;
 
-public class EnterpriseEdition {
+public class StudentEdition {
 
 	private final Shell shell;
 	private Display display;
@@ -44,18 +44,18 @@ public class EnterpriseEdition {
 	private List<Checkpoint> checkpointsList = new ArrayList<Checkpoint>();
 	private Label error;
 
-	public EnterpriseEdition(final Synapse synapse) {
+	public StudentEdition(final Synapse synapse) {
 		this.synapse = synapse;
 		display = Display.getDefault();
 		shell = new Shell(display);
 
 		// BACKGROUND
-		Image background = new Image(display, EnterpriseEdition.class
-				//				.getResourceAsStream("studentBack.png"));
-				.getResourceAsStream("enterpriseBack.png"));
+		Image background = new Image(display, StudentEdition.class
+								.getResourceAsStream("studentBack.png"));
+//				.getResourceAsStream("enterpriseBack.png"));
 
 		/* Init the shell */
-		shell.setText("MyTransport: Enterprise Edition");
+		shell.setText("MyTransport: Student Edition");
 		FormLayout layout = new FormLayout();
 		layout.marginHeight = 5;
 		layout.marginWidth = 5;
@@ -222,7 +222,7 @@ public class EnterpriseEdition {
 		checkFormData.top = new FormAttachment(checkpoints, 10);
 		checkFormData.left = new FormAttachment(0, 0);
 		check.setLayoutData(checkFormData);
-
+		
 		Label time = new Label(shell, SWT.NONE);
 		time.setBackgroundImage(background);
 		time.setText("Time: ");
@@ -275,7 +275,7 @@ public class EnterpriseEdition {
 		locationTextFormData.top = new FormAttachment(check, 10);
 		locationTextFormData.left = new FormAttachment(location, 0);
 		locationText.setLayoutData(locationTextFormData);
-
+		
 		final Button addCheckPoint = new Button(shell, SWT.PUSH);
 		// addCheckPoint.setBackgroundImage(background);
 		addCheckPoint.setText("+");
@@ -388,9 +388,9 @@ public class EnterpriseEdition {
 		result.setBackgroundImage(background);
 		result.setEditable(false);
 		result.setForeground(white);
-		Image font = new Image(display, EnterpriseEdition.class
-				//				.getResourceAsStream("studentRes.png"));
-				.getResourceAsStream("enterpriseRes.png"));
+		Image font = new Image(display, StudentEdition.class
+								.getResourceAsStream("studentRes.png"));
+//				.getResourceAsStream("enterpriseRes.png"));
 		result.setBackgroundImage(font);
 		FormData resultTextFormData = new FormData();
 		resultTextFormData.width = 279;
@@ -398,7 +398,7 @@ public class EnterpriseEdition {
 		resultTextFormData.top = new FormAttachment(0, 0);
 		resultTextFormData.left = new FormAttachment(0, 400);
 		result.setLayoutData(resultTextFormData);
-
+		
 		// ERROR
 		error = new Label(shell, SWT.NONE);
 		error.setBackgroundImage(background);
@@ -440,7 +440,7 @@ public class EnterpriseEdition {
 					boolean hasFound = false;
 					for(int i = 0 ; i<checkpointsList.size() ; i++){
 						for(int j = i+1 ; j<checkpointsList.size() ; j++){
-							String key = checkpointsList.get(i).formatTokey() + checkpointsList.get(j).formatTokey();
+							String key = header  + checkpointsList.get(i).formatTokey() + checkpointsList.get(j).formatTokey();
 							if (checkPublish.getSelection()) {
 								String value = checkpointsList.get(i) + "+" + checkpointsList.get(j) + "+" + contactText.getText() + "+" + informationsText.getText();
 								synapse.put(key,value);
@@ -529,15 +529,15 @@ public class EnterpriseEdition {
 		clearFormData.top = new FormAttachment(error, 5);
 		clearFormData.left = new FormAttachment(okButton, 5);
 		clearButton.setLayoutData(clearFormData);
-
+		
 		// SELECTION LISTENER
 		Listener sendListener = new Listener() {
 			public void handleEvent(Event event) {
 				okButton.setEnabled((checkAll.getSelection() || 
-						(!dayText.getText().equals("") &&
-								!mounthText.getText().equals("") &&
-								!yearText.getText().equals(""))) &&
-								checkpointsList.size() >= 2);
+								(!dayText.getText().equals("") &&
+										!mounthText.getText().equals("") &&
+										!yearText.getText().equals(""))) &&
+										checkpointsList.size() >= 2);
 			}
 		};
 		dayText.addListener(SWT.KeyUp, sendListener);
@@ -599,7 +599,47 @@ public class EnterpriseEdition {
 		}
 
 		public void handleEvent(Event arg0) {
-			new JoinDialog(shell, synapse);
+			 new JoinDialog(shell, synapse);
+			//			IOverlay overlay = null;
+			//			String ip = synapse.getThisNode().getIp();
+			//			String trackerResponse = "null";
+			//			if (item.getText().equals("student")) {
+			//				overlay = new ChordNodePlugin(ip, 0, synapse, "student");
+			//				trackerResponse = synapse.getTransport().sendRequest(
+			//						ITracker.GETCONNECTION + "," + "student",
+			//						new Node(ITracker.TRACKER_HOST, 0,
+			//								ITracker.TRACKER_PORT));
+			//			} else {
+			//				overlay = new ChordNodePlugin(ip, 0, synapse, "enterprise");
+			//				trackerResponse = synapse.getTransport().sendRequest(
+			//						ITracker.GETCONNECTION + "," + "enterprise",
+			//						new Node(ITracker.TRACKER_HOST, 0,
+			//								ITracker.TRACKER_PORT));
+			//			}
+			//			synapse.getNetworks().add(overlay);
+			//
+			//			// CONNECT ON TRACKER
+			//			synapse.getTransport().sendRequest(
+			//					ITracker.ADDNODE + "," + overlay.getIdentifier() + ","
+			//					+ overlay.getThisNode(),
+			//					new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
+			//			if (!trackerResponse.equals("null")) {
+			//				Node n = new Node(trackerResponse);
+			//				System.out.println("join to " + trackerResponse);
+			//				overlay.join(n.getIp(), n.getPort());
+			//			}
+			//			System.out.println("join ok!");
+			//
+			//			// Set GUI Text
+			//			checkpoints.setForeground(new Color(null, 0, 180, 0));
+			//			String text = "Services enabled: ";
+			//			for (IOverlay o : synapse.getNetworks()) {
+			//				text += o.getIdentifier() + "["
+			//				+ ((AbstractChord) o).getThisNode().getId() + ","
+			//				+ ((AbstractChord) o).getPredecessor().getId() + "], ";
+			//			}
+			//			checkpoints.setText(text);
+//			System.out.println("do nothings...");
 		}
 	}
 
@@ -630,7 +670,7 @@ public class EnterpriseEdition {
 			System.out.print("MyTransport's Launching, please wait... ");
 			String ip = InfoConsole.getIp();
 			Synapse synapse = new Synapse(ip, 0);		
-			ChordNodePlugin overlay = new ChordNodePlugin(ip, 0, synapse, "enterprise");
+			ChordNodePlugin overlay = new ChordNodePlugin(ip, 0, synapse, "student");
 
 			/* TRACKER */
 			// control network
@@ -650,7 +690,7 @@ public class EnterpriseEdition {
 
 			// overlay network
 			trackerResponse = synapse.getTransport().sendRequest(
-					ITracker.GETCONNECTION + "," + "enterprise",
+					ITracker.GETCONNECTION + "," + "student",
 					new Node(ITracker.TRACKER_HOST, 0,
 							ITracker.TRACKER_PORT));
 			synapse.getNetworks().add(overlay);
@@ -666,7 +706,7 @@ public class EnterpriseEdition {
 			System.out.println("ok!");
 			Thread.sleep(300);
 
-			EnterpriseEdition myTransportGUI = new EnterpriseEdition(synapse);
+			StudentEdition myTransportGUI = new StudentEdition(synapse);
 			myTransportGUI.start();
 		} catch (Exception e) {
 			e.printStackTrace();

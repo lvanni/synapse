@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Set;
 
+import core.Invitation;
 import core.Tracker;
 import core.protocols.p2p.Node;
 
@@ -21,6 +22,7 @@ public class LaunchTracker {
 				try {
 					System.out.println("\n\n1) print status");
 					System.out.println("2) clear history");
+					System.out.println("3) add invitation");
 					System.out.println("0) exit");
 					System.out.print("---> ");
 					int chx = Integer.parseInt(input.readLine().trim());
@@ -37,9 +39,21 @@ public class LaunchTracker {
 								System.out.println("\t" + n);
 							}
 						}
+						System.out.println("\nInvitations:");
+						for(Invitation i : tracker.getInvitations()){
+							System.out.println("\t. networID: " + i.getNetworkID());
+							System.out.println("\t. access pass: " + i.getAccessPass() + "\n");
+						}
 						break;
 					case 2:
 						tracker.getPeerSet().clear();
+						break;
+					case 3:
+						System.out.print("networkID: ");
+						String networkID = input.readLine();
+						System.out.print("access pass: ");
+						String accessPass = input.readLine();
+						tracker.addInvitation(networkID, accessPass);
 						break;
 					default:
 						break;
