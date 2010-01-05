@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 
 import core.experiments.next.nodes.ChordNode;
 import core.experiments.next.synapse.Synapse;
+import core.experiments.next.synapse.plugins.ChordNodePlugin;
 import core.experiments.tools.ITracker;
 import core.experiments.tools.InfoConsole;
 import core.protocols.p2p.IOverlay;
@@ -17,8 +18,6 @@ public class Create {
 	private static enum NodeType{CHORD, CHORDPLUGIN, SYNAPSE}
 
 	public static IOverlay getNode(String protocol, String id, NodeType t, Synapse s){
-
-		// BUILD NODE
 		IOverlay overlay = null;
 		String ip = InfoConsole.getIp();
 		if(protocol.equals("chord")){
@@ -28,14 +27,14 @@ public class Create {
 				node = new ChordNode(ip, 0, id);
 				break;
 			case CHORDPLUGIN:
-				//				node = new ChordNodePlugin(ip, 0, s, id);
+				node = new ChordNodePlugin(ip, 0, s, id);
 				break;
 			case SYNAPSE:
-				//				node = new Synapse(ip, 0, id);
+				node = new Synapse(ip, 0);
 				break;
 			}
 			new Thread((Runnable) node).start();
-			do{} while(node.getTransport() == null);
+			Thread.yield();
 			overlay = node;
 		}
 
@@ -47,7 +46,6 @@ public class Create {
 			Node n = new Node(trackerResponse);
 			overlay.join(n.getIp(), n.getPort());
 		}
-
 		return overlay;
 	}
 
@@ -71,14 +69,12 @@ public class Create {
 
 			// STAND-BY
 			BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-			System.out.println("the node is successfully created!");
 			while(true){
 				System.out.println("1) Publish");
 				System.out.println("2) Search");
 				System.out.println("3) Quit");
 				System.out.print("---> ");
 				try{
-					System.out.println("\n" + overlay + "\n");
 					int chx = Integer.parseInt(input.readLine().trim());
 					String key;
 					switch(chx){
@@ -97,6 +93,13 @@ public class Create {
 						System.out.println("found: " + overlay.get(key));
 						break;
 					case 3:
+						if(overlay instanceof Synapse){
+							for(IOverlay o : ((Synapse) overlay).getNetworks()){
+								overlay.getTransport().forward(ITracker.REMOVENODE + "," + o.getIdentifier() + "," + o.getThisNode(), new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
+							}
+							
+						}
+						overlay.getTransport().forward(ITracker.REMOVENODE + "," + overlay.getIdentifier() + "," + overlay.getThisNode(), new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 						overlay.kill();
 					default : break;
 					}
@@ -109,7 +112,7 @@ public class Create {
 		} catch(ArrayIndexOutOfBoundsException e){
 			System.out.println("invalid parameters!\n" +
 					"=> Create node [chord|can] <IDNetwork>\n" +
-			"=> Create synapse (-a [chord|can] <IDNetwork>)+");
+					"=> Create synapse (-a [chord|can] <IDNetwork>)+");
 		}
 	}
 }

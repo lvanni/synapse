@@ -111,7 +111,6 @@ public class ChordNode extends AbstractChord implements Runnable{
 	 * For the transport protocol
 	 */
 	public String doStuff(String code){
-		System.out.println("doStuff: " + code);
 		if(debugMode){
 			System.out.println("\n** DEBUG: doStuff\n*\tcode: " + code);
 		}

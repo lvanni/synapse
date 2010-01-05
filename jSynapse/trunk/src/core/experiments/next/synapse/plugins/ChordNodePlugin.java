@@ -20,7 +20,6 @@ public class ChordNodePlugin extends ChordNode{
 	}
 
 	public String doStuff(String code){
-		System.out.println("\tdoStuff: " + code);
 		String[] args = code.split(",");
 		String result = "";
 		if(args[0].equals(overlayIntifier)){

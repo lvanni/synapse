@@ -133,7 +133,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 	}
 
 	public String get(String key){
-		result = ""; // init result
+		result = "";
 		nbResponse = 0;
 		for(IOverlay o : networks){
 			new Thread(new Get(key, o, this)).start();
