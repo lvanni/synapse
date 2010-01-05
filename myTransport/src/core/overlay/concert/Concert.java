@@ -15,7 +15,7 @@ import core.protocols.p2p.Node;
 import core.protocols.p2p.chord.AbstractChord;
 import core.protocols.p2p.chord.IChord;
 import core.protocols.transport.ITransport;
-import core.protocols.transport.socket.SocketImpl;
+import core.protocols.transport.socket.SimpleSocketImpl;
 import core.tools.HashFunction;
 import core.tools.Range;
 
@@ -47,7 +47,7 @@ public class Concert extends AbstractChord implements Runnable{
 		this.h = new HashFunction(OVERLAY_IDENTIFIER);
 		int id = h.SHA1ToInt(ip+port+time);
 		try {
-			transport = new SocketImpl(port);
+			transport = new SimpleSocketImpl(port);
 		} catch (IOException e) {
 			System.out.println("port " + port + " already in use: exit(1)");
 			System.exit(1);
@@ -60,7 +60,7 @@ public class Concert extends AbstractChord implements Runnable{
 	// /////////////////////////////////////////// //
 	public String forward(String message, Node destination){
 		String res = "";
-		res = transport.forward(getIdentifier() + "," + message, destination);
+		res = transport.sendRequest(getIdentifier() + "," + message, destination);
 		if(res == null || res.equals(""))
 			res = getThisNode().toString(); // <================== A REVOIR
 		return res;		
@@ -109,7 +109,7 @@ public class Concert extends AbstractChord implements Runnable{
 	/**
 	 * For the transport protocol
 	 */
-	public String doStuff(String code){
+	public String handleRequest(String code){
 		if(debugMode){
 			System.out.println("\n** DEBUG: doStuff\n*\tcode: " + code);
 		}
@@ -166,7 +166,7 @@ public class Concert extends AbstractChord implements Runnable{
 		BufferedReader pin = null;
 		PrintWriter pout = null;
 
-		serverSocket = ((SocketImpl)transport).getServerSocket();
+		serverSocket = ((SimpleSocketImpl)transport).getServerSocket();
 		Socket soc = null;
 		checkStable(); // LAUNCHING CHORD STABILIZATION
 		ACCEPT:
@@ -180,7 +180,7 @@ public class Concert extends AbstractChord implements Runnable{
 						String message = pin.readLine(); // receive a message
 						String response = "";
 						if(message != null)
-							response = this.doStuff(message);
+							response = this.handleRequest(message);
 						pout.println(response);// sending a response <IP>,<ID>,<Port>
 					}
 				} catch (IOException e) {

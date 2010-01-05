@@ -379,16 +379,16 @@ public class MyTransportSWTMaemo {
 			String trackerResponse = "null";
 			if(item.getText().equals("Concert")){
 				overlay = new MyConcert(ip, 0, myTransport);
-				trackerResponse = myTransport.getTransport().forward(ITracker.GETCONNECTION + "," + Concert.OVERLAY_IDENTIFIER, new Node(TRACKER_HOST, 0, TRACKER_PORT));
+				trackerResponse = myTransport.getTransport().sendRequest(ITracker.GETCONNECTION + "," + Concert.OVERLAY_IDENTIFIER, new Node(TRACKER_HOST, 0, TRACKER_PORT));
 			} else {
 				overlay = new MyFoot(ip, 0, myTransport);
-				trackerResponse = myTransport.getTransport().forward(ITracker.GETCONNECTION + "," + Foot.OVERLAY_IDENTIFIER, new Node(TRACKER_HOST, 0, TRACKER_PORT));
+				trackerResponse = myTransport.getTransport().sendRequest(ITracker.GETCONNECTION + "," + Foot.OVERLAY_IDENTIFIER, new Node(TRACKER_HOST, 0, TRACKER_PORT));
 			}
 			new Thread((Runnable) overlay).start();
 			Thread.yield();
 			myTransport.getNetworks().add(overlay);
 			// CONNECT ON TRACKER
-			myTransport.getTransport().forward(ITracker.ADDNODE + "," + overlay.getIdentifier() + "," + overlay.getThisNode(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
+			myTransport.getTransport().sendRequest(ITracker.ADDNODE + "," + overlay.getIdentifier() + "," + overlay.getThisNode(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
 			if(!trackerResponse.equals("null")) {
 				Node n = new Node(trackerResponse);
 				System.out.println("join to " + trackerResponse);
@@ -413,9 +413,9 @@ public class MyTransportSWTMaemo {
 		}
 		display.dispose();
 		for(IOverlay o : myTransport.getNetworks()){
-			myTransport.getTransport().forward(ITracker.REMOVENODE + "," + o.getIdentifier() + "," + o.getThisNode(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
+			myTransport.getTransport().sendRequest(ITracker.REMOVENODE + "," + o.getIdentifier() + "," + o.getThisNode(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
 		}
-		myTransport.getTransport().forward(ITracker.REMOVENODE + "," + myTransport.getIdentifier() + "," + myTransport.getThisNode(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
+		myTransport.getTransport().sendRequest(ITracker.REMOVENODE + "," + myTransport.getIdentifier() + "," + myTransport.getThisNode(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
 		myTransport.kill();
 	}
 
@@ -425,8 +425,8 @@ public class MyTransportSWTMaemo {
 			System.out.print("MyTransport's Launching, please wait... ");
 			String ip = InfoConsole.getIp();
 			MyTransport myTransport = new MyTransport(ip, 0);
-			new Thread(myTransport).start();
-			Thread.yield();
+//			new Thread(myTransport).start();
+//			Thread.yield();
 
 			// IF ARGS
 			if(args.length > 1 && args[1].equals("-j")){
@@ -435,8 +435,8 @@ public class MyTransportSWTMaemo {
 				myTransport.join(hostToJoin, portToJoin);
 			} else {
 				// CONNECT ON TRACKER
-				String trackerResponse = myTransport.getTransport().forward(ITracker.GETCONNECTION + "," + myTransport.getIdentifier(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
-				myTransport.getTransport().forward(ITracker.ADDNODE + "," + myTransport.getIdentifier() + "," + myTransport.getThisNode(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
+				String trackerResponse = myTransport.getTransport().sendRequest(ITracker.GETCONNECTION + "," + myTransport.getIdentifier(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
+				myTransport.getTransport().sendRequest(ITracker.ADDNODE + "," + myTransport.getIdentifier() + "," + myTransport.getThisNode(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
 				if(!trackerResponse.equals("null")) {
 					Node n = new Node(trackerResponse);
 					myTransport.join(n.getIp(), n.getPort());

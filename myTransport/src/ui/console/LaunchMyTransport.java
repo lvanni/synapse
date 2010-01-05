@@ -19,10 +19,10 @@ public class LaunchMyTransport {
 			System.out.print("MyTransport's Launching, please wait... ");
 			ip = InfoConsole.getIp();
 			MyTransport myTransport = new MyTransport(ip, Integer.parseInt(args[0]));
-			new Thread(myTransport).start();
-			do{
-				Thread.sleep(1000);
-			} while(myTransport.getTransport() == null);
+//			new Thread(myTransport).start();
+//			do{
+//				Thread.sleep(1000);
+//			} while(myTransport.getTransport() == null);
 
 			// IF ARGS
 			if(args.length > 1 && args[1].equals("-j")){

@@ -16,7 +16,7 @@ import core.experiments.networks2010.synapse.plugins.ChordNodePlugin;
 import core.experiments.tools.InfoConsole;
 import core.protocols.p2p.Node;
 import core.protocols.transport.ITransport;
-import core.protocols.transport.socket.SocketImpl;
+import core.protocols.transport.socket.SimpleSocketImpl;
 
 //public class CreateSynapse implements Runnable{
 //
@@ -119,8 +119,8 @@ public class CreateSynapse {
 
 			// BUILD SYNAPSE
 			Synapse synapse = new Synapse(InfoConsole.getIp(), Integer.parseInt(args[0]));
-			new Thread(synapse).start();
-			Thread.yield();
+//			new Thread(synapse).start();
+//			Thread.yield();
 			if(join){
 				synapse.join(hostToJoin, portToJoin);
 			}
@@ -134,8 +134,8 @@ public class CreateSynapse {
 			for(NewNode n : l){
 				ChordNodePlugin plugin = null;
 				if(n.getPortToJoin() != 0){ // IF JOIN
-					SocketImpl s = new SocketImpl();
-					String identifier = s.forward("getIdentifier", new Node(n.getHostToJoin(),  n.getPortToJoin()));
+					SimpleSocketImpl s = new SimpleSocketImpl();
+					String identifier = s.sendRequest("getIdentifier", new Node(n.getHostToJoin(),  n.getPortToJoin()));
 					plugin = new ChordNodePlugin(InfoConsole.getIp(), n.getPort(), synapse, identifier);
 					new Thread(plugin).start();
 					Thread.yield();

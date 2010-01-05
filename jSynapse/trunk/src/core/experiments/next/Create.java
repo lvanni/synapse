@@ -33,15 +33,15 @@ public class Create {
 				node = new Synapse(ip, 0);
 				break;
 			}
-			new Thread((Runnable) node).start();
+//			new Thread((Runnable) node).start();
 			Thread.yield();
 			overlay = node;
 		}
 
 		// CONNECT ON TRACKER
 		Node tracker = new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT);
-		String trackerResponse = overlay.getTransport().forward(ITracker.GETCONNECTION + "," + overlay.getIdentifier(), tracker);
-		overlay.getTransport().forward(ITracker.ADDNODE + "," + overlay.getIdentifier() + "," + overlay.getThisNode(), tracker);
+		String trackerResponse = overlay.getTransport().sendRequest(ITracker.GETCONNECTION + "," + overlay.getIdentifier(), tracker);
+		overlay.getTransport().sendRequest(ITracker.ADDNODE + "," + overlay.getIdentifier() + "," + overlay.getThisNode(), tracker);
 		if(!trackerResponse.equals("null")) {
 			Node n = new Node(trackerResponse);
 			overlay.join(n.getIp(), n.getPort());
@@ -101,11 +101,11 @@ public class Create {
 					case 3:
 						if(overlay instanceof Synapse){
 							for(IOverlay o : ((Synapse) overlay).getNetworks()){
-								overlay.getTransport().forward(ITracker.REMOVENODE + "," + o.getIdentifier() + "," + o.getThisNode(), new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
+								overlay.getTransport().sendRequest(ITracker.REMOVENODE + "," + o.getIdentifier() + "," + o.getThisNode(), new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 							}
 							
 						}
-						overlay.getTransport().forward(ITracker.REMOVENODE + "," + overlay.getIdentifier() + "," + overlay.getThisNode(), new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
+						overlay.getTransport().sendRequest(ITracker.REMOVENODE + "," + overlay.getIdentifier() + "," + overlay.getThisNode(), new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 						overlay.kill();
 					default : break;
 					}

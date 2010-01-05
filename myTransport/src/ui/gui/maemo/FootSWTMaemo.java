@@ -371,7 +371,7 @@ public class FootSWTMaemo {
 				display.sleep();
 		}
 		display.dispose();
-		foot.getTransport().forward(ITracker.REMOVENODE + "," + foot.getIdentifier() + "," + foot.getThisNode(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
+		foot.getTransport().sendRequest(ITracker.REMOVENODE + "," + foot.getIdentifier() + "," + foot.getThisNode(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
 		foot.kill();
 	}
 
@@ -394,8 +394,8 @@ public class FootSWTMaemo {
 			} else {
 
 				// CONNECT ON TRACKER
-				String trackerResponse = foot.getTransport().forward(ITracker.GETCONNECTION + "," + foot.getIdentifier(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
-				foot.getTransport().forward(ITracker.ADDNODE + "," + foot.getIdentifier() + "," + foot.getThisNode(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
+				String trackerResponse = foot.getTransport().sendRequest(ITracker.GETCONNECTION + "," + foot.getIdentifier(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
+				foot.getTransport().sendRequest(ITracker.ADDNODE + "," + foot.getIdentifier() + "," + foot.getThisNode(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
 				if(!trackerResponse.equals("null")) {
 					Node n = new Node(trackerResponse);
 					foot.join(n.getIp(), n.getPort());

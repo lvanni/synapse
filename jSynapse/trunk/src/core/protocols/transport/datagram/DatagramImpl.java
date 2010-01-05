@@ -4,7 +4,7 @@ import core.protocols.p2p.Node;
 import core.protocols.transport.ITransport;
 
 public class DatagramImpl implements ITransport {
-	public String forward(String message, Node destination) {
+	public String sendRequest(String message, Node destination) {
 		// TODO Auto-generated method stub
 		return null;
 	}

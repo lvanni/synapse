@@ -151,7 +151,6 @@ public abstract class AbstractChord implements IChord {
 		new Thread(new Runnable() {
 			public void run() {
 				while (alive) {
-//					System.out.println("*************");
 					try {
 						stabilize();
 						fixFingersTable();

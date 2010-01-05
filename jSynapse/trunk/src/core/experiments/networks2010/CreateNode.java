@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import core.experiments.networks2010.nodes.ChordNode;
 import core.experiments.tools.InfoConsole;
 import core.protocols.p2p.Node;
-import core.protocols.transport.socket.SocketImpl;
+import core.protocols.transport.socket.SimpleSocketImpl;
 
 //public class CreateNode implements Runnable{
 
@@ -103,8 +103,8 @@ public class CreateNode {
 			// BUILD NODE
 			ChordNode node = null;
 			if(join){
-				SocketImpl s = new SocketImpl();
-				String identifier = s.forward("getIdentifier", new Node(hostToJoin, portToJoin));
+				SimpleSocketImpl s = new SimpleSocketImpl();
+				String identifier = s.sendRequest("getIdentifier", new Node(hostToJoin, portToJoin));
 				node = new ChordNode(InfoConsole.getIp(), Integer.parseInt(args[0]), identifier);
 				new Thread(node).start();
 				Thread.yield();

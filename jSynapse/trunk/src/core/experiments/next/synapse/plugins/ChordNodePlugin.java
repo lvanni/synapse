@@ -19,7 +19,7 @@ public class ChordNodePlugin extends ChordNode{
 		this.synapse = synapse;
 	}
 
-	public String doStuff(String code){
+	public String handleRequest(String code){
 		String[] args = code.split(",");
 		String result = "";
 		if(args[0].equals(overlayIntifier)){
@@ -30,15 +30,15 @@ public class ChordNodePlugin extends ChordNode{
 				if(cleanKey != null && !cleanKey.equals("null") && !cleanKey.equals("")){
 					result = synapse.get(cleanKey);
 				} else {
-					result = super.doStuff(code);
+					result = super.handleRequest(code);
 				}
 				break;
 			default:
-				result = super.doStuff(code);
+				result = super.handleRequest(code);
 				break;
 			}
 		} else {
-			result = super.doStuff(code);
+			result = super.handleRequest(code);
 		}
 		return result;
 	}

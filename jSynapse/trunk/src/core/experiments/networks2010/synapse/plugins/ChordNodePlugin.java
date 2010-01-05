@@ -18,7 +18,7 @@ public class ChordNodePlugin extends ChordNode{
 		this.synapse = synapse;
 	}
 
-	public String doStuff(String code){
+	public String handleRequest(String code){
 		String[] args = code.split(",");
 		String result = "";
 		if(args[0].equals(overlayIntifier)){
@@ -34,7 +34,7 @@ public class ChordNodePlugin extends ChordNode{
 					synapse.put(cleanKey, args[3]);
 				} else {
 //					System.out.println("PUT: unknown key, no synapse routing...");
-					super.doStuff(code);
+					super.handleRequest(code);
 				}
 				break;
 			case IChord.GET :
@@ -47,15 +47,15 @@ public class ChordNodePlugin extends ChordNode{
 					result = synapse.get(cleanKey);
 				} else {
 //					System.out.println("GET: unknown key, no synapse routing...");
-					result = super.doStuff(code);
+					result = super.handleRequest(code);
 				}
 				break;
 			default:
-				result = super.doStuff(code);
+				result = super.handleRequest(code);
 				break;
 			}
 		} else {
-			result = super.doStuff(code);
+			result = super.handleRequest(code);
 		}
 		return result;
 	}

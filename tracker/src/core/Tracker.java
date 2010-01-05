@@ -1,36 +1,26 @@
 package core;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import core.protocols.p2p.Node;
+import core.protocols.transport.IRequestHandler;
 import core.protocols.transport.ITransport;
-import core.protocols.transport.socket.SocketImpl;
+import core.protocols.transport.socket.request.RequestHandler;
+import core.protocols.transport.socket.server.SocketImpl;
 
-public class Tracker implements Runnable{
-
-	/** Code for the transport*/
-	public final static int ADDNODE  		= 0;
-	public final static int REMOVENODE 		= 1;
-	public final static int GETCONNECTION  	= 2;
+public class Tracker implements ITracker, IRequestHandler{
 
 	/** peerSet<networkID, List<Node>>*/
 	private Map<String, List<Node>> peerSet;
 
 	private ITransport transport;
 
-	public Tracker(ITransport transport){
-		this.transport = transport;
+	public Tracker(){
+		transport = new SocketImpl(PORT, 10, RequestHandler.class.getName(), 10, 1, 10, this);
+		((SocketImpl) transport).launchServer();
 		peerSet = new HashMap<String, List<Node>>();
 	}
 
@@ -65,13 +55,10 @@ public class Tracker implements Runnable{
 	//                  TRANSPORT                  //
 	// /////////////////////////////////////////// //
 	public String forward(String message, Node destination){
-		return transport.forward(message, destination);
+		return transport.sendRequest(message, destination);
 	}
-
-	/**
-	 * For the transport protocol
-	 */
-	public String doStuff(String code){
+	
+	public String handleRequest(String code) {
 		String[] args = code.split(",");
 		String result = "";
 			int f = Integer.parseInt(args[0]);
@@ -92,35 +79,10 @@ public class Tracker implements Runnable{
 		return result;
 	}
 
-	// /////////////////////////////////////////// //
-	//            IMPLEMENTS RUNNABLE              //
-	// /////////////////////////////////////////// //
-	public void run() {
-		ServerSocket serverSocket = null;
-		BufferedReader pin = null;
-		PrintWriter pout = null;
-		serverSocket = ((SocketImpl)transport).getServerSocket();
-		Socket soc = null;
-		ACCEPT:
-			while(true){
-				try {
-					if((soc = serverSocket.accept()) != null){
-						pin  = new BufferedReader(new InputStreamReader(soc.getInputStream()));
-						pout = new PrintWriter(new BufferedWriter(
-								new OutputStreamWriter(soc.getOutputStream())),
-								true);
-						String message = pin.readLine(); // receive a message
-						String response = "";
-						if(message != null)
-							response = this.doStuff(message);
-						pout.println(response);// sending a response <IP>,<ID>,<Port>
-					}
-				} catch (IOException e) {
-					continue ACCEPT;
-				}
-			}
+	public void kill() {
+		System.err.println("kill request do nothing...");
 	}
-
+	
 	// //////////////////////////// //
 	//      GETTER AND SETTER       //
 	// //////////////////////////// //
@@ -139,5 +101,4 @@ public class Tracker implements Runnable{
 	public void setTransport(ITransport transport) {
 		this.transport = transport;
 	}
-
 }

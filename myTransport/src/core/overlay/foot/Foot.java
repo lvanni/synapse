@@ -3,7 +3,7 @@ package core.overlay.foot;
 import java.io.IOException;
 
 import core.overlay.concert.Concert;
-import core.protocols.transport.socket.SocketImpl;
+import core.protocols.transport.socket.SimpleSocketImpl;
 import core.tools.HashFunction;
 
 public class Foot extends Concert implements Runnable{
@@ -17,7 +17,7 @@ public class Foot extends Concert implements Runnable{
 		this.h = new HashFunction(OVERLAY_IDENTIFIER);
 		int id = h.SHA1ToInt(ip+port+time);
 		try {
-			transport = new SocketImpl(port);
+			transport = new SimpleSocketImpl(port);
 		} catch (IOException e) {
 			System.out.println("port " + port + " already in use: exit(1)");
 			System.exit(1);

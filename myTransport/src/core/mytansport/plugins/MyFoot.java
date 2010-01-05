@@ -13,7 +13,7 @@ public class MyFoot extends Foot{
 		this.myTransport = myTransport;
 	}
 
-	public String doStuff(String code){
+	public String handleRequest(String code){
 		if(debugMode){
 			System.out.println("\n** DEBUG: doStuff\n*\tcode: " + code);
 		}
@@ -41,11 +41,11 @@ public class MyFoot extends Foot{
 					result = myTransport.get(cleanKey);
 				} else {
 //					System.out.println("unknown key, no synapse routing...");
-					result = super.doStuff(code);
+					result = super.handleRequest(code);
 				}
 				break;
 			default: 
-				result = super.doStuff(code);
+				result = super.handleRequest(code);
 				break;
 			}
 		} else {

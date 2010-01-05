@@ -1,13 +1,5 @@
 package core.synapse;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,11 +12,12 @@ import core.protocols.p2p.Node;
 import core.protocols.p2p.chord.AbstractChord;
 import core.protocols.p2p.chord.IChord;
 import core.protocols.transport.ITransport;
-import core.protocols.transport.socket.SocketImpl;
+import core.protocols.transport.socket.request.RequestHandler;
+import core.protocols.transport.socket.server.SocketImpl;
 import core.tools.HashFunction;
 import core.tools.Range;
 
-public abstract class AbstractSynapse extends AbstractChord implements ISynapse, Runnable{
+public abstract class AbstractSynapse extends AbstractChord implements ISynapse{
 
 	/** Collection of networks*/
 	protected List<IOverlay> networks;
@@ -56,16 +49,14 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 		this.identifier = identifier;
 		this.h = new HashFunction(identifier);
 		int id = h.SHA1ToInt(ip+port+time);
-		try {
-			this.transport = new SocketImpl(port);
-		} catch (IOException e) {
-			System.out.println("port already in use: exit(1)");
-			System.exit(1);
-		} // TRANSPORT CHOICE
-		initialise(ip, id, transport.getPort());
 		networks = new ArrayList<IOverlay>();
 		cleanKeyTable = new HashMap<Integer, String>();
 		cacheTable = new HashMap<Integer, Cache>();
+		
+		this.transport = new SocketImpl(port, 10, RequestHandler.class.getName(), 10, 1, 10, this);
+		((SocketImpl) transport).launchServer();
+		initialise(ip, id, transport.getPort());
+		checkStable();
 	}
 
 	// /////////////////////////////////////////// //
@@ -226,7 +217,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 	// /////////////////////////////////////////// //
 	public String forward(String message, Node destination){
 		String res = "";
-		res = transport.forward(getIdentifier() + "," + message, destination);
+		res = transport.sendRequest(getIdentifier() + "," + message, destination);
 		if(res.equals(""))
 			res = getThisNode().toString();
 		return res;
@@ -235,7 +226,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 	/**
 	 * For the transport protocol
 	 */
-	public String doStuff(String code){
+	public String handleRequest(String code){
 		if(debugMode){
 			System.out.println("\n** DEBUG: doStuff\n*\tcode: " + code);
 		}
@@ -287,36 +278,6 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse,
 			}
 		}
 		return result;
-	}
-
-	// /////////////////////////////////////////// //
-	//            IMPLEMENTS RUNNABLE              //
-	// /////////////////////////////////////////// //
-	public void run() {
-		ServerSocket serverSocket = null;
-		BufferedReader pin = null;
-		PrintWriter pout = null;
-		serverSocket = ((SocketImpl)transport).getServerSocket();
-		Socket soc = null;
-		checkStable(); // LAUNCHING CHORD STABILIZATION
-		ACCEPT:
-			while(true){
-				try {
-					if((soc = serverSocket.accept()) != null){
-						pin  = new BufferedReader(new InputStreamReader(soc.getInputStream()));
-						pout = new PrintWriter(new BufferedWriter(
-								new OutputStreamWriter(soc.getOutputStream())), 
-								true);
-						String message = pin.readLine(); // receive a message
-						String response = "";
-						if(message != null)
-							response = this.doStuff(message);
-						pout.println(response);// sending a response <IP>,<ID>,<Port>
-					}
-				} catch (IOException e) {
-					continue ACCEPT;
-				}
-			}
 	}
 
 	// /////////////////////////////////////////// //

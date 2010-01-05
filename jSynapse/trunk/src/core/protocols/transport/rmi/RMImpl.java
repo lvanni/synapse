@@ -21,14 +21,14 @@ public class RMImpl implements ITransport, java.rmi.Remote{
 	}
 
 	public String doStuff(String code){
-		return o.doStuff(code);
+		return o.handleRequest(code);
 	}
 
 	public void test(){
 		o.put("test", "test");
 	}
 
-	public String forward(String message, Node destination) {
+	public String sendRequest(String message, Node destination) {
 		try {
 			//			System.out.println("rmi://" + destination.getIp() + ":" + destination.getPort() + "/RMImpl");
 			RMImpl dest = (RMImpl) Naming.lookup("rmi://" + destination.getIp() + ":" + destination.getPort() + "/RMImpl");

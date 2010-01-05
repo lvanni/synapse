@@ -12,7 +12,7 @@ import java.net.Socket;
 import core.protocols.p2p.Node;
 import core.protocols.transport.ITransport;
 
-public class SocketImpl implements ITransport{
+public class SimpleSocketImpl implements ITransport{
 
 	private int serverPort;
 	private ServerSocket serverSocket = null;
@@ -20,9 +20,9 @@ public class SocketImpl implements ITransport{
 	// /////////////////////////////////////////// //
 	//                 CONSTRUCTOR                 //
 	// /////////////////////////////////////////// //
-	public SocketImpl(){}
+	public SimpleSocketImpl(){}
 
-	public SocketImpl(int port) throws IOException {
+	public SimpleSocketImpl(int port) throws IOException {
 		do{
 			serverSocket = new ServerSocket(port);
 		} while(serverSocket == null);
@@ -34,7 +34,7 @@ public class SocketImpl implements ITransport{
 	 * Sending
 	 * @throws Exception 
 	 */
-	public String forward(String message, Node destination){
+	public String sendRequest(String message, Node destination){
 		Socket socket = null;
 		BufferedReader pin = null;
 		PrintWriter pout = null;

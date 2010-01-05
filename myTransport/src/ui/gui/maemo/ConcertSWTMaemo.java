@@ -372,7 +372,7 @@ public class ConcertSWTMaemo{
 				display.sleep();
 		}
 		display.dispose();
-		concert.getTransport().forward(ITracker.REMOVENODE + "," + concert.getIdentifier() + "," + concert.getThisNode(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
+		concert.getTransport().sendRequest(ITracker.REMOVENODE + "," + concert.getIdentifier() + "," + concert.getThisNode(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
 		concert.kill();
 	}
 
@@ -400,8 +400,8 @@ public class ConcertSWTMaemo{
 			} else {
 
 				// CONNECT ON TRACKER
-				String trackerResponse = concert.getTransport().forward(ITracker.GETCONNECTION + "," + concert.getIdentifier(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
-				concert.getTransport().forward(ITracker.ADDNODE + "," + concert.getIdentifier() + "," + concert.getThisNode(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
+				String trackerResponse = concert.getTransport().sendRequest(ITracker.GETCONNECTION + "," + concert.getIdentifier(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
+				concert.getTransport().sendRequest(ITracker.ADDNODE + "," + concert.getIdentifier() + "," + concert.getThisNode(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
 				if(!trackerResponse.equals("null")) {
 					Node n = new Node(trackerResponse);
 					concert.join(n.getIp(), n.getPort());
