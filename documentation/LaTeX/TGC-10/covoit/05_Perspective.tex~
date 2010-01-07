@@ -1,0 +1,10 @@
+Ce système d'overlay robuste permet de couvrir de manière quasi optimal une zone géographique en co-voiturage. De plus la scalabilité du modèle P2P permet d'envisager d'étendre ce modèle sur toute une région ou même plus, en ajoutant de nouveaux réseaux liés a d'autres entreprises et en faisant apparaitre de nouvelles synapses. Le protocole synapse permet d'interconnecter n'importe quels réseaux, il suffit donc de créer de nouveaux réseaux de covoiturage, spécialisé et adapté a une zone géographique ou a des entreprises pour optimiser le covoiturage entre eux.\\
+
+D'un point de vue technique l'utilisation de réseaux pair a pair permet d'envisager simplement l'ajout de nouveaux services:\\
+Par exemple, pour nos réseaux Student et Enterprise, on pourrai imaginer de mettre au point un service de transfère de fichiers/données. Le P2P, très adapté a ce genre de services (plusieurs protocole comme bittorrent) permettrai dans notre cas d'autoriser l'échange de données entre les chercheurs, ingénieurs et professeurs des 3 centres de recherches. Les étudiants de leur coté pourrai aussi s'échanger des données tout en bénéficiant de certains cours ou papier mis a disposition par le réseau entreprise.\\
+
+On pourrait aussi imaginer d'intégrer des systèmes (geolocalisation GPS, RFID) permettant de mettre automatiquement a jour le statu d'un utilisateur suivant sa position géographique. Un système de notification SMS pourrait être mis en place lorsqu'un utilisateur décide de rentrer chez lui pour ameliorer encore plus le système de covoiturage dans le cas des horaires flexibles.
+
+
+
+

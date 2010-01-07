@@ -1,0 +1,156 @@
+
+\usepackage{algorithm}
+
+\newfloat{algo}{thp}{}
+\floatname{algo}{Algorithm}
+
+\newcommand{\R}{\mathtt{root}}
+
+\newcommand{\TRUE}{\mathtt{true}}
+\newcommand{\FALSE}{\mathtt{false}}
+%\newcommand{\R}{\mathtt{R}}
+%\newcommand{\C}{\mathcal{C}}
+%\newcommand{\OR}{\mathtt{O}}
+\newcommand{\IF}[1]{\textbf{if} {#1}}
+\newcommand{\THEN}{\textbf{then} }
+\newcommand{\ELSE}{\textbf{else} }
+\newcommand{\ELSEIF}[1]{\textbf{elseif} {#1}}
+\newcommand{\ENDIF}{\textbf{endif} }
+\newcommand{\FOR}[1]{\textbf{for} {#1} \textbf{do }}
+%\newcommand{\FOR}[2]{\textbf{for } {#1} \textbf{to } {#2} \textbf{do }}
+\newcommand{\FORALL}[1]{\textbf{for all} {#1} \textbf{do }}
+\newcommand{\FOREACH}[1]{\textbf{for each} {#1} \textbf{do }}
+\newcommand{\WHILE}[1]{\textbf{while} {#1} \textbf{do }}
+\newcommand{\REPEAT}{\textbf{repeat} }
+\newcommand{\FOREVER}{\textbf{forever} }
+\newcommand{\DONE}{ \textbf{done}}
+
+\newcommand{\ALGOHEADER}[3]
+{\begin{tabular}[t]{@{\extracolsep{0pt}}p{#3}l}
+    \textbf{#1} &
+    \begin{tabular}[t]{@{\hspace{15pt}}l}
+        #2
+    \end{tabular}
+ \end{tabular}\smallskip
+}
+
+\makeatletter
+\newcommand{\alglabel}[1]{%
+  \@bsphack%
+  \protected@write\@auxout{}%
+         {\string\newlabel{#1}{{\the\ALGONum\LineSep \formatLine}{\thepage}}}
+  \@esphack%
+}
+\makeatother
+
+\newcommand{\CST}[1]      {\ALGOHEADER{Constants: }{#1}{.5in}}
+\newcommand{\VAR}[1]        {\ALGOHEADER{Variables: }{#1}{.5in}}
+\newcommand{\LOCALVAR}[1]   {\ALGOHEADER{Local  Variables: }{#1}{1.2in}}
+
+\newcommand{\MACRO}[1]      {\ALGOHEADER{Macros: }{#1}{.5in}}
+
+%\newcommand{\FUNCTION}[2]   {\textbf{function}  ${#1}$: \textbf{{#2}}}
+
+\newcommand{\FUNCTION}[1]{\textbf{Function} {#1}}
+
+\newcommand{\RETURN}[1]     {\textbf{return} {#1}}
+\newcommand{\PROC}[1]       {\textbf{procedure} ${#1}$}
+\newcommand{\INIT}[1]       {\textbf{initially} ${#1}$}
+\newcommand{\ACTION}        {\textbf{actions:}}
+
+\newcommand{\MAC}[2]
+{
+   ${#1} \equiv $
+   \begin{tabular}[t]{@{\extracolsep{0pt}}l}
+       #2
+   \end{tabular}
+}
+
+\newcommand{\RCV}[1]{\textbf{upon} receipt \textbf{of} $<$#1$>$ \textbf{do}}
+\newcommand{\RCVFROM}[2]{\textbf{upon} receipt \textbf{of} $<$#1$>$ \textbf{from} #2 \textbf{do}}
+\newcommand{\RCVFROMSYNC}[2]{\textbf{receive} $<$#1$>$ \textbf{from} #2} %\textbf{to} #2}
+
+\newcommand{\SEND}[2]{\textbf{send} $<$#1$>$ \textbf{to} #2}
+\newcommand{\SENDSYNC}[2]{\textbf{send-sync} $<$#1$>$ \textbf{to} #2}
+\newcommand{\SENDTOHOST}[1]{\textbf{send\_to\_host}$<$#1$>$}
+\newcommand{\RCVFROMHOST}[1]{\textbf{receive\_from\_host}$<$#1$>$}
+
+\newcommand{\PROCINIT}{\textbf{upon} INITIALIZATION}
+
+\newcommand{\BEGLIST}{\begin{list}{}{\partopsep -3pt \parsep -2pt \listparindent -0pt \labelwidth .5in}}
+\newcommand{\ENDLIST}{\end{list}}
+\newcount\ALGOLine
+\ALGOLine=-1
+\newcount\ALGOLineStart
+\ALGOLine=0
+\newcount\ALGONum
+\ALGONum=1
+
+\newcommand{\LineSep}{.}
+\newcommand{\LINESTYLE}{\scriptsize}
+\newcommand{\INITALGO}[1]{\global\ALGONum=#1}
+\newcommand{\INITLINE}[1]{\global\ALGOLineStart=#1}
+\newcommand{\RESETLINE}{\global\ALGOLine=\ALGOLineStart}
+\newcommand{\formatLine}{\ifnum\the\ALGOLine<10 0\fi\the\ALGOLine}
+\newcommand{\NA}{\global\advance\ALGONum  by 1 \RESETLINE}
+\newcommand{\AL}{\global\advance\ALGOLine by 1 \LINESTYLE{$\the\ALGONum$\LineSep$\formatLine$}}
+\newcommand{\VL}{\ \vline\>}
+
+\newcommand{\logreq}{{\tt logReq}}
+\newcommand{\hostreq}{{\tt hostReq}}
+\newcommand{\updatechild}{{\tt updateChild}}
+\newcommand{\addchild}{{\tt addChild}}
+\newcommand{\scanreq}{{\tt scanReq}}
+\newcommand{\replicationreq}{{\tt replicationReq}}
+\newcommand{\addparent}{{\tt addParent}}
+
+\newcommand{\commonprefix}{{\bf COMMONPREFIX}}
+\newcommand{\sizeof}{{\bf SIZEOF}}
+\newcommand{\getpeer}{{\bf GETPEER}}
+\newcommand{\getnbreplicas}{{\bf GETNBREPLICAS}}
+\newcommand{\getbestreplica}{{\bf GETBESTREPLICA}}
+
+\newcommand{\PREF}[1]{\mbox{{\sc Prefixes}}({#1})}
+
+%%%%% ASYNC REPAIR
+\newcommand{\destroy}{{\footnotesize{\bf DESTROY}}}
+\newcommand{\prefix}{{\footnotesize{\bf PREFIX}}}
+\newcommand{\isprefix}{\sc IsPrefix}
+\newcommand{\len}{{\footnotesize{\bf LEN}}}
+\newcommand{\gcp}{{\footnotesize{\bf GCP}}}
+\newcommand{\inser}{{\footnotesize{\bf INSERT}}}
+\newcommand{\newnode}{\sc NewNode}
+
+\newcommand{\checkmerge}{\sc CheckMerge}
+\newcommand{\checkdown}{\sc CheckDown}
+\newcommand{\checkup}{\sc CheckUp}
+\newcommand{\checkdef}{\sc CheckDefault}
+
+\newcommand{\msgmerge}{\sc MsgMerge}
+\newcommand{\msgdown}{\sc MsgDown}
+\newcommand{\msgup}{\sc MsgUp}
+\newcommand{\msgdef}{\sc MsgDefault}
+
+\newcommand{\Bt}{B\mbox{-}tree}
+
+%\newtheorem{theorem}{Theorem}
+%% \newtheorem{hypothese}{Hypothèse}
+%% \newtheorem{lemma}{Lemma}
+%% \newtheorem{corollary}{Corollary}
+%% \newtheorem{proposition}{Proposition}
+%% \newtheorem{definition}{Definition}
+%% \newtheorem{assumption}{Assumption}
+%\newtheorem{remark}{Remark}
+
+\floatname{algorithm}{Algorithm}
+
+\newcommand{\phyreq}{{\tt phyReq}}
+\newcommand{\phyreqinitiator}{{\tt phyReqInitiator}}
+\newcommand{\updatesuccessor}{{\tt updateSuccessor}}
+\newcommand{\host}{{\bf INSERT}}
+
+\floatname{algorithm}{Algorithm}
+
+\makeatletter
+\providecommand*{\toclevel@algorithm}{0}
+\makeatother

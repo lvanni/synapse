@@ -1,0 +1,116 @@
+\documentclass[a4paper,oneside,12pt]{article}
+
+%---------------------------
+% Header
+%---------------------------
+\usepackage{longtable,geometry}
+\usepackage[frenchb]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[babel]{csquotes}
+\usepackage{graphicx}
+\usepackage[absolute]{textpos}
+\usepackage{fancyhdr}
+\usepackage{pslatex}
+\usepackage[toc,page]{appendix} 
+
+% Header 
+\pagestyle{fancy}
+\fancyhf{}
+\lhead[\thepage]{\rightmark} 
+\rhead[\leftmark]{\thepage}
+\cfoot[\thepage]{- \thepage ~-} 
+
+\MakeAutoQuote{«}{»}
+\textwidth 14.8cm
+\oddsidemargin 0.0in 
+\textheight 22.94cm 
+\setlength{\skip\footins}{1cm}
+
+%---------------------------
+% Document
+%---------------------------
+\begin{document}
+%---------------------------
+% Title
+%---------------------------
+\begin{titlepage}
+\begin{center}
+\includegraphics[scale=.4]{img/logos/logo-mymed} ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\includegraphics[scale=.25]{img/logos/Logo_INRIA}
+\vskip 1.5cm
+Trustworthy Global Computing 2010
+\vskip 1cm
+{\Huge\bfseries Réseau social Pair a Pair spécialisé dans le co-voiturage}
+\vskip 1cm
+Supported by AEOLUS FP6-IST-15964-FET Proactive and DEUKS JEP-41099 TEMPUS.
+\vskip 1.5cm
+\end{center}
+2009 LogNet Team - INRIA Sophia Antipolis - Méditerranée , France:\\
+Laurent Vanni: laurent.vanni@sophia.inria.fr\\
+Luigi Liquori: luigi.liquori@sophia.inria.fr\\
+Vincenzo Ciancaglini: vincenzo.ciancaglini@sophia.inria.fr
+\begin{center}
+\vskip 0.5cm
+24 decembre 2009
+\vskip 1cm
+Résumé\\
+\end{center}
+{\em Ce document présente un prototype de réseau de covoiturage, adapté et optimisé pour une zone géographique précise. Il utilise une architecture Pair a Pair, est constitue un exemple d'utilisation du protocole Synapse\footnote{Protocole développé par l'équipe Lognet - INRIA Sophia Antipolis - Méditerranée , France : http://www-sop.inria.fr/teams/lognet/synapse/}}
+\vskip 2cm
+\includegraphics[scale=0.7]{img/logos/cnrs} ~~~~~~~~~~~~~~~~~~~~~~
+\includegraphics[scale=0.3]{img/logos/logo-i3s}  ~~~~~~~~~~~~~~~~~~~~~~
+\includegraphics[scale=0.3]{img/logos/epu}
+\end{titlepage} 
+\clearpage
+
+%---------------------------
+% Table of contents
+%---------------------------
+\tableofcontents \clearpage
+
+%---------------------------
+% Intro
+%---------------------------
+\section{Introduction}
+\input{01_Intro} 
+\clearpage
+
+%---------------------------
+% Problématique
+%---------------------------
+\section{Problématique}
+\input{02_Problematique} 
+\clearpage
+
+%---------------------------
+% Solutions
+%---------------------------
+\section{Solutions}
+\input{03_Solution} 
+\clearpage
+
+%---------------------------
+% Synapse
+%---------------------------
+\section{Synapse}
+\input{04_Synapse} 
+\clearpage
+
+%---------------------------
+% Perspective et Évolution
+%---------------------------
+\section{Perspective et Évolution}
+\input{05_Perspective} 
+\clearpage
+
+%---------------------------
+% Conclusion
+%---------------------------
+\section{Conclusion}
+%\input{01_Intro} 
+\clearpage
+
+\end{document}
+
+

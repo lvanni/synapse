@@ -1,0 +1,9 @@
+\select@language {french}
+\contentsline {section}{\numberline {1}Introduction}{2}
+\contentsline {section}{\numberline {2}Probl\IeC {\'e}matique}{4}
+\contentsline {section}{\numberline {3}Solutions}{5}
+\contentsline {subsection}{\numberline {3.1}R\IeC {\'e}seaux Pair a Pair}{5}
+\contentsline {subsection}{\numberline {3.2}Exemple de fonctionnement: }{6}
+\contentsline {section}{\numberline {4}Synapse}{8}
+\contentsline {section}{\numberline {5}Perspectives et \IeC {\'E}volutions}{10}
+\contentsline {section}{\numberline {6}Conclusion}{11}

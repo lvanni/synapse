@@ -1,0 +1,147 @@
+\documentclass[a4paper,oneside,12pt]{article}
+
+%---------------------------
+% Header
+%---------------------------
+\usepackage{longtable,geometry}
+\usepackage[frenchb]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[babel]{csquotes}
+\usepackage{graphicx}
+\usepackage[absolute]{textpos}
+\usepackage{fancyhdr}
+\usepackage{pslatex}
+\usepackage[toc,page]{appendix} 
+
+% Header 
+\pagestyle{fancy}
+\fancyhf{}
+\lhead[\thepage]{\rightmark} 
+\rhead[\leftmark]{\thepage}
+\cfoot[\thepage]{- \thepage ~-} 
+
+\MakeAutoQuote{«}{»}
+\textwidth 14.8cm
+\oddsidemargin 0.0in 
+\textheight 22.94cm 
+\setlength{\skip\footins}{1cm}
+
+%---------------------------
+% Document
+%---------------------------
+\begin{document}
+%---------------------------
+% Title
+%---------------------------
+\begin{titlepage}
+\begin{center}
+\includegraphics[scale=.4]{img/logos/unice} ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\includegraphics[scale=.4]{img/logos/epu}
+\vskip 3cm
+MASTER PRO IFI-SSR EN APPRENTISSAGE\\
+RAPPORT DE FIN D’APPRENTISSAGE 2008-2009
+\vskip 1cm
+{\Huge\bfseries Outils pour le debuggage d’applications réparties}
+\vskip 1cm
+Apprenti: {\Large Laurent Vanni (master IFI filière SSR)}
+\vskip 0.5cm
+Encadrant Universitaire: Jean-Paul Rigault
+\vskip 0.5cm
+Encadrants Industriels: Denis Caromel, Arnaud Contes\\
+Entreprise: Projet OASIS - INRIA (Sophia - Antipolis)\\
+\vskip 0.5cm
+01 octobre 2008 - 08 septembre 2009
+\vskip 1cm
+Résumé\\
+\end{center}
+{\em Ce document présente le travail réalisé dans le cadre de mon apprentissage dans l’équipe OASIS durant mon
+année de MASTER IFI à l’EPU de Sophia-Antipolis. Il y est décrit l'élaboration d'une extension du debuggeur d'Eclipse pour le middleware ProActive. 
+Le but était d'apporter des solutions et de nouveaux outils pour améliorer l'intéraction entre un debuggeur et une application ProActive.}
+\vskip 2cm
+\includegraphics[scale=.15]{img/logos/inria} ~~~~~~~~~~~~~~~~~~~~~~
+\includegraphics[scale=3]{img/logos/ProActive}  ~~~~~~~~~~~~~~~~~~~~~~
+\includegraphics[scale=0.5]{img/logos/activeeon}
+\end{titlepage} 
+\clearpage
+
+%---------------------------
+% Table of contents
+%---------------------------
+\tableofcontents \clearpage
+
+%---------------------------
+% Intro
+%---------------------------
+\section{Introduction}
+%\input{01_Intro} 
+\clearpage
+
+%---------------------------
+% Description du travail propose
+%---------------------------
+\section{Description du travail proposé}
+\input{03_Description} \clearpage
+
+%---------------------------
+% Description du travail réalisé
+%---------------------------
+\section{Description du travail réalisé}
+
+%---------------------------
+% Automatiser la connexion
+%---------------------------
+\subsection{Automatisation de la connexion du debuggeur}
+\input{04_Automatiser} \clearpage
+
+%---------------------------
+% Découverte des VM
+%---------------------------
+\subsection{Branchement dynamique du debuggeur}
+\input{05_Decouverte} \clearpage
+
+%---------------------------
+% Optimiser les outils et l'interface homme machine
+%---------------------------
+\subsection{Optimisation des outils et de l'interface homme-machine}
+\input{06_IHM} \clearpage
+
+%---------------------------
+% Organisation du travail
+%---------------------------
+\section{Organisation du travail}
+\input{07_Organisation.tex} \clearpage
+
+%---------------------------
+% Conclusion
+%---------------------------
+\section{Conclusion}
+\input{08_Conclusion} \clearpage
+
+%---------------------------
+% Bibliographie
+%---------------------------
+\section{Bibliographie}
+\input{Bibliographie} \clearpage
+
+%---------------------------
+% Annexes
+%---------------------------
+\section{Annexe A}
+\input{AnnexeA} \clearpage
+
+\section{Annexe B}
+\input{AnnexeB} \clearpage
+
+%---------------------------
+% Abstract
+%---------------------------
+\newpage
+\strut
+\newpage
+\section{Abstract}
+\input{Abstract} \clearpage
+
+\end{document}
+
+
