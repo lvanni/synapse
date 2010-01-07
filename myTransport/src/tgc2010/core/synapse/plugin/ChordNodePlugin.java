@@ -27,10 +27,13 @@ public class ChordNodePlugin extends ChordNode{
 			case IChord.GET :
 				String cleanKey = synapse.getInCleanTable(args[2]+"|"+overlayIntifier);
 				if(cleanKey != null && !cleanKey.equals("null") && !cleanKey.equals("")){
-					result = synapse.get(cleanKey);
-				} else {
-					result = super.handleRequest(code);
+					if(synapse.cacheTableExist(cleanKey).equals("1")){
+						// THEN SYNAPSE AND USE THE CACHE TABLE
+						synapse.synapseGet(cleanKey, overlayIntifier); 
+					} 
 				}
+				// IN ALL CASES CONITNUE TO ROUTE
+				result = super.handleRequest(code);
 				break;
 			default:
 				result = super.handleRequest(code);

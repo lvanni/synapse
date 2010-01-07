@@ -38,7 +38,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse{
 	private Map<Integer, String> cleanKeyTable;
 
 	/** cacheTable */
-	private Map<Integer, Cache> cacheTable;
+	private Map<String, Cache> cacheTable;
 
 	// /////////////////////////////////////////// //
 	//                 CONSTRUCTOR                 //
@@ -51,9 +51,9 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse{
 		int id = h.SHA1ToInt(ip+port+time);
 		networks = new ArrayList<IOverlay>();
 		cleanKeyTable = new HashMap<Integer, String>();
-		cacheTable = new HashMap<Integer, Cache>();
-		
-		this.transport = new SocketImpl(port, 10, RequestHandler.class.getName(), 10, 1, 10, this);
+		cacheTable = new HashMap<String, Cache>();
+
+		this.transport = new SocketImpl(port, 10, RequestHandler.class.getName(), 10, 1, 50, this);
 		((SocketImpl) transport).launchServer();
 		initialise(ip, id, transport.getPort());
 		checkStable();
@@ -87,8 +87,8 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse{
 			new Thread(new Runnable() {
 				public void run() {
 					int hKey = keyToH(o.keyToH(key)+"|"+o.getIdentifier()); // h(key)|IDENT
-					putInCleanTable(hKey, key);     // SAVE THE CLEAN KEY
-					o.put(key, value);  // MULTIPUT	
+					putInCleanTable(hKey, key);     						// SAVE THE CLEAN KEY
+					o.put(key, value);  									// MULTIPUT	
 				}
 			}).start();
 		}
@@ -97,34 +97,29 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse{
 	// /////////////////////////////////////////// //
 	//                     GET                     //
 	// /////////////////////////////////////////// //
-	public String get(String key, int ttl){
-		// 	INIT CACHE TABLE
-		int hKey = h.SHA1ToInt(key);
-		if(Range.inside(hKey, getPredecessor().getId() + 1, getThisNode().getId())){
-			initCacheTable(hKey, ttl);
-		} else {
-			forward(ISynapse.INITCacheTable + "," + hKey + "," + ttl, findSuccessor(hKey));
-		}
-		return get(key); // ========> + cache
-	}
-
 	public String get(String key){
-		int size = networks.size();
-		if(size != 0 ){
-			for(int i = 1 ; i < size ; i++){
-				IOverlay o = networks.get(i);
+		// 	INIT CACHE TABLE
+		initCacheTable(key);
+		// FIND RESULTS
+		synapseGet(key, "");
+		// WAIT FOR COLLECTING VALUES AND REMOVE CACHE TABLE
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		String res = getValues(key);
+		removeCacheTable(key);
+		return res;
+	}
+	
+	public void synapseGet(String key, String overlayIntifier){
+		for(int i = 0 ; i < networks.size() ; i++){
+			IOverlay o = networks.get(i);
+			if(!o.getIdentifier().equals(overlayIntifier)){
+				System.out.println("find in " + o.getIdentifier());
 				new Thread(new Get(key, o, this)).start();
 			}
-			// CLEAN TABLE
-			int hCleanKey = keyToH(networks.get(0).keyToH(key)+"|"+networks.get(0).getIdentifier()); // h(key)|IDENT
-			putInCleanTable(hCleanKey, key);
-			String res = networks.get(0).get(key);
-			// TTL
-			int ttl = Integer.parseInt(getTTL(key));
-			setTTL(key, ttl-size);
-			return res;
-		} else {
-			return "null";
 		}
 	}
 
@@ -142,23 +137,22 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse{
 			int hCleanKey = keyToH(o.keyToH(key)+"|"+o.getIdentifier()); // h(key)|IDENT
 			putInCleanTable(hCleanKey, key);
 
-			// RESULT
-			String res = o.get(key);
-			addValue(key, res);
+			// ADD VALUE IN THE CACHE TABLE
+			addValue(key, o.get(key));
 		}
 	}
 
-	/* GET CLEAN KEY */
+	// GET CLEAN KEY
 	public String getInCleanTable(String key){
 		int hKey = h.SHA1ToInt(key);
 		if(Range.inside(hKey, getPredecessor().getId() + 1, getThisNode().getId())){
 			return cleanKeyTable.get(hKey);
 		} else {
-			return forward(ISynapse.GETCleanKey + "," + hKey, findSuccessor(hKey));
+			return forward(ISynapse.GETCleanKey + "," + key, findSuccessor(hKey));
 		}
 	}
 
-	/* PUT CLEAN KEY */
+	// PUT CLEAN KEY
 	public void putInCleanTable(int hKey, String key){
 		if(Range.inside(hKey, getPredecessor().getId() + 1, getThisNode().getId())){
 			cleanKeyTable.put(hKey, key);
@@ -167,51 +161,65 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse{
 		}
 	}
 
-	/* INIT CACHE TABLE */
-	public void initCacheTable(int hKey, int ttl){
-		cacheTable.put(hKey, new Cache(ttl));
-	}
-
-	/* GET TTL */
-	public String getTTL(String key){
+	// INIT CACHE TABLE
+	public void initCacheTable(String key){
 		int hKey = h.SHA1ToInt(key);
 		if(Range.inside(hKey, getPredecessor().getId() + 1, getThisNode().getId())){
-			return cacheTable.get(hKey).getTtl() + "";
+			cacheTable.put(key, new Cache());
 		} else {
-			return forward(ISynapse.GETTTL + "," + hKey, findSuccessor(hKey));
+			forward(ISynapse.INITCacheTable + "," + key, findSuccessor(hKey));
 		}
 	}
-
-	/* SET TTL */
-	public String setTTL(String key, int ttl){
+	
+	// CACHE TABLE EXIST 
+	public String cacheTableExist(String key){
 		int hKey = h.SHA1ToInt(key);
 		if(Range.inside(hKey, getPredecessor().getId() + 1, getThisNode().getId())){
-			return cacheTable.get(hKey).getTtl() + "";
+			return cacheTable.containsKey(key) ? "1" : "0";
 		} else {
-			return forward(ISynapse.SETTTL + "," + hKey + "," + "3", findSuccessor(hKey)); // <============ a modifier!!!
+			return forward(ISynapse.CacheTableExist + "," + key, findSuccessor(hKey));
 		}
 	}
-
-	/* GET CHACHE VALUE */
-	public String getValue(String key){
+	
+	// REMOVE CACHE TABLE
+	public void removeCacheTable(String key){
 		int hKey = h.SHA1ToInt(key);
 		if(Range.inside(hKey, getPredecessor().getId() + 1, getThisNode().getId())){
-			return cacheTable.get(hKey).getValue();
+			cacheTable.remove(key);
 		} else {
-			return forward(ISynapse.GETCacheValue + "," + hKey, findSuccessor(hKey));
+			forward(ISynapse.REMOVECacheTable + "," + key, findSuccessor(hKey));
 		}
+		
 	}
 
-	/* ADD CACHE VALUE */
+	// ADD CACHE VALUE
 	public void addValue(String key, String value){
 		int hKey = h.SHA1ToInt(key);
 		if(Range.inside(hKey, getPredecessor().getId() + 1, getThisNode().getId())){
-			cacheTable.get(hKey).addValue(value);
+			if(cacheTable.get(key) != null){
+				cacheTable.get(key).addValue(value);
+			}
 		} else {
 			forward(ISynapse.ADDCacheValue + "," + key + "," + value, findSuccessor(hKey));
 		}
 	}
 
+	// GET CHACHE VALUES
+	public String getValues(String key){
+		int hKey = h.SHA1ToInt(key);
+		if(Range.inside(hKey, getPredecessor().getId() + 1, getThisNode().getId())){
+			System.out.println("getValues!! + " + key);
+			if(cacheTable.get(key) != null){
+				return cacheTable.get(key).getValues();
+			} else {
+				return null;
+			}
+		} else {
+			System.out.println("forward getValues...: " + key);
+			return forward(ISynapse.GETCacheValue + "," + key, findSuccessor(hKey));
+		}
+	}
+	
 	// /////////////////////////////////////////// //
 	//                  TRANSPORT                  //
 	// /////////////////////////////////////////// //
@@ -256,24 +264,26 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse{
 				setPredecessor(new Node(args[2], Integer.parseInt(args[3]), Integer.parseInt(args[4])));
 				break;
 				// SYNAPSE
-			case ISynapse.INITCacheTable :
-				initCacheTable(Integer.parseInt(args[2]), Integer.parseInt(args[3]));
-				break;
 			case ISynapse.PUTCleanKey :
 				putInCleanTable(Integer.parseInt(args[2]), args[3]);
 				break;
 			case ISynapse.GETCleanKey :
 				result =  getInCleanTable(args[2]);
 				break;
-			case ISynapse.GETTTL :
-				result =  getTTL(args[2]);
+			case ISynapse.INITCacheTable :
+				initCacheTable(args[2]);
 				break;
-			case ISynapse.SETTTL :
-				System.out.println(code);
-				setTTL(args[2], Integer.parseInt(args[3]));
+			case ISynapse.CacheTableExist :
+				result = cacheTableExist(args[2]);
+				break;
+			case ISynapse.REMOVECacheTable :
+				removeCacheTable(args[2]);
 				break;
 			case ISynapse.ADDCacheValue :
 				addValue(args[2], args[3]);
+				break;
+			case ISynapse.GETCacheValue :
+				result = getValues(args[2]);
 				break;
 			default: break;
 			}
@@ -295,7 +305,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse{
 		}
 		if (!cacheTable.isEmpty()) {
 			res += "\n\n\tCacheTable Content : ";
-			for (Map.Entry<Integer, Cache> entry : cacheTable.entrySet()) {
+			for (Map.Entry<String, Cache> entry : cacheTable.entrySet()) {
 				res += "\n\t  [" + entry.getKey() + "] - ";
 				res += entry.getValue().toString();
 			}

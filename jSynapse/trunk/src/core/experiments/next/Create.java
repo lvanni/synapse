@@ -33,8 +33,6 @@ public class Create {
 				node = new Synapse(ip, 0);
 				break;
 			}
-//			new Thread((Runnable) node).start();
-			Thread.yield();
 			overlay = node;
 		}
 
@@ -92,7 +90,7 @@ public class Create {
 						key = input.readLine();
 						String found = "";
 						if(overlay instanceof Synapse){
-							found = ((Synapse)overlay).get(key, 3); // 3 = TTL
+							found = ((Synapse)overlay).get(key);
 						} else {
 							found = overlay.get(key);
 						}

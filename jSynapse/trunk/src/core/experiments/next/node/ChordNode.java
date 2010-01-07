@@ -41,7 +41,7 @@ public class ChordNode extends AbstractChord {
 		this.h = new HashFunction(overlayIntifier);
 		int id = h.SHA1ToInt(ip+port+time);
 		
-		transport = new SocketImpl(port, 10, RequestHandler.class.getName(), 10, 1, 10, this);
+		transport = new SocketImpl(port, 10, RequestHandler.class.getName(), 10, 1, 50, this);
 		((SocketImpl) transport).launchServer();
 		initialise(ip, id, transport.getPort());
 		checkStable();
@@ -122,6 +122,7 @@ public class ChordNode extends AbstractChord {
 				put(Integer.parseInt(args[2]), args[3]);
 				break;
 			case IChord.GET :
+				System.out.println("===> handleRequest Get");
 				result = get(Integer.parseInt(args[2]));
 				break;
 			case IChord.SETSUCC :

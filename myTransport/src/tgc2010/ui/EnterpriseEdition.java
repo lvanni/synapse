@@ -440,7 +440,7 @@ public class EnterpriseEdition {
 					boolean hasFound = false;
 					for(int i = 0 ; i<checkpointsList.size() ; i++){
 						for(int j = i+1 ; j<checkpointsList.size() ; j++){
-							String key = checkpointsList.get(i).formatTokey() + checkpointsList.get(j).formatTokey();
+							String key = header + checkpointsList.get(i).formatTokey() + checkpointsList.get(j).formatTokey();
 							if (checkPublish.getSelection()) {
 								String value = checkpointsList.get(i) + "+" + checkpointsList.get(j) + "+" + contactText.getText() + "+" + informationsText.getText();
 								synapse.put(key,value);
@@ -451,19 +451,25 @@ public class EnterpriseEdition {
 									resultStr += "\n\n===> MyTransport published!";
 								}
 							} else {
-								String found = synapse.get(key, default_ttl);
+								String found = synapse.get(key);
 								if (found == null || found.equals("null")){
 									key = "all" + checkpointsList.get(i).formatTokey() + checkpointsList.get(j).formatTokey();
-									found = synapse.get(key, default_ttl);
+									found = synapse.get(key);
 								}
 								if (found != null && !found.equals("null")){
 									System.out.println(found);
 									hasFound = true;
 									String[] founds =  found.split("\\*\\*\\*\\*");
 									for(String f : founds) {
-										String[] args = f.split("\\+");
-										resultStr += "\n\t\t----------------------" + "\n\t\t" + args[0] + "\n\t\t" + args[1];
-										resultStr += "\n\t\t. contact: " + args[2] + "\n\t\t. informations: " + args[3];
+										if (f != null && !f.equals("null")){
+											String[] args = f.split("\\+");
+											if(args.length == 4){
+												resultStr += "\n\t\t----------------------" + "\n\t\t" + args[0] + "\n\t\t" + args[1];
+												resultStr += "\n\t\t. contact: " + args[2] + "\n\t\t. informations: " + args[3];
+											} else {
+												System.err.println("args.length != 4 on " + f);
+											}
+										}
 									}
 								}
 								if(i+2 >= checkpointsList.size()){

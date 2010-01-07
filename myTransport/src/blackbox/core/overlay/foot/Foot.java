@@ -16,7 +16,7 @@ public class Foot extends Concert{
 		this.h = new HashFunction(OVERLAY_IDENTIFIER);
 		int id = h.SHA1ToInt(ip+port+time);
 		
-		transport = new SocketImpl(port, 10, RequestHandler.class.getName(), 10, 1, 10, this);
+		transport = new SocketImpl(port, 10, RequestHandler.class.getName(), 10, 1, 50, this);
 		((SocketImpl) transport).launchServer();
 		initialise(ip, id, transport.getPort());
 		checkStable();

@@ -70,7 +70,6 @@ public class JoinDialog extends Dialog{
 		okButton.setLayoutData(okFormData);
 		shell.setDefaultButton(okButton);
 
-
 		shell.pack();
 		shell.open();
 

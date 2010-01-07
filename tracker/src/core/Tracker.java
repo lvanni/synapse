@@ -22,7 +22,7 @@ public class Tracker implements ITracker, IRequestHandler {
 
 	public Tracker() {
 		transport = new SocketImpl(TRACKER_PORT, 10, RequestHandler.class.getName(),
-				10, 1, 10, this);
+				10, 1, 50, this);
 		((SocketImpl) transport).launchServer();
 		peerSet = new HashMap<String, List<Node>>();
 	}

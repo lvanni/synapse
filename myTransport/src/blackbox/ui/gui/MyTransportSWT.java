@@ -291,9 +291,9 @@ public class MyTransportSWT {
 						} else {
 							String found;
 							if(idText.getText().equals("")) { // DEBUG MODE! 
-								found = myTransport.get(key1 + "+" + key2, default_ttl);
+								found = myTransport.get(key1 + "+" + key2);
 							} else {
-								found = myTransport.get(idText.getText(), default_ttl);
+								found = myTransport.get(idText.getText());
 							}
 							if(found == null || found.equals("null") || found.equals("")){
 								result.setText("No transport found...");
