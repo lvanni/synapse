@@ -48,8 +48,16 @@ public class SocketImpl extends AbstractServer {
 			// WAIT FOR A RESPONSE
 			String res = pin.readLine();
 			TTL = MAX_TTL;
+			try {
+				socket.close();
+				pout.close();
+				pin.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (NullPointerException e) {
+				System.err.println("\tno socket opended...");
+			}
 			return res;
-			
 		} catch (IOException e) {
 			System.err.println("\n\n[" + TTL-- + "] : time to live");
 			System.err.println(e.getMessage() + " => cached");

@@ -34,6 +34,11 @@ public class RequestHandler {
 				response = overlay.handleRequest(message);
 			pout.println(response);// sending a response <IP>,<ID>,<Port>
 			pout.flush();
+
+			// close socket
+			socket.close();
+			pin.close();
+			pout.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
