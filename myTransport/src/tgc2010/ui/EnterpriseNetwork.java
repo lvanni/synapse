@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTError;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -14,12 +16,14 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -41,6 +45,7 @@ public class EnterpriseNetwork {
 	private Color white = new Color(null, 220, 190, 130);
 	private Synapse synapse;
 	private StyledText result;
+	private Browser browser;
 	private List<Checkpoint> checkpointsList = new ArrayList<Checkpoint>();
 	private Label error;
 
@@ -96,7 +101,7 @@ public class EnterpriseNetwork {
 		checkPrivate.setText("Private");
 		FormData checkPrivateFormData = new FormData();
 		checkPrivateFormData.top = new FormAttachment(0, 0);
-		checkPrivateFormData.left = new FormAttachment(0, 290);
+		checkPrivateFormData.left = new FormAttachment(0, 310);
 		checkPrivate.setLayoutData(checkPrivateFormData);
 
 		final Button checkSearch = new Button(shell, SWT.CHECK);
@@ -137,65 +142,65 @@ public class EnterpriseNetwork {
 		separator.setLayoutData(separatorFormData);
 
 		// TRIP
-		Label roadTrip = new Label(shell, SWT.NONE);
-		roadTrip.setBackgroundImage(background);
-		roadTrip.setText("Trip: ");
-		FormData roadTripFormData = new FormData();
-		roadTripFormData.top = new FormAttachment(separator, 4);
-		roadTrip.setLayoutData(roadTripFormData);
+//		Label roadTrip = new Label(shell, SWT.NONE);
+//		roadTrip.setBackgroundImage(background);
+//		roadTrip.setText("Trip: ");
+//		FormData roadTripFormData = new FormData();
+//		roadTripFormData.top = new FormAttachment(separator, 4);
+//		roadTrip.setLayoutData(roadTripFormData);
 
 		// DAY
 		final Label day = new Label(shell, SWT.NONE);
 		day.setBackgroundImage(background);
-		day.setText("Day: ");
+		day.setText("*Day: ");
 		FormData dayFormData = new FormData();
-		dayFormData.top = new FormAttachment(roadTrip, 0);
+		dayFormData.top = new FormAttachment(separator, 10);
 		dayFormData.left = new FormAttachment(0, 0);
 		day.setLayoutData(dayFormData);
 
 		final Text dayText = new Text(shell, SWT.BORDER);
 		dayText.setTextLimit(2);
 		FormData dayTextFormData = new FormData();
-		dayTextFormData.width = 30;
+		dayTextFormData.width = 20;
 		dayTextFormData.height = 15;
-		dayTextFormData.top = new FormAttachment(roadTrip, 0);
-		dayTextFormData.left = new FormAttachment(day, 0);
+		dayTextFormData.top = new FormAttachment(separator, 10);
+		dayTextFormData.left = new FormAttachment(0, 130);
 		dayText.setLayoutData(dayTextFormData);
 
 		final Label slash1 = new Label(shell, SWT.NONE);
 		slash1.setBackgroundImage(background);
 		slash1.setText("/");
 		FormData slash1FormData = new FormData();
-		slash1FormData.top = new FormAttachment(roadTrip, 0);
-		slash1FormData.left = new FormAttachment(dayText, 5);
+		slash1FormData.top = new FormAttachment(separator, 10);
+		slash1FormData.left = new FormAttachment(dayText, 0);
 		slash1.setLayoutData(slash1FormData);
 
 		final Text mounthText = new Text(shell, SWT.BORDER);
 		// mounthText.setBackgroundImage(background);
 		mounthText.setTextLimit(2);
 		FormData mounthTextFormData = new FormData();
-		mounthTextFormData.width = 30;
+		mounthTextFormData.width = 20;
 		mounthTextFormData.height = 15;
-		mounthTextFormData.top = new FormAttachment(roadTrip, 0);
-		mounthTextFormData.left = new FormAttachment(slash1, 5);
+		mounthTextFormData.top = new FormAttachment(separator, 10);
+		mounthTextFormData.left = new FormAttachment(slash1, 0);
 		mounthText.setLayoutData(mounthTextFormData);
 
 		final Label slash2 = new Label(shell, SWT.NONE);
 		slash2.setBackgroundImage(background);
 		slash2.setText("/");
 		FormData slash2FormData = new FormData();
-		slash2FormData.top = new FormAttachment(roadTrip, 0);
-		slash2FormData.left = new FormAttachment(mounthText, 5);
+		slash2FormData.top = new FormAttachment(separator, 10);
+		slash2FormData.left = new FormAttachment(mounthText, 0);
 		slash2.setLayoutData(slash2FormData);
 
 		final Text yearText = new Text(shell, SWT.BORDER);
 		// yearText.setBackgroundImage(background);
 		yearText.setTextLimit(4);
 		FormData yearTextFormData = new FormData();
-		yearTextFormData.width = 60;
+		yearTextFormData.width = 40;
 		yearTextFormData.height = 15;
-		yearTextFormData.top = new FormAttachment(roadTrip, 0);
-		yearTextFormData.left = new FormAttachment(slash2, 5);
+		yearTextFormData.top = new FormAttachment(separator, 10);
+		yearTextFormData.left = new FormAttachment(slash2, 0);
 		yearText.setLayoutData(yearTextFormData);
 
 		// CHECKALL
@@ -203,23 +208,72 @@ public class EnterpriseNetwork {
 		checkAll.setBackgroundImage(background);
 		checkAll.setText("Every");
 		FormData checkAllFormData = new FormData();
-		checkAllFormData.top = new FormAttachment(roadTrip, 0);
-		checkAllFormData.left = new FormAttachment(0, 290);
+		checkAllFormData.top = new FormAttachment(separator, 10);
+		checkAllFormData.left = new FormAttachment(0, 310);
 		checkAll.setLayoutData(checkAllFormData);
 
-		Label check = new Label(shell, SWT.NONE);
-		check.setBackgroundImage(background);
-		check.setText("Add checkpoint:");
-		FormData checkFormData = new FormData();
-		checkFormData.top = new FormAttachment(day, 20);
-		checkFormData.left = new FormAttachment(0, 0);
-		check.setLayoutData(checkFormData);
+//		Label check = new Label(shell, SWT.NONE);
+//		check.setBackgroundImage(background);
+//		check.setText("Add checkpoint:");
+//		FormData checkFormData = new FormData();
+//		checkFormData.top = new FormAttachment(day, 20);
+//		checkFormData.left = new FormAttachment(0, 0);
+//		check.setLayoutData(checkFormData);
+
+		// CHECKPOINTS
+		Label address = new Label(shell, SWT.NONE);
+		address.setBackgroundImage(background);
+		address.setText("Address: ");
+		FormData addressFormData = new FormData();
+		addressFormData.top = new FormAttachment(yearText, 0);
+		addressFormData.left = new FormAttachment(0, 0);
+		address.setLayoutData(addressFormData);
+
+		final Text addressText = new Text(shell, SWT.BORDER);
+		FormData addressTextFormData = new FormData();
+		addressTextFormData.width = 160;
+		addressTextFormData.height = 15;
+		addressTextFormData.top = new FormAttachment(yearText, 0);
+		addressTextFormData.left = new FormAttachment(0, 130);
+		addressText.setLayoutData(addressTextFormData);
+
+		Label zip = new Label(shell, SWT.NONE);
+		zip.setBackgroundImage(background);
+		zip.setText("Zip Code: ");
+		FormData zipFormData = new FormData();
+		zipFormData.top = new FormAttachment(addressText, 0);
+		zipFormData.left = new FormAttachment(0, 0);
+		zip.setLayoutData(zipFormData);
+
+		final Text zipText = new Text(shell, SWT.BORDER);
+		FormData zipTextFormData = new FormData();
+		zipTextFormData.width = 160;
+		zipTextFormData.height = 15;
+		zipTextFormData.top = new FormAttachment(addressText, 0);
+		zipTextFormData.left = new FormAttachment(0, 130);
+		zipText.setLayoutData(zipTextFormData);
+
+		Label city = new Label(shell, SWT.NONE);
+		city.setBackgroundImage(background);
+		city.setText("*City: ");
+		FormData cityFormData = new FormData();
+		cityFormData.top = new FormAttachment(zipText, 0);
+		cityFormData.left = new FormAttachment(0, 0);
+		city.setLayoutData(cityFormData);
+
+		final Text cityText = new Text(shell, SWT.BORDER);
+		FormData cityTextFormData = new FormData();
+		cityTextFormData.width = 160;
+		cityTextFormData.height = 15;
+		cityTextFormData.top = new FormAttachment(zipText, 0);
+		cityTextFormData.left = new FormAttachment(0, 130);
+		cityText.setLayoutData(cityTextFormData);
 
 		Label time = new Label(shell, SWT.NONE);
 		time.setBackgroundImage(background);
-		time.setText("Time: ");
+		time.setText("*Time: ");
 		FormData timeFormData = new FormData();
-		timeFormData.top = new FormAttachment(check, 0);
+		timeFormData.top = new FormAttachment(cityText, 0);
 		timeFormData.left = new FormAttachment(0, 0);
 		time.setLayoutData(timeFormData);
 
@@ -229,15 +283,15 @@ public class EnterpriseNetwork {
 		FormData hourTextFormData = new FormData();
 		hourTextFormData.width = 20;
 		hourTextFormData.height = 15;
-		hourTextFormData.top = new FormAttachment(check, 0);
-		hourTextFormData.left = new FormAttachment(0, 145);
+		hourTextFormData.top = new FormAttachment(cityText, 0);
+		hourTextFormData.left = new FormAttachment(0, 130);
 		hourText.setLayoutData(hourTextFormData);
 
 		Label doubleColon = new Label(shell, SWT.NONE);
 		doubleColon.setBackgroundImage(background);
 		doubleColon.setText(":");
 		FormData doubleColonFormData = new FormData();
-		doubleColonFormData.top = new FormAttachment(check, 0);
+		doubleColonFormData.top = new FormAttachment(cityText, 0);
 		doubleColonFormData.left = new FormAttachment(hourText, 0);
 		doubleColon.setLayoutData(doubleColonFormData);
 
@@ -247,38 +301,28 @@ public class EnterpriseNetwork {
 		FormData minTextFormData = new FormData();
 		minTextFormData.width = 20;
 		minTextFormData.height = 15;
-		minTextFormData.top = new FormAttachment(check, 0);
+		minTextFormData.top = new FormAttachment(cityText, 0);
 		minTextFormData.left = new FormAttachment(doubleColon, 0);
 		minText.setLayoutData(minTextFormData);
 
-		// CHECKPOINTS
-		Label location = new Label(shell, SWT.NONE);
-		location.setBackgroundImage(background);
-		location.setText("Location: ");
-		FormData locationFormData = new FormData();
-		locationFormData.top = new FormAttachment(minText, 0);
-		locationFormData.left = new FormAttachment(0, 0);
-		location.setLayoutData(locationFormData);
-
-		final Text locationText = new Text(shell, SWT.BORDER);
-		FormData locationTextFormData = new FormData();
-		locationTextFormData.width = 160;
-		locationTextFormData.height = 15;
-		locationTextFormData.top = new FormAttachment(minText, 0);
-		locationTextFormData.left = new FormAttachment(0, 145);
-		locationText.setLayoutData(locationTextFormData);
+		final Button locate = new Button(shell, SWT.PUSH);
+		locate.setText("Locate");
+		FormData locateFormData = new FormData();
+		locateFormData.top = new FormAttachment(minText, 0);
+		locateFormData.left = new FormAttachment(0, 130);
+		locate.setLayoutData(locateFormData);
 
 		final Button addCheckPoint = new Button(shell, SWT.PUSH);
-		addCheckPoint.setText("+");
+		addCheckPoint.setText("Add");
 		FormData destinationTextFormData = new FormData();
-		destinationTextFormData.top = new FormAttachment(minText, -5);
-		destinationTextFormData.left = new FormAttachment(locationText, 5);
+		destinationTextFormData.top = new FormAttachment(minText, 0);
+		destinationTextFormData.left = new FormAttachment(locate, 5);
 		addCheckPoint.setLayoutData(destinationTextFormData);
 
 		final Button removeCheckPoint = new Button(shell, SWT.PUSH);
-		removeCheckPoint.setText("-");
+		removeCheckPoint.setText("Remove");
 		FormData removeTextFormData = new FormData();
-		removeTextFormData.top = new FormAttachment(minText, -5);
+		removeTextFormData.top = new FormAttachment(minText, 0);
 		removeTextFormData.left = new FormAttachment(addCheckPoint, 2);
 		removeCheckPoint.setLayoutData(removeTextFormData);
 
@@ -294,7 +338,7 @@ public class EnterpriseNetwork {
 		// CONTACT
 		final Label contact = new Label(shell, SWT.NONE);
 		contact.setBackgroundImage(background);
-		contact.setText("Contact: ");
+		contact.setText("*Contact: ");
 		FormData contactFormData = new FormData();
 		contactFormData.top = new FormAttachment(separator1, 10);
 		contactFormData.left = new FormAttachment(0, 0);
@@ -306,13 +350,13 @@ public class EnterpriseNetwork {
 		contactTextFormData.width = 211;
 		contactTextFormData.height = 15;
 		contactTextFormData.top = new FormAttachment(separator1, 10);
-		contactTextFormData.left = new FormAttachment(0, 145);
+		contactTextFormData.left = new FormAttachment(0, 130);
 		contactText.setLayoutData(contactTextFormData);
 
 		// INFORMATIONS
 		final Label informations = new Label(shell, SWT.NONE);
 		informations.setBackgroundImage(background);
-		informations.setText("Informations: ");
+		informations.setText("Information: ");
 		FormData transportFormData = new FormData();
 		transportFormData.top = new FormAttachment(contactText, 0);
 		transportFormData.left = new FormAttachment(0, 0);
@@ -324,7 +368,7 @@ public class EnterpriseNetwork {
 		transportTextFormData.width = 211;
 		transportTextFormData.height = 15;
 		transportTextFormData.top = new FormAttachment(contactText, 0);
-		transportTextFormData.left = new FormAttachment(0, 145);
+		transportTextFormData.left = new FormAttachment(0, 130);
 		informationsText.setLayoutData(transportTextFormData);
 
 		// SEPARATOR
@@ -338,6 +382,7 @@ public class EnterpriseNetwork {
 
 		// RESULT
 		result = new StyledText(shell, SWT.BORDER);
+		result.setVisible(false);
 		result.setText(" Road Book: \n\n\tEmpty...");
 		result.setBackgroundImage(background);
 		result.setEditable(false);
@@ -353,6 +398,35 @@ public class EnterpriseNetwork {
 		resultTextFormData.left = new FormAttachment(0, 400);
 		result.setLayoutData(resultTextFormData);
 
+		// HIDDEN BROWSER
+		final Composite composite = new Composite(shell, SWT.BORDER);
+		FormData compositeFormData = new FormData();
+		compositeFormData.width = 279;
+		compositeFormData.height = 380;
+		compositeFormData.top = new FormAttachment(0, 0);
+		compositeFormData.left = new FormAttachment(0, 400);
+		composite.setLayoutData(compositeFormData);
+		FormLayout compositeFormLayout = new FormLayout();
+		composite.setLayout(compositeFormLayout);
+
+		try {
+			browser = new Browser(composite, SWT.NONE);
+			browser.setUrl("maps.google.fr");
+			FormData browserFormData = new FormData();
+			browserFormData.width = 665;
+			browserFormData.height = 500;
+			browserFormData.top = new FormAttachment(0, -120);
+			browserFormData.left = new FormAttachment(0, -385);
+			browser.setLayoutData(browserFormData);
+		} catch (SWTError e) {
+			MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+			messageBox.setMessage("Browser cannot be initialized.");
+			messageBox.setText("Exit");
+			messageBox.open();
+			System.exit(-1);
+		}
+
+
 		// CRUD ROADBOOK
 		addCheckPoint.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -360,13 +434,15 @@ public class EnterpriseNetwork {
 					error.setVisible(false);
 					int hour = Integer.parseInt(hourText.getText());
 					int minute = Integer.parseInt(minText.getText());
-					if (locationText.getText().equals("") || hour < 0
+					if (cityText.getText().equals("") || hour < 0
 							|| hour >= 24 || minute < 0 || minute >= 60) {
 						throw new NumberFormatException();
 					}
-					String location = locationText.getText();
+					String location = cityText.getText();
 					checkpointsList.add(new Checkpoint(location, hour, minute));
 					updateRoadBook();
+					composite.setVisible(false);
+					result.setVisible(true);
 				} catch (NumberFormatException excep) {
 					error.setVisible(true);
 				}
@@ -377,7 +453,15 @@ public class EnterpriseNetwork {
 				if (checkpointsList.size() > 0) {
 					checkpointsList.remove(checkpointsList.size() - 1);
 					updateRoadBook();
+					composite.setVisible(false);
+					result.setVisible(true);
 				}
+			}
+		});
+		locate.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				composite.setVisible(true);
+				result.setVisible(false);
 			}
 		});
 
@@ -531,7 +615,7 @@ public class EnterpriseNetwork {
 					dayText.setText("");
 					mounthText.setText("");
 					yearText.setText("");
-					locationText.setText("");
+					cityText.setText("");
 					hourText.setText("");
 					minText.setText("");
 					informationsText.setText("");

@@ -37,13 +37,11 @@ public class LocateDialog extends Dialog{
 		shell.setLayout(layout);
 
 		final Composite composite = new Composite(shell, SWT.BORDER);
-//		composite.setSize(600, 300);
-		FormLayout compositeFormData = new FormLayout();
-		composite.setLayout(compositeFormData);
+		FormLayout compositeFormLayout = new FormLayout();
+		composite.setLayout(compositeFormLayout);
 
 		try {
 			browser = new Browser(composite, SWT.NONE);
-//			browser.setUrl("http://maps.google.com");
 			FormData browserFormData = new FormData();
 			browserFormData.width = 1000;
 			browserFormData.height = 400;
@@ -118,20 +116,6 @@ public class LocateDialog extends Dialog{
 		okButton.setLayoutData(okFormData);
 		shell.setDefaultButton(okButton);
 
-//		// button "CANCEL"
-//		final Button cancelButton = new Button(shell, SWT.PUSH);
-//		cancelButton.setText("Cancel");
-//		cancelButton.addSelectionListener(new SelectionAdapter(){
-//			public void widgetSelected(SelectionEvent e) {
-//				shell.close();
-//			}
-//		});
-//		FormData cancelFormData = new FormData();
-//		cancelFormData.width = 80;
-//		cancelFormData.top = new FormAttachment(cityText, 0);
-//		cancelFormData.left = new FormAttachment(okButton, 10);
-//		cancelButton.setLayoutData(cancelFormData);
-//
 		shell.pack();
 		shell.open();
 
