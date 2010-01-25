@@ -32,7 +32,8 @@ import tgc2010.core.synapse.plugin.ChordNodePlugin;
 import tgc2010.ui.dialog.ConsoleDialog;
 import tgc2010.ui.dialog.JoinDialog;
 import tgc2010.ui.dialog.LocateDialog;
-import tgc2010.ui.geoloc.GeoLoc;
+import tgc2010.ui.tool.GeoLoc;
+import tgc2010.ui.tool.Value;
 import core.ITracker;
 import core.experiments.tools.InfoConsole;
 import core.protocols.p2p.IOverlay;
@@ -43,7 +44,7 @@ public class EnterpriseNetwork {
 	private final Shell shell;
 	private Display display;
 	private Color red = new Color(null, 255, 0, 0);
-	private Color white = new Color(null, 220, 190, 130);
+//	private Color white = new Color(null, 255, 255, 255);
 	private Synapse synapse;
 	private Button locate;
 	private StyledText result;
@@ -375,6 +376,7 @@ public class EnterpriseNetwork {
 		informations.setLayoutData(transportFormData);
 
 		final Text informationsText = new Text(shell, SWT.BORDER);
+		informationsText.setToolTipText("Number of seats, vehicule type, ...");
 		// informationsText.setBackgroundImage(background);
 		FormData transportTextFormData = new FormData();
 		transportTextFormData.width = 211;
@@ -398,7 +400,7 @@ public class EnterpriseNetwork {
 		result.setText(" Road Book: \n\n\tEmpty...");
 		result.setBackgroundImage(background);
 		result.setEditable(false);
-		result.setForeground(white);
+//		result.setForeground(white);
 		Image font = new Image(display, EnterpriseNetwork.class
 				// .getResourceAsStream("studentRes.png"));
 				.getResourceAsStream("enterpriseRes.png"));
@@ -535,21 +537,10 @@ public class EnterpriseNetwork {
 							+ checkpointsList.get(i).formatToKey()
 							+ checkpointsList.get(j).formatToKey();
 							if (checkPublish.getSelection()) {
-								String value = checkpointsList.get(i) + "+"
-								+ checkpointsList.get(j) + "+"
-								+ contactText.getText() + "+"
-								+ informationsText.getText();
-								System.out.println("Publish: \n\tkey = " + key + "\n\tvalue = " + value );
+								String value = Value.serializeValue(checkpointsList.get(i), checkpointsList.get(j), contactText.getText(), informationsText.getText(), "ENTERPRISE NETWORK");
 								synapse.put(key, value);
-								resultStr += "\t--------------------------------"
-									+ "\n\t" + Checkpoint.formatToPrint(checkpointsList.get(i).toString())
-									+ "\n\t" + Checkpoint.formatToPrint(checkpointsList.get(j).toString());
+								resultStr += Value.deserializeValue(value) + "\n";
 								if (i + 2 >= checkpointsList.size()) {
-									resultStr += "\t--------------------------------"
-										+ "\n\n\tContact: "
-										+ contactText.getText()
-										+ "\n\tInformation: "
-										+ informationsText.getText();
 									resultStr += "\n\n===> Published!";
 								}
 							} else {
@@ -570,22 +561,8 @@ public class EnterpriseNetwork {
 									.split("\\*\\*\\*\\*");
 									for (String f : founds) {
 										if (f != null && !f.equals("null")) {
-											String[] args = f.split("\\+");
-											if (args.length >= 3) {
-												resultStr += "\t--------------------------------"
-													+ "\n\t"
-													+ Checkpoint.formatToPrint(args[0])
-													+ "\n\t" + Checkpoint.formatToPrint(args[1]);
-												resultStr += "\n\tContact: "
-													+ args[2]
-													       + "\n\tInformation: ";
-												resultStr += args.length == 4 ? args[3] + "\n" : "\n";
-												cpt++;
-											} else {
-												System.err
-												.println("args.length < 3 on "
-														+ f);
-											}
+											resultStr += Value.deserializeValue(f) + "\n";
+											cpt++;
 										}
 									}
 								}
@@ -730,9 +707,9 @@ public class EnterpriseNetwork {
 	}
 
 	public void updateRoadBook() {
-		String checkpts = " Road Book: \n\n";
+		String checkpts = " Road Book: \n";
 		for (Checkpoint s : checkpointsList) {
-			checkpts += "\t" + Checkpoint.formatToPrint(s.toString()) + "\n";
+			checkpts += "\n\t" + s.toString() + "\n";
 		}
 		result.setText(checkpts);
 		shell.pack();

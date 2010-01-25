@@ -1,4 +1,4 @@
-package tgc2010.ui.geoloc;
+package tgc2010.ui.tool;
 
 import java.net.URI;
 import java.net.URISyntaxException;
