@@ -45,7 +45,7 @@ public class StudentNetwork {
 	private Color white = new Color(null, 220, 190, 130);
 	private Synapse synapse;
 	private StyledText result;
-	private Browser browser;
+	private Browser browser = null;
 	private List<Checkpoint> checkpointsList = new ArrayList<Checkpoint>();
 	private Label error;
 
@@ -425,7 +425,9 @@ public class StudentNetwork {
 			messageBox.setMessage("Browser cannot be initialized.");
 			messageBox.setText("Exit");
 			messageBox.open();
-			System.exit(-1);
+			locate.setEnabled(false);
+			locateItem.setEnabled(false);
+			result.setVisible(true);
 		}
 
 
@@ -541,7 +543,7 @@ public class StudentNetwork {
 								System.out.println("Search: key = " + key);
 								String found = synapse.get(key);
 								if (found == null || found.equals("null")) {
-									key = "all"
+									key = "Every"
 											+ checkpointsList.get(i)
 													.formatToKey()
 											+ checkpointsList.get(j)
@@ -632,7 +634,8 @@ public class StudentNetwork {
 					error.setVisible(false);
 					checkpointsList.clear();
 					composite.setVisible(true);
-					result.setVisible(false);
+					if(browser != null)
+						result.setVisible(false);
 					shell.pack();
 				}
 			}
