@@ -1,11 +1,11 @@
 package tgc2010.ui.dialog;
 
-import java.awt.Desktop;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTError;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -16,12 +16,14 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 public class LocateDialog extends Dialog{
 
 	private Color red = new Color(null, 255, 0, 0);
+	private Browser browser;
 
 	public LocateDialog(final Shell parent) {
 		super(parent);
@@ -35,18 +37,34 @@ public class LocateDialog extends Dialog{
 		layout.marginWidth = 5;
 		shell.setLayout(layout);
 
+		try {
+			browser = new Browser(shell, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+			FormData browserFormData = new FormData();
+			browserFormData.width = 400;
+			browserFormData.height = 600;
+			browserFormData.top = new FormAttachment(0, 0);
+			browserFormData.left = new FormAttachment(0, 0);
+			browser.setLayoutData(browserFormData);
+		} catch (SWTError e) {
+			MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+			messageBox.setMessage("Browser cannot be initialized.");
+			messageBox.setText("Exit");
+			messageBox.open();
+			System.exit(-1);
+		}
+
 		Label addess = new Label(shell, SWT.NONE);
 		addess.setText("Address:");
 		FormData addressData = new FormData();
-		addressData.top = new FormAttachment(0, 0);
-		addressData.left = new FormAttachment(0, 2);
+		addressData.top = new FormAttachment(browser, 0);
+		addressData.left = new FormAttachment(0, 0);
 		addess.setLayoutData(addressData);
 
 		final Text addressText = new Text(shell, SWT.BORDER);
 		FormData addressTextFormData = new FormData();
 		addressTextFormData.width = 200;
 		addressTextFormData.height = 15;
-		addressTextFormData.top = new FormAttachment(0, 0);
+		addressTextFormData.top = new FormAttachment(browser, 0);
 		addressTextFormData.left = new FormAttachment(0, 100);
 		addressText.setLayoutData(addressTextFormData);
 
@@ -86,13 +104,13 @@ public class LocateDialog extends Dialog{
 		okButton.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
 				search(addressText.getText(), zipText.getText(), cityText.getText());
-				shell.close();
+				browser.pack();
 			}
 		});
 		FormData okFormData = new FormData();
 		okFormData.width = 80;
-		okFormData.top = new FormAttachment(city, 0);
-		okFormData.left = new FormAttachment(0, 0);
+		okFormData.top = new FormAttachment(zip, 0);
+		okFormData.left = new FormAttachment(cityText, 0);
 		okButton.setLayoutData(okFormData);
 		shell.setDefaultButton(okButton);
 
@@ -106,7 +124,7 @@ public class LocateDialog extends Dialog{
 		});
 		FormData cancelFormData = new FormData();
 		cancelFormData.width = 80;
-		cancelFormData.top = new FormAttachment(city, 0);
+		cancelFormData.top = new FormAttachment(zip, 0);
 		cancelFormData.left = new FormAttachment(okButton, 0);
 		cancelButton.setLayoutData(cancelFormData);
 
@@ -120,27 +138,16 @@ public class LocateDialog extends Dialog{
 		}
 	}
 
-	public static void search(String address, String zipcode, String city) {
-	    String scheme = "http";
-	    String authority = "maps.google.fr";
-	    String path = "/maps";
-	    String query = "f=q&hl=fr&q=" + address+ " , " + zipcode + " " + city ;
-	    if(Desktop.isDesktopSupported()) {
-	        if(Desktop.getDesktop().isSupported(java.awt.Desktop.Action.BROWSE)) {
-	            try {
-	                URI uri = new URI(scheme, authority, path, query, null);
-	                System.out.println(uri.toASCIIString());
-	                java.awt.Desktop.getDesktop().browse(uri);
-	            } catch (URISyntaxException ex) {
-	                ex.printStackTrace();
-	            } catch (IOException ex) {
-	                ex.printStackTrace();
-	            }
-	        } else {
-	            //La fonction n'est pas supportée par votre système d'exploitation
-	        }
-	    } else {
-	        //Desktop pas supportée par votre système d'exploitation
-	    }
+	public void search(String address, String zipcode, String city) {
+		String scheme = "http";
+		String authority = "maps.google.fr";
+		String path = "/maps";
+		String query = "f=q&hl=fr&q=" + address+ " , " + zipcode + " " + city ;
+		try {
+			URI uri = new URI(scheme, authority, path, query, null);
+			browser.setUrl(uri.toASCIIString());
+		} catch (URISyntaxException ex) {
+			ex.printStackTrace();
+		}
 	}
 }
