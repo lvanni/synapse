@@ -411,7 +411,7 @@ public class StudentNetwork {
 
 		try {
 			browser = new Browser(composite, SWT.NONE);
-			browser.setUrl("maps.google.fr");
+			browser.setUrl("http://maps.google.fr/maps?f=q&hl=fr&q=%20,%20%20nice");
 			FormData browserFormData = new FormData();
 			browserFormData.width = 665;
 			browserFormData.height = 500;
