@@ -1,0 +1,301 @@
+\subsection{Application principles}
+%
+One of the most important features for a car share application is to
+be able to maximize the chances of finding a match between one driver
+and one or more travelers. From this comes the choice of arranging
+the database by communities in order to put in touch people who most
+likely share the same traveling patterns in space and time (\eg\ work
+for the same company, attend the same university and so on). Another
+important aspect is to be able to update the planned itinerary
+information as quick as possible so that a last minute change in plans
+can be easily managed and updated and may eventually lead in finding a
+new match.
+ 
+For the above reasons, CarPal has been intended as a desktop and
+mobile application running on a peer-to-peer overlay network. This
+allows a community of people to spontaneously create its own travel DB
+(which, as it will be shown later, can be interconnected with siblings
+communities) and manage it in a distributed manner.  Moreover, it
+constitutes a flexible infrastructure where,by being deployed on
+connected mobile devices, it will be possible to develop more advanced
+info-mobility solutions that might take into account the position of
+the user/vehicle (via the internal GPS), geographically-aware network
+discovery or easy network join or vehicle tracking through checkpoints
+with the use of Near Field Communications technologies~\cite{NFC}.
+
+\subsection{CarPal in a nutshell}
+%
+The working principle is simple: a user running a CarPal client on his
+mobile or desktop will connect to one or more communities to which he
+is member (\ie\ he has been invited or his request has been accepted).
+Tow operations are then available, namely $(i)$ publishing a new
+itinerary and $(ii)$ finding a matching itinerary.
+
+\noindent{\bf Publishing a new itinerary.}
+%
+When a CarPal user has a one time or recurring trip that he wants to
+optimize cost-wise he can publish his route in the community in hope
+to find someone looking for a place in the same route and time window
+to share the ride with. A planned itinerary is usually composed by the
+following data:
+%
+\begin{itemize}
+\item \emph{Trip date and number of repetitions} in case is a
+  recurring trip;
+\item \emph{Departure place and arrival place}, whose representation
+  is critical since a too high granularity might lead to miss similar
+  results;
+\item \emph{Departure time} or at least an estimate given by the
+  user;
+\item \emph{Arrival time} or at least an estimate given by the user;
+\item \emph{Number of available seats} to be updated when another
+  passenger asks for a place;
+\item \emph{Contact}, usually an e-mail or a telephone number;
+\item \emph{Information}, other useful information, \ie\ animal
+  allergies, women-only car etc.
+\end{itemize}
+%
+Moreover, from a functional point of view, a trip \eg\ from a place A
+to a place D may include several checkpoints, meaning that the user
+offering his car can specify one or more intermediate places where he
+is willing to pick up or leave a passenger.
+
+ Once the user has inserted all the needed data (date, departure,
+arrival, times, seats and optional checkpoints), the trip is 
+decomposed in all the possible combinations: for example, a trip 
+containing the legs A-B-C-D (where B and C are checkpoints specified 
+by the user) will generate the combinations A-B and A-C and  
+A-D and  B-C and  B-D and  C-D. This
+operation is commonly known as \emph{Slice and Dice}.  Since the
+number of possible combinations can increase exponentially with the
+number of checkpoints, there is a software limitation to 3 maximum
+stops in the trip. Each combination is then stored in the DHT as an
+individual segment; moreover all the segments who don't start form A
+are marked as estimated in departure time since, given a trip made of
+different checkpoints, only the effective departure time can be
+considered reliable, the others being subject to traffic conditions
+and contingencies. Geographic and time information must be encoded in
+such a way to be precise enough to be still relevant for our purposes
+(someone leaving from the same city but 10 km far is not a useful
+match) yet broad in a way that a punctual query will not skip
+important results.
+
+Until we find a feasible way to perform semantically relevant range
+queries, departure/arrival hotspots can be added in a ``social''
+style. A driver departing from a certain spot for the first time will
+be offered a map where to mark his spot of departure, inviting the
+user to use an already defined spot nearby in case. Finally,
+concerning time approximation, a 20 minutes window is used to
+approximate departure times. Both during an insertion or a query,
+anything within the 0-19 minutes interval will be automatically set at
+10 minutes, 20-39 will be set at 30 minutes and 40-59 at 50.
+
+\noindent{\bf Finding a matching itinerary and one seat.}
+%
+A user wishing to find a ride can perform a search by inserting the
+following information:
+%
+\begin{itemize}
+\item \emph{Date} of the trip;
+\item \emph{Departure} place and time (picked on a map between the
+  proposed points;
+\item \emph{Arrival} place and wished time, picked in the same
+  manner as the departure.
+\end{itemize}
+%
+To increase the chances of finding a match, only part of the search
+criteria can be specified, allowing \eg\ to browse for all the trip
+leading to the airport in a certain day disregarding the departure
+time (giving the user the chance of finding someone leaving the hour
+before) or the departure point (giving the user, in case of nobody
+leaving from the same place as him, to find someone leaving nearby to
+join with other means of transportation).  Moreover it is possible to
+specify checkpoints in the search criteria too, in order to have the
+system look for multiple segments and create aggregated responses out
+of publications from multiple users.
+
+\noindent{\bf Negotiation.}
+%
+Once the itinerary has been found it will be possible to contact the
+driver in order to negotiate and reserve a seat. If the trip is an
+aggregation of different drivers' segments all of them will be
+notified through the application. The individual trip records will
+then be updated by decreasing the available seats number.
+
+ 
+\begin{table}[!t]
+  {\small \begin{center}
+    \key{
+      \begin{tabular}{|c|c|c|c|}
+        \hline
+        \key{\bf Criteria} &\key{\bf Key} & \key{\bf Value} & \key{\bf Trip Grouped by} \\
+        \hline
+        1 & TR|TRIP\_ID & $\clubsuit$ & Individual \\\hline
+        2 & T|DATE|DEP|TOD|ARR|TOA &list[TRIP\_ID] 
+        & Dep \& Arr \& Time\\ \hline   
+        3 & DA|DATE|DEP|ARR & list[TRIP\_ID] 
+        & Dep \& Arr\\ \hline
+        4 & D|DATE|DEP & list[TRIP\_ID] 
+        & Dep\\ \hline
+        5 & A|DATE|ARR & list[TRIP\_ID] 
+        & Arr\\ \hline
+        6 & U|USER\_ID & list[TRIP\_ID] 
+        & User id\\ \hline
+      \end{tabular}
+
+     \smallskip where $\clubsuit$ = \key{[DATE,DEP,TOD,ARR,TOA,SEATS,REF,PUB]}
+    }
+  \end{center}}
+  \caption{Different data structures stored in the DHT for each entry}
+  \label{t:DHTvalues}
+\end{table}
+
+\subsection{Encoding CarPal in a DHT }
+%
+The segments are stored in the DHT according to Table
+\ref{t:DHTvalues}.
+%
+Since we are not able yet to perform useful range queries on the DHT,
+multiple keys are inserted or updated for each entry, representing
+sets of trips grouped according to different criteria:
+%
+\begin{enumerate}
+\item Is the actual trip record, associated to a unique
+  \key{TRIP\_ID}, that will be updated, for example, when someone book
+  a seat.  The information stored concerns trip date \key{DATE},
+  departure place \key{DEP} and time \key{TOD}, arrival place
+  \key{ARR} and time \key{TOA} number of available seats \key{SEATS}
+  (or cargo space, in case of shared goods transportation), a
+  reference to contact the driver \key{REF}, and if the trip has to
+  be public or not \key{PUB}.  Depending on the needs more information
+  can be appended to this record;
+\item Represents a set of trips having the same date,
+  departure/arrival point and departure/arrival time. The key is
+  created by concatenating the token \key{T}, trip date \key{DATE},
+  departure place \key{DEP}, departure time \key{TOD}, arrival place
+  \key{ARR} and arrival time \key{TOA}.  As value is the list of
+  \key{TRIP\_ID} pointing to the trip records. The key is created by
+  appending the token \key{TR} to the \key{TRIP\_ID};
+\item Is a set of trips grouped by date, departure and arrival place.
+  It will be used to query in one request all the trips of the day on
+  a certain itinerary. The key to store them in the DHT is
+  consequently made by appending the token \key{DA}, trip date,
+  departure and arrival point;
+\item[4-5.] Are two sets of trips arranged by day and by departure
+  or arrival point. The key is therefore made by concatenating either
+  the token \key{D} (for departure) or \key{A} (for arrival) to the
+  \key{DATE} and departure or arrival point \key{DEP} or \key{ARR}.
+  This key can be used \eg to query in one request all the trips of
+  the day leaving from a company or all the trips of the day heading
+  to the airport; \setcounter{enumi}{5}
+\item Is a set of trips for a given user. The key is therefore the
+  token \key{U} prepending the \key{USER\_ID} itself.
+\end{enumerate}
+
+\subsection{Network architecture}
+%
+The overlay chosen for the proof of concept is Chord~\cite{chord}
+although other protocol could be used to leverage the locality of the
+application or a more direct geographical mapping (see Section
+\ref{sec:semantic}).  Even on a simple Chord mechanisms to ensure
+fault tolerance can be put in place, like data replication using
+multiple hash keys or request caching.  To allow a new community to be
+start up, a \emph{public tracker} has been put in place on the
+Internet. The public tracker is a server whose tasks can be resumed as
+following:
+%
+\begin{itemize}
+\item It allows the setup of a new community by registering the IP of
+  certain reliable peers, in a YOID-like
+  fashion~\cite{francis2000yoid};
+\item It acts as a central database of all the communities, keeping
+  track of them and their geographical position;
+\item consequently, it can propose nearby overlays to improve the
+  matches by placing co-located peers;
+\item It acts as a third party for the invitation of new peers into an
+  overlay;
+\item It can provide statistical data about the activity of n overlay,
+  letting a user know if a certain community has been active lately
+  (and thus it's worth joining);
+\item It stores all the placeholders set as departure and arrival
+  points, in order to avoid having similar routes not matching because
+  of 2 different geographical markers for the same spot;
+\item It act as the entry point to download the application and get
+  updates.
+\end{itemize}
+
+\subsection{Enhancing the architecture}
+%
+It is clear that a user might take advantage of nearby communities
+other than his. In case of an unsuccessful query or upon explicit
+request, it is possible to access nearby networks by asking co-located
+nodes in his community to reroute the query.  To do this, synapse
+nodes are connected, in parallel to their actual overlays, to a common
+Control Network that handles 2 different data structures (a KeyTable
+and a CacheTable) used to manage inter-overlay routing. Both are
+implemented as DHTs on a global overlay participated by every node of
+every networks.
+
+\noindent{\bf The Key Table}
+%
+is responsible for storing the unhashed keys circulating in the
+underlying overlays.  When a synapse performs a \key{GET} that has to
+be replicated in other networks, it makes the unhashed key available
+to the other synapses through the Key Table. The key is stored using
+an index formed by a networks identifier as a prefix and the hashed
+key itself as a suffix. This way when a synapse on the overlay with
+\eg\ \key{ID = A} will have to replicate \eg\ \key{H(KEY) = 123}, it
+will be able to retrieve, if available, the unhashed key from the
+KeyTable by performing a get of \key{A|123}.
+
+\noindent{\bf The Cache Table}
+%
+is used to implement the replication of get requests, cache multiple
+responses and control the flooding of foreign networks.  It stores
+entries in the form of \key{[H(KEY),TTL,[NETID],[CACHE]]}.  In a
+nutshell: \key{NETID} are optional and used to perform selective
+flooding on specific networks.  When another synapse receives a
+\key{GET} requests, it checks if there is an entry in the Key Table
+(to retrieve the unencrypted key), and an entry in the Cache Table; if
+so, it replicates the \key{GET} in the \key{[NETID]} networks he is
+connected to, or in all his networks if no \key{[NETID]} are
+specified. All the responses are stored in the \key{[CACHE]} and only
+one is forwarded back, in order not to flood other nodes having
+performed the same request. A \key{TTL} is specified to manage the
+cache expiration and block the flooding of networks.  When the synapse
+originating the request receives the first response, it can retrieve
+from the Cache Table the rest of the results.  The cached responses
+should be sent back with the associated \key{NETID}. This can allow a
+with time to define a strategy of selective flooding to the networks
+who are better responding to a synapse request.
+
+\noindent{\bf Inter-overlay routing algorithm} is performed hen a peer
+wish to perform query: before routing the request in his own community
+it adds an entry in the KeyTable, containing the unhashed key to be
+searched, and an empty entry in the CacheTable.  When an synapse in
+the first overlay receives the request, it looks for the unhashed key
+in the KeyTable and the corresponding entry in the CacheTable. If
+those are found, the co-located synapse will query for the same key in
+all his communities and store the results in the CacheTable, in order
+not to pollute the network with too many results. The requesting peer
+in the first network will then collect the results from the
+CacheTable.
+
+\noindent{\bf Controlling the data.}
+%
+Since different CarPal overlays use different hash functions to map
+their keys a first level of privacy and control is guaranteed in case
+a community wish to have some control over the visibility of their
+information. At the present state there are 2 possible scenarios for
+accessing the data:
+%
+\begin{itemize}
+\item A user can search for trips mark as both public and private in
+  every overlay he's directly connected to. As previously stated, the
+  connection to an overlay happens via invitation through a mechanism
+  similar to certain social networks;
+\item If certain nodes of his own networks are member of other
+  overlays, they can act as synapses and route queries from one
+  network to another. However only the trips marked as ``public'' will
+  be made available to a foreign request.
+\end{itemize}

@@ -1,15 +1,18 @@
 \documentclass{llncs}
-\usepackage{times,url,comment}
+\usepackage{times,url}
 \usepackage{amsmath,amssymb,amsfonts,bbm}
 \usepackage{graphicx,epsfig,epsf}
 \usepackage{alltt}
 \usepackage{url}
 \usepackage{cite}
+%\usepackage{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{multirow}
  
    
-% mix and mac
-\usepackage[latin1]{inputenc}
-\usepackage{comment}
+% mix and mac 
+%\usepackage[latin1]{inputenc}
 \usepackage{algorithm}
 \usepackage[usenames]{color}
 
@@ -19,11 +22,15 @@
 \newcommand{\ie}{i.e.}
 \newcommand{\eg}{e.g.}
 \newcommand{\vs}{vs.}
+\newcommand{\key}[1]{{\small {\sf #1}}}
+
+
 
 \newcommand{\verbi}[1]{{\small\texttt{#1}}}
+\newcommand{\comment}[1]{}
 
 
-%% Intra nos
+%% Intra nossss
 \newcommand{\Ce} [1]{{[\color{cyan}{Cdric}}: {#1}]}
 \newcommand{\Gi} [1]{{[\color{green}{Gigi}}: {#1}]}
 \newcommand{\La} [1]{{[\color{cyan}{Laurent}}: {#1}]}
@@ -45,188 +52,84 @@
 \newcommand{\rew}[1]   {\hspace{-#1mm}}
 \newcommand{\fwd}[1]   {\hspace{#1mm}}
 \newcommand{\down}[1]  {\vspace{#1mm}}
-\newcommand{\up}[1]    {\vspace{-#1mm}}
+\newcommand{\up}[1]    {\vspace{-#1mm}} %je l'ai du decommenter parce que il cassait la compil
 
 \include{algorithmic_header}
  
- \title{CarPal: interconnecting overlay networks for a community-driven shared mobility} \up{4}
-% %
- \author{Vincenzo Ciancaglini\inst{1} \and Luigi Liquori \inst{1} %\and C\'edric Tedeschi \inst{2}
-     \and Laurent Vanni \inst{1}}
+\title{CarPal: interconnecting overlay networks for a community-driven
+  shared mobility\thanks{Supported by AEOLUS FP6-IST-15964-FET
+    Proactive.}}
+%
+\author{Vincenzo Ciancaglini \and Luigi Liquori \and Laurent Vanni}
 
-\institute{Institut National de Recherche en Informatique et
-  Automatique, France\\
-  Email: {\tt firstName.lastName@sophia.inria.fr} %\and
-  %Universit\'e de Rennes I/INRIA, France\\ 
-  %Email: {\tt Cedric.Tedeschi@inria.fr}
-  }
+\institute{INRIA Sophia Antipolis M\'editerran\'ee, France\\
+  Email: {\tt firstName.lastName@sophia.inria.fr} }
 
 \pagestyle{plain}
 \sloppy
 
 \begin{document}
 
-
+  
 \maketitle
   
-\begin{abstract}\up{4}
-  Car sharing has proven to be an effective solution 
-  to reduce the amount of running vehicles by increasing the density of passengers per car
-  amongst medium/big communities like schools or enterprises.
-  However the success of such practice relies on the ability by the community to share and retrieve
-  effectively information about travelers and itineraries.
-  Structured overlay networks such as Chord or CAN has emerged recently as a flexible 
-  solution to handle large amount of data without the use of high-end servers, 
-  in a decentralized manner.
-  In this paper we present CarPal, a proof-of-concept for a mobility sharing application that leverages
-  a Distributed Hash Table to allow a community of people to spontaneously share trip information without 
-  the costs of a centralized structure.
-  The peer-to-peer architecture allows moreover the deployment on portable devices and opens new scenarios
-  where trips can be updated in real time.
-  Furthermore by the use of our Synapse protocol to interconnect different overlays/communities the success rate can be boosted
-  up thus increasing the effectiveness of our solution. Some simulations results are shown to give
+\begin{abstract} 
+  Car sharing and car pooling have proven to be an effective solution
+  to reduce the amount of running vehicles by increasing the number of
+  passengers per car amongst medium/big communities like schools or
+  enterprises.  However, the success of such practice relies on the
+  community ability to effectively share and retrieve
+  information about travelers and itineraries.  Structured overlay
+  networks such as Chord have emerged recently as a flexible solution
+  to handle large amount of data without the use of high-end servers,
+  in a decentralized manner.  In this paper we present CarPal, a
+  proof-of-concept for a mobility sharing application that leverages a
+  Distributed Hash Table to allow a community of people to
+  spontaneously share trip information without the costs of a
+  centralized structure.  The peer-to-peer architecture allows
+  moreover the deployment on portable devices and opens new scenarios
+  where trips and sharing requests can be updated in real time.  Using
+  an original protocol already developed that allows to
+  interconnect different overlays/communities, the success rate
+  (number of shared rides) can be boosted up thus increasing the
+  effectiveness of our solution. Simulations results are shown to give
   a possible estimate of such effectiveness.
-
-  \smallskip {\bf Keywords.} Peer to peer, overlay networks, case study,
-  information retrieval, car sharing  \up{2}
+ 
+  \smallskip {\bf Keywords.} Peer to peer, overlay networks, case
+  study, information retrieval, car sharing.
 \end{abstract}
 
-  
-\up{4}
+
+
+
+
 \section{Introduction\label{sec:introduction}}
-\up{3}
+
 \input{introduction}
-\up{3}
-\section{Application architecture\label{sec:architecture}}
-\up{3}
-\input{architecture}
-\up{3}
+
 \section{Interconnecting multiple networks\label{sec:link}}
-\up{3}
+
 \input{link}
-\up{3}
-\section{Proof of concept\label{sec:proof}}
-\up{3}
+
+\section{Application architecture \label{sec:architecture}}
+
+\input{architecture2}
+
+\section{A Running example \label{sec:proof}}
+
 \input{proof}
-\up{3}
+
 \section{Experimental results\label{sec:experiences}}
-\up{3}
+
 \input{experiences}
-\up{3}
+
 \section{Conclusion and further work\label{sec:conclusion}}
-\up{3}
+
 \input{conclusion}
 
-% \bigskip
-% \noindent{\bf Acknowledgment}
-% The authors warmly thank Ernst Biersack for the precious help in
-% reading an early version of this paper.  \bibliographystyle{plain}
-% \bibliography{biblio}
  
-%\up{2}
-\begin{thebibliography}{10}
-%\up{1}
-{\scriptsize
-\bibitem{BCCL08}
-D.~Borsetti, C.~Casetti, C.~Chiasserini, and L.~Liquori.
-\newblock {\em Heterogeneous Wireless Access Networks: Architectures and
-  Protocols}, chapter {Content Discovery in Heterogeneous Mobile Networks}.
-\newblock Sringer-Verlag, 2009.
-
-\bibitem{castro_scribe:large-scale_2002}
-M.~Castro, P.~Druschel, A.-M. Kermarrec, and A.~Rowstron.
-\newblock {SCRIBE: A Large-Scale and Decentralized Application-Level Multicast
-  Infrastructure}.
-\newblock {\em {IEEE} Journal on Selected Areas in Communications {(JSAC)}},
-  20, 2002.
-
-\bibitem{cheng_bridging_2007}
-L.~Cheng.
-\newblock {Bridging Distributed Hash Tables in Wireless {Ad-Hoc} Networks}.
-\newblock In {\em Global Telecommunications Conference, 2007. {GLOBECOM} '07.
-  {IEEE}}, pages 5159--5163, 2007.
-
-\bibitem{cheng2006tdh}
-L.~Cheng, R.~Ocampo, K.~Jean, A.~Galis, C.~Simon, R.~Szabo, P.~Kersch, and
-  R.~Giaffreda.
-\newblock {Towards Distributed Hash Tables (De) Composition in Ambient
-  Networks}.
-\newblock {\em LNCS}, 4269:258, 2006.
-
-\bibitem{Datta}
-A.~Datta and K.~Aberer.
-\newblock The\,challenges\,of\,merging\,two\,similar\,structured\,overlays:\,{A}\,tale\,of\,two\,networks.\,In\,{\em IWSOS},\,2006.
-
-\bibitem{Biersack}
-L.~G. Erice, E.~W. Biersack, K.~W. Ross, P.~A. Felber, and G.~U. Keller.
-\newblock {Hierarchical P2P Systems}.
-\newblock In {\em Euro-Par}, 2003.
-
-% \bibitem{fonte_interdomain_2008}
-% A.~Fonte, M.~Curado, and E.~Monteiro.
-% \newblock {Interdomain Quality of Service Routing: Setting the Grounds for the
-%   Way Ahead}.
-% \newblock {\em Annals of Telecommunications}, 63(11):683--695, 2008.
-
-\bibitem{furtado_multiple_2007}
-P.~Furtado.
-\newblock {Multiple Dynamic Overlay Communities and Inter-space Routing}.
-\newblock {\em LNCS}, 4125:38, 2007.
-
-\bibitem{kwon_synergy:overlay_2005}
-M.~Kwon and S.~Fahmy.
-\newblock {Synergy: an Overlay Internetworking Architecture}.
-\newblock In {\em Proc. of International Conference on Computer Communications
-  and Networks}, pages 401--406, 2005.
-
-\bibitem{LBCC08}
-L.~Liquori, D.~Borsetti, C.~Casetti, and C.~Chiasserini.
-\newblock {An Overlay Architecture for Vehicular Networks}.
-\newblock In {\em IFIP Networking, International Conference on Networking},
-  volume 4982 of {\em LNCS}, pages 60--71. Springer, 2008.
-
-\bibitem{LTB09}
-L.~Liquori, C.~Tedeschi, and F.~Bongiovanni.
-\newblock {BabelChord: a Social Tower of DHT-Based Overlay Networks}.
-\newblock In {\em 14th Symposium on Computers and Communications (ISCC 2009)}.
-  IEEE, 2009.
-\newblock Short paper.
-
-\bibitem{CAN}
-\mbox{S.\,Ratnasamy,\,P.\,Francis,\,M.\,Handley,\,R.\,Karp,\,and\,S.\,Shenker.\,{A\,Scalable\,Content{-}Adressable\,Network}.\,In\,{\em SIGCOMM},\,2001.}
-
-\bibitem{Pastry}
-A.~Rowstron and P.~Druschel.
-\newblock {Pastry: Scalable, Distributed Object Location and Routing for
-  Large-Scale Peer-To-Peer Systems}.
-\newblock In {\em Int. Conference on Distributed Systems Platforms
-  (Middleware)}, 2001.
-
-\bibitem{Haridi}
-T.~M. Shafaat, A.~Ghodsi, and S.~Haridi.
-\newblock Handling network partitions and mergers in structured overlay
-  networks.
-\newblock In {\em Proc. of P2P}, pages 132--139. IEEE Computer Society, 2007.
-
-% \bibitem{siekkinen_beyondfuture_2007} M.~Siekkinen, V.~Goebel,
-%   T.~Plagemann, {K.-A.} Skevik, M.~Banfield, and I.~Brusic.
-%   \newblock {Beyond the Future Internet--Requirements of Autonomic
-%     Networking Architectures to Address Long Term Future Networking
-%     Challenges}.  \newblock In {\em International Workshop on Future
-%     Trends of Distributed Computing Systems}, pages 89--98, 2007.
-
-\bibitem{Chord}
-I.~Stoica, R.~Morris, D.~Karger, M.~Kaashoek, and H.~Balakrishnan.
-\newblock {Chord: A Scalable Peer-to-Peer Lookup service for Internet
-  Applications.}
-\newblock In {\em ACM SIGCOMM}, pages 149--160, 2001.
-\bibitem{XuMH03} Z.~Xu, R.~Min, and Y.~Hu.  \newblock {HIERAS: A DHT
-    Based Hierarchical P2P Routing Algorithm.}  \newblock In {\em
-    ICPP}, 2003.  
-%
-}
-\end{thebibliography}
+\bibliographystyle{alpha}
+\bibliography{biblio}
 
 \end{document}
-
 

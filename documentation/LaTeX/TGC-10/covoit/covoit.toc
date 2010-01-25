@@ -4,6 +4,6 @@
 \contentsline {section}{\numberline {3}Solutions}{5}
 \contentsline {subsection}{\numberline {3.1}R\IeC {\'e}seaux Pair a Pair}{5}
 \contentsline {subsection}{\numberline {3.2}Exemple de fonctionnement: }{6}
-\contentsline {section}{\numberline {4}Synapse}{8}
-\contentsline {section}{\numberline {5}Perspectives et \IeC {\'E}volutions}{10}
-\contentsline {section}{\numberline {6}Conclusion}{11}
+\contentsline {section}{\numberline {4}Synapse}{11}
+\contentsline {section}{\numberline {5}Perspectives et \IeC {\'E}volutions}{13}
+\contentsline {section}{\numberline {6}Conclusion}{14}

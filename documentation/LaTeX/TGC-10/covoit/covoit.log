@@ -1,4 +1,4 @@
-This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=pdflatex 2009.7.13)  8 JAN 2010 11:10
+This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=pdflatex 2009.7.13)  8 JAN 2010 13:48
 entering extended mode
  %&-line parsing enabled.
 **covoit.tex
@@ -659,10 +659,10 @@ Underfull \hbox (badness 10000) in paragraph at lines 18--19
 
  []
 
-<img/screenshot/enterprisePub.png, id=34, 797.98125pt x 700.6175pt>
-File: img/screenshot/enterprisePub.png Graphic file (type png)
+<img/screenshot/geolock2.png, id=34, 401.5pt x 394.47375pt>
+File: img/screenshot/geolock2.png Graphic file (type png)
 
-<use img/screenshot/enterprisePub.png>
+<use img/screenshot/geolock2.png>
 Underfull \hbox (badness 10000) in paragraph at lines 20--21
 
  []
@@ -672,45 +672,108 @@ Underfull \hbox (badness 10000) in paragraph at lines 22--23
 
  []
 
+<img/screenshot/enterprisePub.png, id=35, 797.98125pt x 700.6175pt>
+File: img/screenshot/enterprisePub.png Graphic file (type png)
 
-Underfull \hbox (badness 10000) in paragraph at lines 32--33
-
+<use img/screenshot/enterprisePub.png>
+Overfull \hbox (75.31639pt too wide) in paragraph at lines 24--25
+[][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 40--41
+Underfull \hbox (badness 10000) in paragraph at lines 24--25
 
  []
 
 [6
 
- <./img/screenshot/enterprisePub.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 43--44
-
- []
-
-<img/screenshot/enterpriseSub.png, id=40, 732.7375pt x 438.63875pt>
-File: img/screenshot/enterpriseSub.png Graphic file (type png)
-
-<use img/screenshot/enterpriseSub.png>
-Underfull \hbox (badness 10000) in paragraph at lines 45--46
+ <./img/screenshot/geolock2.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 41--42
 
  []
 
 
+Underfull \hbox (badness 10000) in paragraph at lines 41--42
+
+ []
+
+[7 <./img/screenshot/enterprisePub.png>]
 Underfull \hbox (badness 10000) in paragraph at lines 47--48
 
  []
 
-<img/screenshot/studentSub.png, id=41, 732.7375pt x 438.63875pt>
-File: img/screenshot/studentSub.png Graphic file (type png)
 
-<use img/screenshot/studentSub.png>
-Underfull \hbox (badness 10000) in paragraph at lines 49--50
+Underfull \hbox (badness 10000) in paragraph at lines 50--51
 
  []
 
-) [7 <./img/screenshot/enterpriseSub.png> <./img/screenshot/studentSub.png>]
+<img/screenshot/NiceSophiaSub.png, id=45, 701.62125pt x 447.6725pt>
+File: img/screenshot/NiceSophiaSub.png Graphic file (type png)
+
+<use img/screenshot/NiceSophiaSub.png>
+Underfull \hbox (badness 10000) in paragraph at lines 52--53
+
+ []
+
+<img/screenshot/CagnesAntibesSophiaPub.png, id=46, 701.62125pt x 448.67625pt>
+File: img/screenshot/CagnesAntibesSophiaPub.png Graphic file (type png)
+
+<use img/screenshot/CagnesAntibesSophiaPub.png>
+Underfull \hbox (badness 10000) in paragraph at lines 56--57
+
+ []
+
+[8 <./img/screenshot/NiceSophiaSub.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 58--59
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 64--65
+
+ []
+
+<img/screenshot/NiceCagnesAntibesSub.png, id=51, 1003.75pt x 447.6725pt>
+File: img/screenshot/NiceCagnesAntibesSub.png Graphic file (type png)
+
+<use img/screenshot/NiceCagnesAntibesSub.png>
+Overfull \hbox (102.9578pt too wide) in paragraph at lines 67--68
+[]  [] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 67--68
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 69--70
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 69--70
+
+ []
+
+[9 <./img/screenshot/CagnesAntibesSophiaPub.png> <./img/screenshot/NiceCagnesAn
+tibesSub.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 71--72
+
+ []
+
+
+<img/screenshot/NiceCagnesAbtibesSophiaPub_studentNetwork.png, id=57, 702.625pt
+ x 447.6725pt>
+File: img/screenshot/NiceCagnesAbtibesSophiaPub_studentNetwork.png Graphic file
+ (type png)
+
+<use img/screenshot/NiceCagnesAbtibesSophiaPub_studentNetwork.png>
+Underfull \hbox (badness 10000) in paragraph at lines 73--74
+
+ []
+
+) [10 <./img/screenshot/NiceCagnesAbtibesSophiaPub_studentNetwork.png>]
 (./04_Synapse.tex
 Underfull \hbox (badness 10000) in paragraph at lines 1--2
 
@@ -721,37 +784,48 @@ Underfull \hbox (badness 10000) in paragraph at lines 3--5
 
  []
 
-<img/schema/Synapse.png, id=47, 529.98pt x 350.30875pt>
+<img/screenshot/EnterpriseJoinStudent.png, id=62, 701.62125pt x 447.6725pt>
+File: img/screenshot/EnterpriseJoinStudent.png Graphic file (type png)
+
+<use img/screenshot/EnterpriseJoinStudent.png>
+<img/schema/Synapse.png, id=63, 529.98pt x 350.30875pt>
 File: img/schema/Synapse.png Graphic file (type png)
 
 <use img/schema/Synapse.png>
-Underfull \hbox (badness 10000) in paragraph at lines 6--7
-
- []
-
-
 Underfull \hbox (badness 10000) in paragraph at lines 8--9
 
  []
 
-[8
+[11
 
- <./img/schema/Synapse.png>]
+ <./img/screenshot/EnterpriseJoinStudent.png> <./img/schema/Synapse.png>]
 Underfull \hbox (badness 10000) in paragraph at lines 10--11
 
  []
 
-<img/screenshot/studentSubFound.png, id=52, 732.7375pt x 438.63875pt>
-File: img/screenshot/studentSubFound.png Graphic file (type png)
 
-<use img/screenshot/studentSubFound.png>)
-Underfull \hbox (badness 10000) in paragraph at lines 12--98
+Underfull \hbox (badness 10000) in paragraph at lines 12--13
 
  []
 
-[9
 
- <./img/screenshot/studentSubFound.png>] (./05_Perspective.tex
+<img/screenshot/NiceCagnesAntibesSophiaSub_StudentNetwork.png, id=69, 1003.75pt
+ x 447.6725pt>
+File: img/screenshot/NiceCagnesAntibesSophiaSub_StudentNetwork.png Graphic file
+ (type png)
+
+<use img/screenshot/NiceCagnesAntibesSophiaSub_StudentNetwork.png>)
+Overfull \hbox (148.58817pt too wide) in paragraph at lines 14--98
+[][] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 14--98
+
+ []
+
+[12 <./img/screenshot/NiceCagnesAntibesSophiaSub_StudentNetwork.png>]
+(./05_Perspective.tex
 Underfull \hbox (badness 10000) in paragraph at lines 1--2
 
  []
@@ -761,25 +835,25 @@ Underfull \hbox (badness 10000) in paragraph at lines 3--5
 
  []
 
-) [10
+) [13
 
-] [11
+] [14
 
 ] (./covoit.aux) ) 
 Here is how much of TeX's memory you used:
- 3134 strings out of 256216
- 40125 string characters out of 1917072
+ 3154 strings out of 256216
+ 41161 string characters out of 1917072
  101986 words of memory out of 1500000
- 6345 multiletter control sequences out of 10000+200000
+ 6361 multiletter control sequences out of 10000+200000
  50626 words of font info for 73 fonts, out of 1200000 for 2000
  645 hyphenation exceptions out of 8191
- 30i,10n,43p,636b,337s stack positions out of 5000i,500n,6000p,200000b,15000s
+ 30i,11n,43p,630b,337s stack positions out of 5000i,500n,6000p,200000b,15000s
 {/usr/share/texmf/fonts/enc/dvips/base/8r.enc}</usr/share/tex
 mf/fonts/type1/urw/times/utmb8a.pfb></usr/share/texmf/fonts/type1/urw/times/utm
 r8a.pfb></usr/share/texmf/fonts/type1/urw/times/utmri8a.pfb>
-Output written on covoit.pdf (12 pages, 3909348 bytes).
+Output written on covoit.pdf (15 pages, 5056878 bytes).
 PDF statistics:
- 75 PDF objects out of 1000 (max. 8388607)
+ 93 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 131072)
- 66 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 86 words of extra memory for PDF output out of 10000 (max. 10000000)
 

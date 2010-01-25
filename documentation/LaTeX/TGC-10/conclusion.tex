@@ -1,6 +1,235 @@
-\Vi{Responsable}
-\La{Co-responsable}
-\subsection{Range queries}
-\subsection{Different overlay protocols}
-\subsection{Mapping overlay/underlay}
+Among the potential improvement, we shortly mention a few ones.
+%
+\subsection{Improved network bootstrap and community discovery}
+%
+At the present state a new community can be setup or joint by passing
+through the tracker. This keeps track of community activities, their
+location, handles the join negotiation and restrictions and can
+suggests nearby communities that could be joined, however it
+constitutes also a centralized point of failure for all the
+communities. To improve further more the mechanism the following
+solutions can be put in place:
+%
+\begin{itemize}
+\item Assuming that a community/overlay could very likely reside on
+  the same network infrastructure (i.e. the enterprise intranet) a
+  discovery protocol can be put in place leveraging existing
+  technologies like Avahi \cite{avahi:website} to discover new peers
+  or new networks to join;
 
+\item Peer caching could be used to reconnect to previously connected
+  peers whose activity is known to be reliable;
+
+\item An invitation to a new community could be handled physically via
+  an NFC transaction. A user with an NFC enabled phone could be
+  invited by another user by simply swiping the phones
+  together. Furthermore this could be an additional guarantee of a
+  user ``reliability'' as the new participant needs to be known and
+  met by an existing member;
+
+\item The community database could be as well stored in the DHT
+  itself, meaning by this that new communities could simply be
+  discovered through specific requests routed through existing
+  synapses to other networks in a ping-like way.
+\end{itemize}
+
+
+\subsection{Semantic queries and specialized protocols}\label{sec:semantic}
+%
+It appears clear that the current approach suffers from the limitation
+of a simple key-value approach. Such approach does not fit well into
+an application that finds her strength in the possibility of
+performing searches according to many different criteria.  The
+adoption of a semantic hash function (such as \cite{SemanticHash})
+would allow to cluster in nearby peers information semantically close
+(\ie\ trips heading to sibling destinations or taking place in the
+same time window).  Needless to say, with such hashing in place the
+adoption of an overlay protocol more suited to range queries (like
+P-Ring \cite{P-Ring}, P-Grid\cite{P-Grid} or Skipnet
+\cite{Harvey03skipnet:a}) might lead the semantically significant
+range queries, where, for example, departure and arrivals can be
+geographically mapped and queried with a certain range in Km.
+
+Another possible improvement (currently under study) would be to use a
+DHT protocol more suited for geo-located information. CAN \cite{CAN})
+in a 2D configuration is a first example of how this could be
+achieved. Mapping CAN's Cartesian space over a limited geographic area
+(like in Placelab \cite{PlaceLab}) could ease the query routing and
+eventually provide some strategic points to place synapsing nodes.
+
+\subsection{Overlay-underlay mapping optimizations}
+%
+From a networking point of view, the scientific hard point to solve is
+the overlay-underlay network mapping (to avoid critical latency issues
+due to the fact that one ``logical'' hop may via ``many'' physical
+hops); The issue is being investigated and could involve for example
+the use of several always on-servers to be used to ``triangulate'' the
+position of a peer over the internet (according to latency metrics)
+and cluster together ``nearby'' peers (whereas nearby will mean sharing
+similar latencies to the same given servers).  Another issue would be
+to make the service firewall-resilent by implementing TCP Punch-hole
+techniques in the peer engine and in the tracker.
+
+
+\subsection{Backward compatibility with other Carpool services}
+%
+At the present time we have developed a CarPal service that is
+suitable to interconnecting Carpool services whose standards are open,
+collaborative and based on our software. Unfortunately this is not
+always the case. This makes a backward compatibility problem in case
+we want to connect existing services. To take into account this case,
+the Synapse protocol we have developed allows also a, so called,
+\emph{black box} variant, that is suitable to interconnecting overlays
+that, for different reasons, are not collaborative at all, in the
+sense that they only route packets according to their proprietary and
+immutable protocol.  Being the black box more of a meta-protocol
+running on top of existing, and not necessarily peer-to-peer,
+protocols, we can imagine strategically placed Synapse nodes being
+responsible of querying existing web services and returning the
+corresponding information as if they were coming from a foreign
+network. This open new scenarios were multimodality is easily
+integrated and made available for the nearby communities. The system
+needs to be properly designed in order to avoid a situation where too
+many peers act as a Distributed Denial Of Service, but the current
+infrastructure make it easily feasible.
+
+\subsection{User rating, social feedback}
+%
+Being CarPal an application based on user-generated content and
+designed to put in touch people not necessarily acquainted to each
+other, it is important to implement some social feedback and security
+mechanism to promote proactive and good behaviors by the users.
+Borrowing from today's most successful web applications, 2 solutions
+can be imagined:
+%
+\begin{itemize}
+\item A user rating should be put in place in order, for example, to
+  allow passengers to evaluate a driver's punctuality, behavior and
+  driving skills, and vice-versa. This feedback, similar to what
+  systems like Ebay already have since several years, can help
+  maintaining a high level of quality in the service by giving an
+  immediate picture of a driver or passenger's reliability;
+
+\item Some points can be assigned to users based on their activity in
+  the community. The more a user will be proactive by publishing or
+  subscribing to new trips in an overlay, the more ``karma points'' he
+  will receive.  A similar approach can be verified in Social News
+  website like Digg~\cite{Digg} or Reddit~\cite{Reddit} and has become
+  pretty common in today's social media.  With the deployment and
+  integration of new distributed services, these points could act as a
+  ``virtual cash'' and grant access to features normally reserved to
+  paying customers, thus motivating drivers and passengers to keep a
+  community alive.
+\end{itemize}
+
+\subsection{Other potential applications}
+%
+The Car sharing/pooling is not the exclusive applicative field the
+overlay network technology we designed; with the same final objective
+of minimizing traffic, pollution and energy a service interconnecting
+transportation companies Information Systems could be envisaged. A
+``BoxPal'' system could be easily build using the same overlay network
+technology: the only difference being the (more difficult) 3D
+bin-packing combinatorial algorithms employed instead of simple
+matching of drivers/cars/itinerary/car places.
+
+%%%%%
+%%%%% SPARE MATERIAL  C O M M E N T !!!
+%%%%%
+\comment{ TUTTO RFID MATERIAL IN VRAC DA POMPARE....VEDI ANCHE NEL PDF
+CHE TI HO MANDATO
+%
+Another potential application would be the introduction of the RFID
+technologies that could be used to collect information about locations
+and possessions of people (and hence about their preferences, possible
+medical conditions, ...) without them knowing about it generated fears
+in the general public.
+%
+\Gi{DS = discovery services}
+%
+The usability in the Enterprise Supply Chain is an immediate proof of
+usage of our approach. From a networking point of view, the scientific
+hard point to solve are the mapping overlay-underlay network (to avoid
+critical latency issues due to the fact that one ``logical'' hop may
+via ``many'' physical hops); - crossing firewalls; - merging different
+overlay networks (\eg\ , networks of different companies); -
+distributing semantic queries toward a P2P network; - trading off
+between routing complexity and of routing method for exhaustive
+discovery;- dealing with heterogeneous underlay networks (IP, Wifi,
+Zigbee, GPRS), just to mention a few.
+%
+Our overlay technology has various originalities that render it very
+interesting from a social viewpoint. First, its particular knowledge
+sharing approach will permit databases and DSs to support much more
+cooperation between people than currently. Second, it will also permit
+people to design their own access control or usage rules and associate
+them to the information they own. Third, thanks to our DSs, people (or
+their personal agents) will better be able to find which databases
+have stored information about them (then, if these persons are not
+happy with that storage, they can legally ask a database
+server/manager to remove or update such information). Fourth,
+conversely, if these persons have their own personal databases where
+they have described access control and usage rule for some kinds of
+information about themselves (\eg, their age or their weight), thanks
+to our DS, database servers could find such rules and respect
+them. This last point is certainly a naive ideal but could be checked
+by people thanks to the third point and then made well known by them
+or rewarded in some other way.
+%
+Systems such as ``Google Latitude'' allows people to let persons they
+trust track them. A flexible and secure DS could be uhypothesis.
+%
+ One objective of RFID3S is to build a P2P overlay network where peers
+contain fragments of RFID databases. Due to the heterogeneity of the
+network and due to the presence of peers playing different roles and
+of SW and HW barriers between companies (very often competitors) we
+plan to use a - so called - hybrid overlay networks. A popular
+topology has a super-peer serving as a server for a subset of the
+peers, as in well know Skype VOIP application.
+%
+Towards a discovery service in a scalable, secure and flexible
+Internet of things including RFID and NFC devices.  The final
+objective of RFID3S is to build a hybrid overlay network where
+security, scalability and semantic expressivity of queries cohabit
+without tears for companies and end-users. Using a P2P infrastructure
+for modeling an ONS of RFID/NFC in presence of different kinds of
+peers and different kind of underlay network is probably one of the
+more interesting challenges of the project.  Routing also complex
+queries towards this network in a secure way is also worth of
+interest.
+%
+The usability in the Enterprise Supply Chain is an immediate proof of
+usage of our approach. From a networking point of view, the scientific
+hard point to solve are the mapping overlay-underlay network (to avoid
+critical latency issues due to the fact that one ``logical'' hop may via
+``many'' physical hops); - crossing firewalls; - merging different
+overlay networks (e.g., networks of different companies); -
+distributing semantic queries toward a P2P network; - trading off
+between routing complexity and of routing method for exhaustive
+discovery;- dealing with heterogeneous underlay networks (IP, Wifi,
+Zigbee, GPRS), just to mention a few.  }
+
+
+
+\comment {spostato tutto in fondo. Cominciamo dal tecnico e andiamo sul funzionale.}
+
+\comment{Questo te l' ho commentato perche' o i concetti sono gia'
+  espressi sotto (reti eterogenee, firewall, mapping etc) o sono
+  concetti che andrebbero sviluppati e fatti aderire, e io ora non
+  riesco davvero a vedere come la supply chain possa essere pertinente
+  a un servizio di covoiturage.}
+
+\comment{Leading from the above would be the introduction of RFID
+  technologies that could be used to collect information about
+  transported goods.  The usability in the Enterprise Supply Chain is
+  an immediate proof of usage of our approach. From a networking point
+  of view, the scientific hard point to solve are the mapping
+  overlay-underlay network (to avoid critical latency issues due to
+  the fact that one "logical" hop may via "many" physical hops); -
+  crossing firewalls; - merging different overlay networks (\eg\,
+  networks of different companies); - distributing semantic queries
+  toward a P2P network; - trading off between routing complexity and
+  of routing method for exhaustive discovery;- dealing with
+  heterogeneous underlay networks (IP, Wifi, Zigbee, GPRS), just to
+  mention a few.  Another potential application would be in the
+  provisioning of supermarket companies.}

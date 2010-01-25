@@ -1,11 +1,123 @@
-\Vi{Responsable}
-\Gi{Co-responsable}
-\La{Co-co-responsable}
+\subsection{Application principles}
+%
+One of the most important features for a car share application is to
+be able to maximize the chances of finding a match between 2 users (1
+driver and 1 or more travelers).  From this comes the choice of
+arranging the database by communities in order to put in touch people
+who most likely share the same traveling patterns in space and time
+(\eg\ work for the same company, attend the same university and so
+on). Another important aspect is to be able to update the planned
+itinerary information as quick as possible so that a last minute
+change in plans can be easily managed and updated and may eventually
+lead in finding a new match.
 
-\subsection{Overlay network structure}
-\subsection{Multiple queries}
-\subsection{Data structures}
-\subsection{Chained lists}
-\subsection{Figures}
-\subsection{Math formalization}
-\Gi{revois ca parce que moi je suis pas trop fort dans la formalisation mathematique}
+For the above reasons CarPal has been intended as a desktop and mobile
+application running on a peer-to-peer overlay network. This allows a
+community of people to spontaneously create its own travel DB (which,
+as it will be shown later, can be interconnected with siblings
+communities) and manage it in a distributed manner.  Moreover it
+constitutes a flexible infrastructure where,by being deployed on
+connected mobile devices, it will be possible to develop more advanced
+info-mobility solutions that might take into account the position of
+the user/vehicle (via the internal GPS), geographically-aware network
+discovery or easy network join or vehicle tracking through checkpoints
+with the use of NFC technologies~\cite{NFC}.
+
+\subsection{Data structure}
+%
+The combinations are then stored in the DHT according to the following table:
+\begin{enumerate}
+\item All the information concerning the trip are stored as
+  \key{INFO} using a key obtained by hashing a newly generated
+  \key{Trip\_ID}.  The information stored concerns trip date and time,
+  departure and arrival places, if the trip has to be repeated in
+  time, number of available seats (or cargo space, in case of shared
+  goods transportation), user contact and other relevant information.
+\item a chained list of INFO is created (or updated if already
+  existing) as \key{BY\_TIME\_DEP\_ARR}, containing all the
+  trips for a certain itinerary at a certain moment.
+\item \key{BY\_DAY\_DEP\_ARR} is also updated. It contains all the trips for a certain itinerary at a certain date (useful to
+quickly query all the trips of the day on a certain itinerary).
+\item \key{BY\_DAY\_DEPARTURE} and \key{BY\_DAY\_ARRIVAL} are 2 lists that contains the references of the trips arranged by day and by departure or destination. This allows, for example, to quickly see who at a certain day will be going, say, to the airport or will be leaving from Company X.
+\item \key{BY\_DAY} contains all the BY\_DAY\_DEP\_ARR relative to a given date. Useful to browse through all the 
+available trips in a certain day.
+\item \key{BY\_DEPARTURE} and \key{BY\_ARRIVAL} also contain a list of BY\_DAY\_DEP\_ARR arranged by
+departure place or arrival place. 
+\item \key{BY\_USER} lists the INFO by UserID, used mostly for maintenance purposes and data updates.
+\end{enumerate}
+
+\begin{table}
+	\begin{center}
+\key{
+		\begin{tabular}{|l|l|l|}
+			\hline
+			\key{Type} & \key{Key} & \key{Value} \\
+			\hline
+			TRIP & ID & USER,PLACE,TIME,SEATS,INFO \\
+			\hline
+			BY\_TIME\_DEP\_ARR & DATE,DEP,TOD,ARR,TOA & list[TRIP] \\
+			\hline
+			BY\_DAY\_DEP\_ARR & DATE,DEP,ARR& list[TRIP] \\
+			\hline
+			BY\_DAY\_DEP & DATE,DEP & list[TRIP] \\
+			\hline
+			BY\_DAY\_ARRIVAL & DATE,ARRIVAL & list[TRIP] \\
+			\hline
+			BY\_USER & USERID & list[TRIP] \\
+			\hline
+		\end{tabular}
+}
+	\end{center}
+	\caption{Different data structures stored in the DHT}
+\end{table}
+
+	
+As we can see, the intention here is to give the maximum search flexibility to the user to find his trip.
+We believe in fact that one of the key problems of car sharing is the high heterogeneity of offer and demand.
+Such heterogeneity makes extremely difficult for an automatic system to find and manage a satisfactory number of matches.
+
+Therefore, we opted to give different search possibilities to the user, from fine grained to a broader search, and leave to
+his intelligence the remaining information skimming.
+
+\Vi{au cas ou rajouter des examples, ici ou ailleurs.}
+
+\subsubsection{Data approximation}
+Geographic and time information must be encoded in such a way to be precise enough to be 
+still relevant for our purposes (someone leaving from the same city but 10 km far is not a useful match)
+yet broad in a way that a punctual query will not skip important results.
+
+Until a feasible way to perform semantically relevant range queries will be found, departure/arrival hotspots
+can be added in a social manner. A driver departing from a certain spot for the first time will be offered a map 
+where to mark his spot of departure, inviting the user to use an already defined spot nearby in case.
+
+Concerning time approximation, a 20 minutes window is used to approximate departure times. Both
+during an insertion or a query, anything within the 0-19 minutes interval will be automatically 
+set at 10 minutes, 20-39 will be set at 30 minutes and 40-59 at 50.
+
+\subsection{Real time updates}
+When a user wants to find a car, he can perform a search using one or more of the criteria provided.
+Once a suitable trip has been found, a negotiation can be started by directly contacting the driver who 
+posted the trip. Such negotiation, being either simple messages or some more elaborate
+procedure, is foreseen in order to allow the 2 parties to exchange relevant information about the trip
+(e.g. urgency, expenses reimbursement, pickup place)
+
+If the 2 parties come to an agreement, the seats/cargo (in case of goods) field is updated in the DHT
+and the user subscribes to the drivers peer in order to get real time updates about its conditions.
+Such updates might involve broadcast messages (the driver will be sick today, slightly late, had a complication)
+or automatic position updates. Message dispatch should be handled by a publish-subscribe system.
+
+\subsection{Network architecture}
+%
+The overlay chosen for the proof of concept is Chord\cite{chord}
+although other protocol could be used to leverage the locality of the
+application (\ie\ SkipNet\cite{skipnet} or a more direct geographical
+mapping using a CAN \cite{CAN}.  Even on a simple Chord mechanisms to
+ensure fault tolerance can be put in place, like data replication
+using multiple hash keys or request caching.
+
+To allow a new community to be start up, a \emph{public tracker} has
+been put in place on the Internet, keeping track of all the
+communities and relevant information about them, like localization,
+brief description, recent activities (to identify inactive
+communities), if the access is public or upon invitation and one or
+more entry peers, in a YODL-like fashion~\ref{YODL}.

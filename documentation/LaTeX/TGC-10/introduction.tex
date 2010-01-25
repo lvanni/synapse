@@ -1,12 +1,94 @@
+%
+%
+%
 \subsection{Context}
-\Gi{Responsable}
-\Vi{Co-responsable}
+%
+Car pooling is the shared use of a driver's personal car with one or
+more passengers, usually but not exclusively colleagues or friends,
+for commuting (usually small-medium recurring trips, like \eg\ home to
+work, home to school, you name it). Amongst the many advantages it
+decreases traffic congestion and pollution, reduces trip expenses
+by alternating the use of the personal vehicle amongst different
+drivers and enables the use of dedicated lanes or reserved parking
+places where made available by countries aiming to
+reduce the global dependency of petrol.
+
+Car sharing is a model of car rental for short period of time (in
+opposite of the classical car rental companies), where a number of
+cars, often small and energy-efficient, are spread on a small
+territory, like a city. Customers first subscribe to a company who
+exploits and maintains the car park, then use those cars for their
+personal purposes. Service fees are normally per kilometer and
+insurance and fuel costs are included in the rates. Car sharing is an
+interesting option for families that need a second car but do not
+want to buy it. Modern geolocation technologies using GPS and mobile
+phones help to find the closest car to pick. The same
+economical/ecological advantage of car pooling applies, and
+mathematically speaking they are parameters of the same function we
+want to minimize.
+
 \subsection{Problem overview}
-\Gi{Responsable}
-\Vi{Co-responsable}
+%
+In Car* services, an Information System (IS) has been showed to be
+essential to match the offers, the requests, and the resources. The
+Information System is, in most cases, a front-end web site connected
+with a back-end database.  A classical client-server architecture is
+usually sufficient to manage those services. Users register their
+profile to one Information System and then post they
+offers/requests. In presence of multiple Car* services, for technical
+and/or commercial reasons, it is not possible to share contents across
+the different providers, despite the evident advantage. As a simple
+example the reader can have a quick look on those two web sites
+Equipage06\footnote{\url{http://www.covoiturage-cg06.fr/}.} and Otto
+and co\footnote{\url{http://www.ottoetco.org/}.} concerning car
+pooling in the French Riviera region. At the moment those two web
+sites does not communicate at all and do not share any user profile
+neither they share any request, even if they operate on the same
+territory and with the same objectives. Since both services are no
+profit, the reason for this has probably to be found in the
+client-server nature of both Information Systems that, by definition,
+are not incline to collaborate with each other. Although in principle
+this does not affect the correct behavior of both services, it is
+clear that \emph{``In union is strength''}\footnote{Italian
+  proverb.}. Moreover, the classical shortcomings of client-server
+architectures make both service unavailable in case both servers are
+down.
+
+
 \subsection{Contributions}
-\Gi{Responsable}
-\Vi{Co-responsable}
+%
+As main contributions in this paper:
+%
+\begin{itemize}
+\item we design and implement a Peer-to-peer based Carpool information
+  system, that we call \emph{CarPal}: this service is suitable to be
+  deployed with a very low infrastructure and can run on various
+  devices spanning from PC to a small intelligent devices, like
+  smartphones;
+
+\item we customize the Arigatoni protocol and his evolution, the
+  Synapse protocol, both specialized for resource discovery in overlay
+  networks in order to allow two completely independent CarPal-based
+  Information systems to communicate without the need of merging one
+  CarPal system into the other or, even worse, build a third CarPal
+  system including both.
+\end{itemize}
+
+
+
 \subsection{Outline}
-\Gi{Responsable}
-\Vi{Co-responsable}
+%
+The rest of the paper is organized as follows: in
+Section~\ref{sec:link} we describe the interconnection of different
+CarPal systems by means of the Synapse protocol developed in our
+team. In Section~\ref{sec:architecture}, we introduce our CarPal
+service and we show how it is mapped onto a Distributed Hash Table.
+In Section~\ref{sec:proof} we show a running example with a
+proof-of-concept that we have implemented in our team on the basis of
+a real case of study in our French Riviera area of Sophia Antipolis a
+technological pole of companies and research centers. A GUI is also
+presented\footnote{See~\url{http://www-sop.inria.fr/teams/lognet/carpal}.}.
+Section~\ref{sec:experiences} describes the deployment of a client
+prototype\footnote{See~\url{http://www-sop.inria.fr/teams/lognet/synapse}.}
+over the Grid'5000 platform.  Section~\ref{sec:conclusion} concludes
+and presents some further work.
