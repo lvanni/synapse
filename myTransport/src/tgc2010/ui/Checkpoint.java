@@ -36,6 +36,7 @@ public class Checkpoint {
 	}
 
 	public String formatTokey(){
+		System.out.println("FORMAT TO KEY: " + city+hour+minuteM);
 		return city+hour+minuteM;
 	}
 
