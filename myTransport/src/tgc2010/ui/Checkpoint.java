@@ -1,5 +1,8 @@
 package tgc2010.ui;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class Checkpoint {
 
 	private String address, zipCode, city, hour, minute, minuteM;
@@ -25,18 +28,34 @@ public class Checkpoint {
 		} else if (minute<=59){
 			minuteM = "50";
 		}
-		System.out.println("minuteM = " + minuteM);
 	}
 
+	/*
+	 * Serialization:
+	 * The value sended by socket must be format in one line!
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString(){
-		String address = this.address.equals("") ? "" : "\n\tAddress: " + this.address;
-		String zipCode = this.zipCode.equals("") ? "" : "\n\tZip Code: " + this.zipCode;
-		String city = "\n\tCity: " + this.city + "\n";
+		String address = this.address.equals("") ? "" : "*Address: " + this.address;
+		String zipCode = this.zipCode.equals("") ? "" : "*Zip Code: " + this.zipCode;
+		String city = "*City: " + this.city + "*";
 		return hour + "h" + minute + ":" + address + zipCode + city;
 	}
 
-	public String formatTokey(){
-		System.out.println("FORMAT TO KEY: " + city+hour+minuteM);
+	/*
+	 * De-serialization of the toString method
+	 */
+	public static String formatToPrint(String inputStr){
+		 // Compile regular expression
+        Pattern pattern = Pattern.compile("\\*");
+
+        // Replace all occurrences of pattern in input
+        Matcher matcher = pattern.matcher(inputStr);
+        return matcher.replaceAll("\n\t");
+	}
+
+	public String formatToKey(){
 		return city+hour+minuteM;
 	}
 

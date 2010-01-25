@@ -515,17 +515,18 @@ public class StudentNetwork {
 					for (int i = 0; i < checkpointsList.size(); i++) {
 						for (int j = i + 1; j < checkpointsList.size(); j++) {
 							String key = header
-									+ checkpointsList.get(i).formatTokey()
-									+ checkpointsList.get(j).formatTokey();
+									+ checkpointsList.get(i).formatToKey()
+									+ checkpointsList.get(j).formatToKey();
 							if (checkPublish.getSelection()) {
 								String value = checkpointsList.get(i) + "+"
 										+ checkpointsList.get(j) + "+"
 										+ contactText.getText() + "+"
 										+ informationsText.getText();
+								System.out.println("Publish: \n\tkey = " + key + "\n\tvalue = " + value );
 								synapse.put(key, value);
 								resultStr += "\t--------------------------------"
-										+ "\n\t" + checkpointsList.get(i)
-										+ "\n\t" + checkpointsList.get(j);
+										+ "\n\t" + Checkpoint.formatToPrint(checkpointsList.get(i).toString())
+										+ "\n\t" + Checkpoint.formatToPrint(checkpointsList.get(j).toString());
 								if (i + 2 >= checkpointsList.size()) {
 									resultStr += "\t--------------------------------"
 											+ "\n\n\tContact: "
@@ -535,13 +536,14 @@ public class StudentNetwork {
 									resultStr += "\n\n===> Published!";
 								}
 							} else {
+								System.out.println("Search: key = " + key);
 								String found = synapse.get(key);
 								if (found == null || found.equals("null")) {
 									key = "all"
 											+ checkpointsList.get(i)
-													.formatTokey()
+													.formatToKey()
 											+ checkpointsList.get(j)
-													.formatTokey();
+													.formatToKey();
 									found = synapse.get(key);
 								}
 								if (found != null && !found.equals("null")) {
@@ -555,8 +557,8 @@ public class StudentNetwork {
 											if (args.length == 4) {
 												resultStr += "\t--------------------------------"
 														+ "\n\t"
-														+ args[0]
-														+ "\n\t" + args[1];
+														+ Checkpoint.formatToPrint(args[0])
+														+ "\n\t" + Checkpoint.formatToPrint(args[1]);
 												resultStr += "\n\tContact: "
 														+ args[2]
 														+ "\n\tInformation: "
@@ -712,7 +714,7 @@ public class StudentNetwork {
 	public void updateRoadBook() {
 		String checkpts = " Road Book: \n\n";
 		for (Checkpoint s : checkpointsList) {
-			checkpts += "\t" + s + "\n";
+			checkpts += "\t" + Checkpoint.formatToPrint(s.toString()) + "\n";
 		}
 		result.setText(checkpts);
 		shell.pack();
