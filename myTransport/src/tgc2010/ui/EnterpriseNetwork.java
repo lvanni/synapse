@@ -32,6 +32,7 @@ import tgc2010.core.synapse.plugin.ChordNodePlugin;
 import tgc2010.ui.dialog.ConsoleDialog;
 import tgc2010.ui.dialog.JoinDialog;
 import tgc2010.ui.dialog.LocateDialog;
+import tgc2010.ui.geoloc.GeoLoc;
 import core.ITracker;
 import core.experiments.tools.InfoConsole;
 import core.protocols.p2p.IOverlay;
@@ -221,7 +222,7 @@ public class EnterpriseNetwork {
 //		check.setLayoutData(checkFormData);
 
 		// CHECKPOINTS
-		Label address = new Label(shell, SWT.NONE);
+		final Label address = new Label(shell, SWT.NONE);
 		address.setBackgroundImage(background);
 		address.setText("Address: ");
 		FormData addressFormData = new FormData();
@@ -237,7 +238,7 @@ public class EnterpriseNetwork {
 		addressTextFormData.left = new FormAttachment(0, 130);
 		addressText.setLayoutData(addressTextFormData);
 
-		Label zip = new Label(shell, SWT.NONE);
+		final Label zip = new Label(shell, SWT.NONE);
 		zip.setBackgroundImage(background);
 		zip.setText("Zip Code: ");
 		FormData zipFormData = new FormData();
@@ -305,26 +306,26 @@ public class EnterpriseNetwork {
 		minTextFormData.left = new FormAttachment(doubleColon, 0);
 		minText.setLayoutData(minTextFormData);
 
-		final Button locate = new Button(shell, SWT.PUSH);
-		locate.setText("Locate");
-		FormData locateFormData = new FormData();
-		locateFormData.top = new FormAttachment(minText, 0);
-		locateFormData.left = new FormAttachment(0, 130);
-		locate.setLayoutData(locateFormData);
-
 		final Button addCheckPoint = new Button(shell, SWT.PUSH);
 		addCheckPoint.setText("Add");
 		FormData destinationTextFormData = new FormData();
 		destinationTextFormData.top = new FormAttachment(minText, 0);
-		destinationTextFormData.left = new FormAttachment(locate, 5);
+		destinationTextFormData.left = new FormAttachment(0, 130);
 		addCheckPoint.setLayoutData(destinationTextFormData);
 
 		final Button removeCheckPoint = new Button(shell, SWT.PUSH);
 		removeCheckPoint.setText("Remove");
 		FormData removeTextFormData = new FormData();
 		removeTextFormData.top = new FormAttachment(minText, 0);
-		removeTextFormData.left = new FormAttachment(addCheckPoint, 2);
+		removeTextFormData.left = new FormAttachment(addCheckPoint, 0);
 		removeCheckPoint.setLayoutData(removeTextFormData);
+
+		final Button locate = new Button(shell, SWT.PUSH);
+		locate.setText("Locate");
+		FormData locateFormData = new FormData();
+		locateFormData.top = new FormAttachment(minText, 0);
+		locateFormData.left = new FormAttachment(removeCheckPoint, 0);
+		locate.setLayoutData(locateFormData);
 
 		// SEPARATOR
 		Label separator1 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL
@@ -438,8 +439,10 @@ public class EnterpriseNetwork {
 							|| hour >= 24 || minute < 0 || minute >= 60) {
 						throw new NumberFormatException();
 					}
-					String location = cityText.getText();
-					checkpointsList.add(new Checkpoint(location, hour, minute));
+					String address = addressText.getText();
+					String zipCode = zipText.getText();
+					String city = cityText.getText();
+					checkpointsList.add(new Checkpoint(address, zipCode, city, hour, minute));
 					updateRoadBook();
 					composite.setVisible(false);
 					result.setVisible(true);
@@ -460,6 +463,10 @@ public class EnterpriseNetwork {
 		});
 		locate.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				String address = addressText.getText();
+				String zipCode = zipText.getText();
+				String city = cityText.getText();
+				GeoLoc.search(browser, address, zipCode, city);
 				composite.setVisible(true);
 				result.setVisible(false);
 			}
@@ -498,13 +505,12 @@ public class EnterpriseNetwork {
 					String header = "Every";
 					if (!checkAll.getSelection()) {
 						header = dayText.getText();
-						header += " / " + mounthText.getText();
-						header += " / " + yearText.getText();
+						header += "/" + mounthText.getText();
+						header += "/" + yearText.getText();
 					}
 
 					// Format key/value and send
-					String resultStr = " Summary:\n\n\t- day: " + header
-							+ "\n\t- Trip:";
+					String resultStr = " Summary:\n\n\tDay: " + header + "\n";
 					boolean hasFound = false;
 					int cpt = 0;
 					for (int i = 0; i < checkpointsList.size(); i++) {
@@ -518,14 +524,14 @@ public class EnterpriseNetwork {
 										+ contactText.getText() + "+"
 										+ informationsText.getText();
 								synapse.put(key, value);
-								resultStr += "\n\t\t----------------------"
-										+ "\n\t\t" + checkpointsList.get(i)
-										+ "\n\t\t" + checkpointsList.get(j);
+								resultStr += "\t--------------------------------"
+										+ "\n\t" + checkpointsList.get(i)
+										+ "\n\t" + checkpointsList.get(j);
 								if (i + 2 >= checkpointsList.size()) {
-									resultStr += "\n\t\t----------------------"
-											+ "\n\n\t- contact: "
+									resultStr += "\t--------------------------------"
+											+ "\n\n\tContact: "
 											+ contactText.getText()
-											+ "\n\t- informations: "
+											+ "\n\tInformation: "
 											+ informationsText.getText();
 									resultStr += "\n\n===> Published!";
 								}
@@ -548,14 +554,14 @@ public class EnterpriseNetwork {
 										if (f != null && !f.equals("null")) {
 											String[] args = f.split("\\+");
 											if (args.length == 4) {
-												resultStr += "\n\t\t----------------------"
-														+ "\n\t\t"
+												resultStr += "\t--------------------------------"
+														+ "\n\t"
 														+ args[0]
-														+ "\n\t\t" + args[1];
-												resultStr += "\n\t\t. contact: "
+														+ "\n\t" + args[1];
+												resultStr += "\n\tContact: "
 														+ args[2]
-														+ "\n\t\t. informations: "
-														+ args[3];
+														+ "\n\tInformation: "
+														+ args[3] + "\n";
 												cpt++;
 											} else {
 												System.err
@@ -600,8 +606,7 @@ public class EnterpriseNetwork {
 		clearButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (informationsText.getText().equals("DebugOn")
-						|| informationsText.getText().equals("debugOn")) { // DEBUG
-																			// MODE!
+						|| informationsText.getText().equals("debugOn")) { // DEBUG MODE!
 					id.setVisible(true);
 					idText.setVisible(true);
 					ConsoleDialog console = new ConsoleDialog(shell, synapse);
@@ -623,6 +628,8 @@ public class EnterpriseNetwork {
 					okButton.setEnabled(false);
 					error.setVisible(false);
 					checkpointsList.clear();
+					composite.setVisible(true);
+					result.setVisible(false);
 					shell.pack();
 				}
 			}
@@ -659,6 +666,10 @@ public class EnterpriseNetwork {
 				informations.setEnabled(checked);
 				informationsText.setEnabled(checked);
 				checkPrivate.setEnabled(checked);
+				address.setEnabled(checked);
+				addressText.setEnabled(checked);
+				zip.setEnabled(checked);
+				zipText.setEnabled(checked);
 			}
 
 			public void widgetDefaultSelected(SelectionEvent arg0) {
@@ -673,6 +684,10 @@ public class EnterpriseNetwork {
 				informations.setEnabled(!checked);
 				informationsText.setEnabled(!checked);
 				checkPrivate.setEnabled(!checked);
+				address.setEnabled(!checked);
+				addressText.setEnabled(!checked);
+				zip.setEnabled(!checked);
+				zipText.setEnabled(!checked);
 			}
 
 			public void widgetDefaultSelected(SelectionEvent arg0) {

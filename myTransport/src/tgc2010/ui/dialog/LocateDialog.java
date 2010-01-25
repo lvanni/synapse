@@ -1,8 +1,5 @@
 package tgc2010.ui.dialog;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
@@ -19,6 +16,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+
+import tgc2010.ui.geoloc.GeoLoc;
 
 public class LocateDialog extends Dialog{
 
@@ -106,7 +105,7 @@ public class LocateDialog extends Dialog{
 		okButton.setText("Locate");
 		okButton.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
-				search(addressText.getText(), zipText.getText(), cityText.getText());
+				GeoLoc.search(browser, addressText.getText(), zipText.getText(), cityText.getText());
 			}
 		});
 		FormData okFormData = new FormData();
@@ -123,19 +122,6 @@ public class LocateDialog extends Dialog{
 			if (!display.readAndDispatch()) {
 				display.sleep();
 			}
-		}
-	}
-
-	public void search(String address, String zipcode, String city) {
-		String scheme = "http";
-		String authority = "maps.google.fr";
-		String path = "/maps";
-		String query = "f=q&hl=fr&q=" + address+ " , " + zipcode + " " + city ;
-		try {
-			URI uri = new URI(scheme, authority, path, query, null);
-			browser.setUrl(uri.toASCIIString());
-		} catch (URISyntaxException ex) {
-			ex.printStackTrace();
 		}
 	}
 }
