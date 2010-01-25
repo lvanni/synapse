@@ -8,11 +8,11 @@ import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Text;
 
 public class LocateDialog extends Dialog{
 
-	private Color red = new Color(null, 255, 0, 0);
 	private Browser browser;
 
 	public LocateDialog(final Shell parent) {
@@ -37,13 +36,19 @@ public class LocateDialog extends Dialog{
 		layout.marginWidth = 5;
 		shell.setLayout(layout);
 
+		final Composite composite = new Composite(shell, SWT.BORDER);
+//		composite.setSize(600, 300);
+		FormLayout compositeFormData = new FormLayout();
+		composite.setLayout(compositeFormData);
+
 		try {
-			browser = new Browser(shell, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+			browser = new Browser(composite, SWT.NONE);
+//			browser.setUrl("http://maps.google.com");
 			FormData browserFormData = new FormData();
-			browserFormData.width = 400;
-			browserFormData.height = 600;
-			browserFormData.top = new FormAttachment(0, 0);
-			browserFormData.left = new FormAttachment(0, 0);
+			browserFormData.width = 1000;
+			browserFormData.height = 400;
+			browserFormData.top = new FormAttachment(0, -120);
+			browserFormData.left = new FormAttachment(0, -384);
 			browser.setLayoutData(browserFormData);
 		} catch (SWTError e) {
 			MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
@@ -56,78 +61,77 @@ public class LocateDialog extends Dialog{
 		Label addess = new Label(shell, SWT.NONE);
 		addess.setText("Address:");
 		FormData addressData = new FormData();
-		addressData.top = new FormAttachment(browser, 0);
+		addressData.top = new FormAttachment(composite, 10);
 		addressData.left = new FormAttachment(0, 0);
 		addess.setLayoutData(addressData);
 
 		final Text addressText = new Text(shell, SWT.BORDER);
 		FormData addressTextFormData = new FormData();
-		addressTextFormData.width = 200;
+		addressTextFormData.width = 415;
 		addressTextFormData.height = 15;
-		addressTextFormData.top = new FormAttachment(browser, 0);
+		addressTextFormData.top = new FormAttachment(composite, 10);
 		addressTextFormData.left = new FormAttachment(0, 100);
 		addressText.setLayoutData(addressTextFormData);
 
 		Label zip = new Label(shell, SWT.NONE);
 		zip.setText("Zip code:");
 		FormData zipFormeData = new FormData();
-		zipFormeData.top = new FormAttachment(addess, 0);
+		zipFormeData.top = new FormAttachment(addess, 10);
 		zipFormeData.left = new FormAttachment(0, 0);
 		zip.setLayoutData(zipFormeData);
 
 		final Text zipText = new Text(shell, SWT.BORDER);
 		FormData zipTextFormData = new FormData();
-		zipTextFormData.width = 200;
+		zipTextFormData.width = 415;
 		zipTextFormData.height = 15;
-		zipTextFormData.top = new FormAttachment(addess, 0);
+		zipTextFormData.top = new FormAttachment(addess, 10);
 		zipTextFormData.left = new FormAttachment(0, 100);
 		zipText.setLayoutData(zipTextFormData);
 
 		Label city = new Label(shell, SWT.NONE);
 		city.setText("City:");
 		FormData cityFormeData = new FormData();
-		cityFormeData.top = new FormAttachment(zip, 0);
+		cityFormeData.top = new FormAttachment(zip, 10);
 		cityFormeData.left = new FormAttachment(0, 0);
 		city.setLayoutData(cityFormeData);
 
 		final Text cityText = new Text(shell, SWT.BORDER);
 		FormData cityTextFormData = new FormData();
-		cityTextFormData.width = 200;
+		cityTextFormData.width = 415;
 		cityTextFormData.height = 15;
-		cityTextFormData.top = new FormAttachment(zip, 0);
+		cityTextFormData.top = new FormAttachment(zip, 10);
 		cityTextFormData.left = new FormAttachment(0, 100);
 		cityText.setLayoutData(cityTextFormData);
 
 		// button "SEND"
 		final Button okButton = new Button(shell, SWT.PUSH);
-		okButton.setText("Send");
+		okButton.setText("Locate");
 		okButton.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
 				search(addressText.getText(), zipText.getText(), cityText.getText());
-				browser.pack();
 			}
 		});
 		FormData okFormData = new FormData();
 		okFormData.width = 80;
-		okFormData.top = new FormAttachment(zip, 0);
-		okFormData.left = new FormAttachment(cityText, 0);
+		okFormData.top = new FormAttachment(zip, 5);
+		okFormData.left = new FormAttachment(cityText, 10);
 		okButton.setLayoutData(okFormData);
 		shell.setDefaultButton(okButton);
 
-		// button "CANCEL"
-		final Button cancelButton = new Button(shell, SWT.PUSH);
-		cancelButton.setText("Cancel");
-		cancelButton.addSelectionListener(new SelectionAdapter(){
-			public void widgetSelected(SelectionEvent e) {
-				shell.close();
-			}
-		});
-		FormData cancelFormData = new FormData();
-		cancelFormData.width = 80;
-		cancelFormData.top = new FormAttachment(zip, 0);
-		cancelFormData.left = new FormAttachment(okButton, 0);
-		cancelButton.setLayoutData(cancelFormData);
-
+//		// button "CANCEL"
+//		final Button cancelButton = new Button(shell, SWT.PUSH);
+//		cancelButton.setText("Cancel");
+//		cancelButton.addSelectionListener(new SelectionAdapter(){
+//			public void widgetSelected(SelectionEvent e) {
+//				shell.close();
+//			}
+//		});
+//		FormData cancelFormData = new FormData();
+//		cancelFormData.width = 80;
+//		cancelFormData.top = new FormAttachment(cityText, 0);
+//		cancelFormData.left = new FormAttachment(okButton, 10);
+//		cancelButton.setLayoutData(cancelFormData);
+//
 		shell.pack();
 		shell.open();
 
