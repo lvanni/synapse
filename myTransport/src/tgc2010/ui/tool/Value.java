@@ -19,7 +19,7 @@ public class Value {
 		checkpoint2 += c2.getCity().equals("") ? "" : "+\tCity: " + c2.getCity();
 		checkpoint2 += "+\tTime: " + c2.getHour() + "h" + c2.getMinute();
 		System.out.println("FROM:" + "+" + checkpoint1 + "+TO:" + "+" +  checkpoint2 + "+*\tContact: " +contact + "+Information: " + inforamtion + "+Given by: " + from);
-		return "FROM:" + checkpoint1 + "+TO:" +  checkpoint2 + "+*\tContact: " +contact + "+Information: " + inforamtion + "+Given by: " + from;
+		return "FROM:" + checkpoint1 + "+TO:" +  checkpoint2 + "+*\tContact: " +contact + "+Information: " + inforamtion + "+Coming from:*" + from;
 	}
 
 	public static String deserializeValue(String value){

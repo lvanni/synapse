@@ -537,7 +537,7 @@ public class EnterpriseNetwork {
 							+ checkpointsList.get(i).formatToKey()
 							+ checkpointsList.get(j).formatToKey();
 							if (checkPublish.getSelection()) {
-								String value = Value.serializeValue(checkpointsList.get(i), checkpointsList.get(j), contactText.getText(), informationsText.getText(), "ENTERPRISE NETWORK");
+								String value = Value.serializeValue(checkpointsList.get(i), checkpointsList.get(j), contactText.getText(), informationsText.getText(), "\tENTERPRISE NETWORK");
 								synapse.put(key, value);
 								resultStr += Value.deserializeValue(value) + "\n";
 								if (i + 2 >= checkpointsList.size()) {
@@ -546,15 +546,18 @@ public class EnterpriseNetwork {
 							} else {
 								System.out.println("Search: key = " + key);
 								String found = synapse.get(key);
-								if ((found == null || found.equals("null")) && !key.equals("Every")) {
+								System.out.println("FOUND = " + found);
+								if ((found == null || found.equals("null") || found.split("\\+").length < 4)
+										&& !key.equals("Every")) {
 									key = "Every"
 										+ checkpointsList.get(i)
 										.formatToKey()
 										+ checkpointsList.get(j)
 										.formatToKey();
 									found = synapse.get(key);
+									System.out.println("FOUND2 = " + found);
 								}
-								if (found != null && !found.equals("null")) {
+								if (found != null && !found.equals("null") && found.split("\\+").length >= 4)  {
 									System.out.println(found);
 									hasFound = true;
 									String[] founds = found
