@@ -544,9 +544,7 @@ public class EnterpriseNetwork {
 									resultStr += "\n\n===> Published!";
 								}
 							} else {
-								System.out.println("Search: key = " + key);
 								String found = synapse.get(key);
-								System.out.println("FOUND = " + found);
 								if ((found == null || found.equals("null") || found.split("\\+").length < 4)
 										&& !key.equals("Every")) {
 									key = "Every"
@@ -555,7 +553,6 @@ public class EnterpriseNetwork {
 										+ checkpointsList.get(j)
 										.formatToKey();
 									found = synapse.get(key);
-									System.out.println("FOUND2 = " + found);
 								}
 								if (found != null && !found.equals("null") && found.split("\\+").length >= 4)  {
 									System.out.println(found);
