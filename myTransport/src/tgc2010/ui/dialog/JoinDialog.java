@@ -55,7 +55,7 @@ public class JoinDialog extends Dialog{
 		final Text accessPassText = new Text(shell, SWT.BORDER);
 		FormData accessPassTextFormData = new FormData();
 		accessPassTextFormData.width = 200;
-		accessPassTextFormData.height = 10;
+		accessPassTextFormData.height = 15;
 		accessPassTextFormData.top = new FormAttachment(error, 5);
 		accessPassTextFormData.left = new FormAttachment(0, 0);
 		accessPassText.setLayoutData(accessPassTextFormData);

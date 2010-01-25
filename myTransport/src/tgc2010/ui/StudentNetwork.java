@@ -27,19 +27,19 @@ import tgc2010.core.synapse.Synapse;
 import tgc2010.core.synapse.plugin.ChordNodePlugin;
 import tgc2010.ui.dialog.ConsoleDialog;
 import tgc2010.ui.dialog.JoinDialog;
+import tgc2010.ui.dialog.LocateDialog;
 import core.ITracker;
 import core.experiments.tools.InfoConsole;
 import core.protocols.p2p.IOverlay;
 import core.protocols.p2p.Node;
 
 public class StudentNetwork {
-
 	private final Shell shell;
 	private Display display;
 	private Color red = new Color(null, 255, 0, 0);
 	private Color white = new Color(null, 220, 190, 130);
 	private Synapse synapse;
-	private StyledText checkpoints;
+	private StyledText result;
 	private List<Checkpoint> checkpointsList = new ArrayList<Checkpoint>();
 	private Label error;
 
@@ -49,8 +49,8 @@ public class StudentNetwork {
 		shell = new Shell(display);
 
 		// BACKGROUND
-		Image background = new Image(display, StudentNetwork.class
-								.getResourceAsStream("studentBack.png"));
+		Image background = new Image(display, EnterpriseNetwork.class
+		 .getResourceAsStream("studentBack.png"));
 //				.getResourceAsStream("enterpriseBack.png"));
 
 		/* Init the shell */
@@ -66,7 +66,19 @@ public class StudentNetwork {
 		final MenuItem joinItem = new MenuItem(menuBar, SWT.PUSH);
 		joinItem.setText("Join");
 		shell.setMenuBar(menuBar);
-		joinItem.addListener(SWT.Selection, new MenuListener(joinItem));
+		joinItem.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event arg0) {
+				new JoinDialog(shell, synapse);
+			}
+		});
+		final MenuItem locateItem = new MenuItem(menuBar, SWT.PUSH);
+		locateItem.setText("Locate");
+		shell.setMenuBar(menuBar);
+		locateItem.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event arg0) {
+				new LocateDialog(shell);
+			}
+		});
 
 		// CHECKBOXS
 		final Button checkPublish = new Button(shell, SWT.CHECK);
@@ -101,25 +113,26 @@ public class StudentNetwork {
 		id.setText("ID: ");
 		FormData idFormData = new FormData();
 		idFormData.top = new FormAttachment(checkPublish, 0);
-		idFormData.left = new FormAttachment(0, 302);
+		idFormData.left = new FormAttachment(0, 267);
 		id.setLayoutData(idFormData);
 
 		final Text idText = new Text(shell, SWT.BORDER);
 		idText.setBackgroundImage(background);
 		idText.setVisible(false);
 		FormData idTextFormData = new FormData();
-		idTextFormData.width = 55;
-		idTextFormData.height = 10;
+		idTextFormData.width = 60;
+		idTextFormData.height = 15;
 		idTextFormData.top = new FormAttachment(checkPublish, 0);
-		idTextFormData.left = new FormAttachment(0, 290);
+		idTextFormData.left = new FormAttachment(id, 0);
 		idText.setLayoutData(idTextFormData);
 
 		// SEPARATOR
-		Label separator = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.LINE_SOLID);
+		Label separator = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL
+				| SWT.LINE_SOLID);
 		separator.setBackgroundImage(background);
 		FormData separatorFormData = new FormData();
-		separatorFormData.width = 365;
-		separatorFormData.top = new FormAttachment(checkSearch, 0);
+		separatorFormData.width = 380;
+		separatorFormData.top = new FormAttachment(checkSearch, 10);
 		separator.setLayoutData(separatorFormData);
 
 		// TRIP
@@ -143,7 +156,7 @@ public class StudentNetwork {
 		dayText.setTextLimit(2);
 		FormData dayTextFormData = new FormData();
 		dayTextFormData.width = 30;
-		dayTextFormData.height = 10;
+		dayTextFormData.height = 15;
 		dayTextFormData.top = new FormAttachment(roadTrip, 0);
 		dayTextFormData.left = new FormAttachment(day, 0);
 		dayText.setLayoutData(dayTextFormData);
@@ -161,7 +174,7 @@ public class StudentNetwork {
 		mounthText.setTextLimit(2);
 		FormData mounthTextFormData = new FormData();
 		mounthTextFormData.width = 30;
-		mounthTextFormData.height = 10;
+		mounthTextFormData.height = 15;
 		mounthTextFormData.top = new FormAttachment(roadTrip, 0);
 		mounthTextFormData.left = new FormAttachment(slash1, 5);
 		mounthText.setLayoutData(mounthTextFormData);
@@ -179,7 +192,7 @@ public class StudentNetwork {
 		yearText.setTextLimit(4);
 		FormData yearTextFormData = new FormData();
 		yearTextFormData.width = 60;
-		yearTextFormData.height = 10;
+		yearTextFormData.height = 15;
 		yearTextFormData.top = new FormAttachment(roadTrip, 0);
 		yearTextFormData.left = new FormAttachment(slash2, 5);
 		yearText.setLayoutData(yearTextFormData);
@@ -193,32 +206,11 @@ public class StudentNetwork {
 		checkAllFormData.left = new FormAttachment(0, 290);
 		checkAll.setLayoutData(checkAllFormData);
 
-		// DESTINATION
-		Label roadBook = new Label(shell, SWT.NONE);
-		roadBook.setBackgroundImage(background);
-		roadBook.setText("Road Book: ");
-		FormData destinationFormData = new FormData();
-		destinationFormData.top = new FormAttachment(yearText, 5);
-		destinationFormData.left = new FormAttachment(0, 0);
-		roadBook.setLayoutData(destinationFormData);
-
-		// MyTransport
-		checkpoints = new StyledText(shell, SWT.NONE);
-		checkpoints.setBackgroundImage(background);
-		checkpoints.setEditable(false);
-		checkpoints.setText("empty...");
-		FormData myTransportFormData = new FormData();
-		myTransportFormData.height = 110;
-		myTransportFormData.width = 200;
-		myTransportFormData.top = new FormAttachment(yearText, 5);
-		myTransportFormData.left = new FormAttachment(roadBook, 5);
-		checkpoints.setLayoutData(myTransportFormData);
-
 		Label check = new Label(shell, SWT.NONE);
 		check.setBackgroundImage(background);
-		check.setText("Checkpoint:");
+		check.setText("Add checkpoint:");
 		FormData checkFormData = new FormData();
-		checkFormData.top = new FormAttachment(checkpoints, 10);
+		checkFormData.top = new FormAttachment(day, 20);
 		checkFormData.left = new FormAttachment(0, 0);
 		check.setLayoutData(checkFormData);
 
@@ -226,7 +218,7 @@ public class StudentNetwork {
 		time.setBackgroundImage(background);
 		time.setText("Time: ");
 		FormData timeFormData = new FormData();
-		timeFormData.top = new FormAttachment(check, 10);
+		timeFormData.top = new FormAttachment(check, 0);
 		timeFormData.left = new FormAttachment(0, 0);
 		time.setLayoutData(timeFormData);
 
@@ -235,17 +227,17 @@ public class StudentNetwork {
 		hourText.setTextLimit(2);
 		FormData hourTextFormData = new FormData();
 		hourTextFormData.width = 20;
-		hourTextFormData.height = 10;
-		hourTextFormData.top = new FormAttachment(check, 10);
-		hourTextFormData.left = new FormAttachment(time, 5);
+		hourTextFormData.height = 15;
+		hourTextFormData.top = new FormAttachment(check, 0);
+		hourTextFormData.left = new FormAttachment(0, 145);
 		hourText.setLayoutData(hourTextFormData);
 
 		Label doubleColon = new Label(shell, SWT.NONE);
 		doubleColon.setBackgroundImage(background);
 		doubleColon.setText(":");
 		FormData doubleColonFormData = new FormData();
-		doubleColonFormData.top = new FormAttachment(check, 10);
-		doubleColonFormData.left = new FormAttachment(hourText, 5);
+		doubleColonFormData.top = new FormAttachment(check, 0);
+		doubleColonFormData.left = new FormAttachment(hourText, 0);
 		doubleColon.setLayoutData(doubleColonFormData);
 
 		final Text minText = new Text(shell, SWT.BORDER);
@@ -253,9 +245,9 @@ public class StudentNetwork {
 		minText.setTextLimit(2);
 		FormData minTextFormData = new FormData();
 		minTextFormData.width = 20;
-		minTextFormData.height = 10;
-		minTextFormData.top = new FormAttachment(check, 10);
-		minTextFormData.left = new FormAttachment(doubleColon, 5);
+		minTextFormData.height = 15;
+		minTextFormData.top = new FormAttachment(check, 0);
+		minTextFormData.left = new FormAttachment(doubleColon, 0);
 		minText.setLayoutData(minTextFormData);
 
 		// CHECKPOINTS
@@ -263,77 +255,39 @@ public class StudentNetwork {
 		location.setBackgroundImage(background);
 		location.setText("Location: ");
 		FormData locationFormData = new FormData();
-		locationFormData.top = new FormAttachment(check, 10);
-		locationFormData.left = new FormAttachment(minText, 10);
+		locationFormData.top = new FormAttachment(minText, 0);
+		locationFormData.left = new FormAttachment(0, 0);
 		location.setLayoutData(locationFormData);
 
 		final Text locationText = new Text(shell, SWT.BORDER);
 		FormData locationTextFormData = new FormData();
-		locationTextFormData.width = 109;
-		locationTextFormData.height = 10;
-		locationTextFormData.top = new FormAttachment(check, 10);
-		locationTextFormData.left = new FormAttachment(location, 0);
+		locationTextFormData.width = 160;
+		locationTextFormData.height = 15;
+		locationTextFormData.top = new FormAttachment(minText, 0);
+		locationTextFormData.left = new FormAttachment(0, 145);
 		locationText.setLayoutData(locationTextFormData);
 
 		final Button addCheckPoint = new Button(shell, SWT.PUSH);
-		// addCheckPoint.setBackgroundImage(background);
 		addCheckPoint.setText("+");
 		FormData destinationTextFormData = new FormData();
-		destinationTextFormData.top = new FormAttachment(check, 5);
+		destinationTextFormData.top = new FormAttachment(minText, -5);
 		destinationTextFormData.left = new FormAttachment(locationText, 5);
 		addCheckPoint.setLayoutData(destinationTextFormData);
-		addCheckPoint.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				try{
-					error.setVisible(false);
-					int hour = Integer.parseInt(hourText.getText());
-					int minute = Integer.parseInt(minText.getText());
-					if(locationText.getText().equals("") || hour<0 || hour>=24 || minute<0 || minute>=60){
-						throw new NumberFormatException();
-					}
-
-					String location = locationText.getText();
-					checkpointsList.add(new Checkpoint(location, hour, minute));
-					String checkpts = "";
-					for (Checkpoint s : checkpointsList) {
-						checkpts += s + "\n";
-					}
-					checkpoints.setText(checkpts);
-					shell.pack();
-				} catch (NumberFormatException excep) {
-					error.setVisible(true);
-				}
-			}
-		});
 
 		final Button removeCheckPoint = new Button(shell, SWT.PUSH);
-		// addCheckPoint.setBackgroundImage(background);
 		removeCheckPoint.setText("-");
 		FormData removeTextFormData = new FormData();
-		removeTextFormData.top = new FormAttachment(check, 5);
+		removeTextFormData.top = new FormAttachment(minText, -5);
 		removeTextFormData.left = new FormAttachment(addCheckPoint, 2);
 		removeCheckPoint.setLayoutData(removeTextFormData);
-		removeCheckPoint.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if(checkpointsList.size() > 0) {
-					checkpointsList.remove(checkpointsList.size()-1);
-					String checkpts = "";
-					for (Checkpoint s : checkpointsList) {
-						checkpts += s + "\n";
-					}
-					checkpoints.setText(checkpts);
-					shell.pack();
-				}
-			}
-		});
 
 		// SEPARATOR
 		Label separator1 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL
 				| SWT.LINE_SOLID);
 		separator1.setBackgroundImage(background);
 		FormData separator1FormData = new FormData();
-		separator1FormData.width = 365;
-		separator1FormData.top = new FormAttachment(removeCheckPoint, 5);
+		separator1FormData.width = 380;
+		separator1FormData.top = new FormAttachment(removeCheckPoint, 10);
 		separator1.setLayoutData(separator1FormData);
 
 		// CONTACT
@@ -341,7 +295,7 @@ public class StudentNetwork {
 		contact.setBackgroundImage(background);
 		contact.setText("Contact: ");
 		FormData contactFormData = new FormData();
-		contactFormData.top = new FormAttachment(separator1, 5);
+		contactFormData.top = new FormAttachment(separator1, 10);
 		contactFormData.left = new FormAttachment(0, 0);
 		contact.setLayoutData(contactFormData);
 
@@ -349,8 +303,8 @@ public class StudentNetwork {
 		// contactText.setBackgroundImage(background);
 		FormData contactTextFormData = new FormData();
 		contactTextFormData.width = 211;
-		contactTextFormData.height = 10;
-		contactTextFormData.top = new FormAttachment(separator1, 5);
+		contactTextFormData.height = 15;
+		contactTextFormData.top = new FormAttachment(separator1, 10);
 		contactTextFormData.left = new FormAttachment(0, 145);
 		contactText.setLayoutData(contactTextFormData);
 
@@ -359,7 +313,7 @@ public class StudentNetwork {
 		informations.setBackgroundImage(background);
 		informations.setText("Informations: ");
 		FormData transportFormData = new FormData();
-		transportFormData.top = new FormAttachment(contactText, 5);
+		transportFormData.top = new FormAttachment(contactText, 0);
 		transportFormData.left = new FormAttachment(0, 0);
 		informations.setLayoutData(transportFormData);
 
@@ -367,8 +321,8 @@ public class StudentNetwork {
 		// informationsText.setBackgroundImage(background);
 		FormData transportTextFormData = new FormData();
 		transportTextFormData.width = 211;
-		transportTextFormData.height = 10;
-		transportTextFormData.top = new FormAttachment(contactText, 5);
+		transportTextFormData.height = 15;
+		transportTextFormData.top = new FormAttachment(contactText, 0);
 		transportTextFormData.left = new FormAttachment(0, 145);
 		informationsText.setLayoutData(transportTextFormData);
 
@@ -377,18 +331,18 @@ public class StudentNetwork {
 				| SWT.LINE_SOLID);
 		separator2.setBackgroundImage(background);
 		FormData separator2FormData = new FormData();
-		separator2FormData.width = 365;
-		separator2FormData.top = new FormAttachment(informationsText, 5);
+		separator2FormData.width = 380;
+		separator2FormData.top = new FormAttachment(informationsText, 10);
 		separator2.setLayoutData(separator2FormData);
 
 		// RESULT
-		final StyledText result = new StyledText(shell, SWT.BORDER);
-		result.setText(" Result:");
+		result = new StyledText(shell, SWT.BORDER);
+		result.setText(" Road Book: \n\n\tEmpty...");
 		result.setBackgroundImage(background);
 		result.setEditable(false);
 		result.setForeground(white);
-		Image font = new Image(display, StudentNetwork.class
-								.getResourceAsStream("studentRes.png"));
+		Image font = new Image(display, EnterpriseNetwork.class
+		 .getResourceAsStream("studentRes.png"));
 //				.getResourceAsStream("enterpriseRes.png"));
 		result.setBackgroundImage(font);
 		FormData resultTextFormData = new FormData();
@@ -398,6 +352,34 @@ public class StudentNetwork {
 		resultTextFormData.left = new FormAttachment(0, 400);
 		result.setLayoutData(resultTextFormData);
 
+		// CRUD ROADBOOK
+		addCheckPoint.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					error.setVisible(false);
+					int hour = Integer.parseInt(hourText.getText());
+					int minute = Integer.parseInt(minText.getText());
+					if (locationText.getText().equals("") || hour < 0
+							|| hour >= 24 || minute < 0 || minute >= 60) {
+						throw new NumberFormatException();
+					}
+					String location = locationText.getText();
+					checkpointsList.add(new Checkpoint(location, hour, minute));
+					updateRoadBook();
+				} catch (NumberFormatException excep) {
+					error.setVisible(true);
+				}
+			}
+		});
+		removeCheckPoint.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (checkpointsList.size() > 0) {
+					checkpointsList.remove(checkpointsList.size() - 1);
+					updateRoadBook();
+				}
+			}
+		});
+
 		// ERROR
 		error = new Label(shell, SWT.NONE);
 		error.setBackgroundImage(background);
@@ -405,7 +387,7 @@ public class StudentNetwork {
 		error.setText("Date/Time: Bad format number!");
 		error.setVisible(false);
 		FormData errorFormData = new FormData();
-		errorFormData.top = new FormAttachment(separator2, 5);
+		errorFormData.top = new FormAttachment(separator2, 10);
 		errorFormData.left = new FormAttachment(0, 80);
 		error.setLayoutData(errorFormData);
 
@@ -417,67 +399,95 @@ public class StudentNetwork {
 			public void widgetSelected(SelectionEvent e) {
 				try {
 					error.setVisible(false);
-					if(!checkAll.getSelection()){
+					if (!checkAll.getSelection()) {
 						int day = Integer.parseInt(dayText.getText());
 						int mounth = Integer.parseInt(mounthText.getText());
 						int year = Integer.parseInt(yearText.getText());
-						if(day<0 || day>31 || mounth<0 || mounth>12 || year<2010 ){
+						if (day < 0 || day > 31 || mounth < 0 || mounth > 12
+								|| year < 2010) {
 							throw new NumberFormatException();
 						}
 					}
 
 					// Format header
 					String header = "Every";
-					if(!checkAll.getSelection()){
+					if (!checkAll.getSelection()) {
 						header = dayText.getText();
 						header += " / " + mounthText.getText();
 						header += " / " + yearText.getText();
 					}
 
 					// Format key/value and send
-					String resultStr = " Summary:\n\n\t- day: " + header + "\n\t- Trip:";
+					String resultStr = " Summary:\n\n\t- day: " + header
+							+ "\n\t- Trip:";
 					boolean hasFound = false;
 					int cpt = 0;
-					for(int i = 0 ; i<checkpointsList.size() ; i++){
-						for(int j = i+1 ; j<checkpointsList.size() ; j++){
-							String key = header  + checkpointsList.get(i).formatTokey() + checkpointsList.get(j).formatTokey();
+					for (int i = 0; i < checkpointsList.size(); i++) {
+						for (int j = i + 1; j < checkpointsList.size(); j++) {
+							String key = header
+									+ checkpointsList.get(i).formatTokey()
+									+ checkpointsList.get(j).formatTokey();
 							if (checkPublish.getSelection()) {
-								String value = checkpointsList.get(i) + "+" + checkpointsList.get(j) + "+" + contactText.getText() + "+" + informationsText.getText();
-								synapse.put(key,value);
-								resultStr += "\n\t\t----------------------" + "\n\t\t" + checkpointsList.get(i) + "\n\t\t" + checkpointsList.get(j);
-								if(i+2 >= checkpointsList.size()){
-									resultStr += "\n\t\t----------------------" + "\n\n\t- contact: " + contactText.getText()
-									+ "\n\t- informations: " + informationsText.getText();
+								String value = checkpointsList.get(i) + "+"
+										+ checkpointsList.get(j) + "+"
+										+ contactText.getText() + "+"
+										+ informationsText.getText();
+								synapse.put(key, value);
+								resultStr += "\n\t\t----------------------"
+										+ "\n\t\t" + checkpointsList.get(i)
+										+ "\n\t\t" + checkpointsList.get(j);
+								if (i + 2 >= checkpointsList.size()) {
+									resultStr += "\n\t\t----------------------"
+											+ "\n\n\t- contact: "
+											+ contactText.getText()
+											+ "\n\t- informations: "
+											+ informationsText.getText();
 									resultStr += "\n\n===> Published!";
 								}
 							} else {
 								String found = synapse.get(key);
-								if (found == null || found.equals("null")){
-									key = "all" + checkpointsList.get(i).formatTokey() + checkpointsList.get(j).formatTokey();
+								if (found == null || found.equals("null")) {
+									key = "all"
+											+ checkpointsList.get(i)
+													.formatTokey()
+											+ checkpointsList.get(j)
+													.formatTokey();
 									found = synapse.get(key);
 								}
-								if (found != null && !found.equals("null")){
+								if (found != null && !found.equals("null")) {
 									System.out.println(found);
 									hasFound = true;
-									String[] founds =  found.split("\\*\\*\\*\\*");
-									for(String f : founds) {
-										if (f != null && !f.equals("null")){
+									String[] founds = found
+											.split("\\*\\*\\*\\*");
+									for (String f : founds) {
+										if (f != null && !f.equals("null")) {
 											String[] args = f.split("\\+");
-											if(args.length == 4){
-												resultStr += "\n\t\t----------------------" + "\n\t\t" + args[0] + "\n\t\t" + args[1];
-												resultStr += "\n\t\t. contact: " + args[2] + "\n\t\t. informations: " + args[3];
+											if (args.length == 4) {
+												resultStr += "\n\t\t----------------------"
+														+ "\n\t\t"
+														+ args[0]
+														+ "\n\t\t" + args[1];
+												resultStr += "\n\t\t. contact: "
+														+ args[2]
+														+ "\n\t\t. informations: "
+														+ args[3];
 												cpt++;
 											} else {
-												System.err.println("args.length != 4 on " + f);
+												System.err
+														.println("args.length != 4 on "
+																+ f);
 											}
 										}
 									}
 								}
-								if(i+2 >= checkpointsList.size()){
-									if(!hasFound){
+								if (i + 2 >= checkpointsList.size()) {
+									if (!hasFound) {
 										resultStr = "No result found...";
 									} else {
-										resultStr += (cpt > 1) ? "\n\n===> " + cpt + " results found!" : "\n\n===> " + cpt + " result found!";
+										resultStr += (cpt > 1) ? "\n\n===> "
+												+ cpt + " results found!"
+												: "\n\n===> " + cpt
+														+ " result found!";
 									}
 								}
 							}
@@ -504,17 +514,19 @@ public class StudentNetwork {
 		clearButton.setText("Clear");
 		clearButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (informationsText.getText().equals("DebugOn") || informationsText.getText().equals("debugOn")) { // DEBUG MODE!
+				if (informationsText.getText().equals("DebugOn")
+						|| informationsText.getText().equals("debugOn")) { // DEBUG
+																			// MODE!
 					id.setVisible(true);
 					idText.setVisible(true);
-					ConsoleDialog console = new ConsoleDialog(shell,
-							synapse);
+					ConsoleDialog console = new ConsoleDialog(shell, synapse);
 					console.start();
-				} else if (informationsText.getText().equals("DebugOff") || informationsText.getText().equals("debugOff")) {
+				} else if (informationsText.getText().equals("DebugOff")
+						|| informationsText.getText().equals("debugOff")) {
 					id.setVisible(false);
 					idText.setVisible(false);
 				} else {
-					result.setText(" Result: ");
+					result.setText(" Road Book: \n\n\tEmpty");
 					dayText.setText("");
 					mounthText.setText("");
 					yearText.setText("");
@@ -526,7 +538,6 @@ public class StudentNetwork {
 					okButton.setEnabled(false);
 					error.setVisible(false);
 					checkpointsList.clear();
-					checkpoints.setText("empty...");
 					shell.pack();
 				}
 			}
@@ -540,11 +551,11 @@ public class StudentNetwork {
 		// SELECTION LISTENER
 		Listener sendListener = new Listener() {
 			public void handleEvent(Event event) {
-				okButton.setEnabled((checkAll.getSelection() ||
-								(!dayText.getText().equals("") &&
-										!mounthText.getText().equals("") &&
-										!yearText.getText().equals(""))) &&
-										checkpointsList.size() >= 2);
+				okButton.setEnabled((checkAll.getSelection() || (!dayText
+						.getText().equals("")
+						&& !mounthText.getText().equals("") && !yearText
+						.getText().equals("")))
+						&& checkpointsList.size() >= 2);
 			}
 		};
 		dayText.addListener(SWT.KeyUp, sendListener);
@@ -593,61 +604,19 @@ public class StudentNetwork {
 				yearText.setEnabled(!checked);
 			}
 
-			public void widgetDefaultSelected(SelectionEvent arg0) {}
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+			}
 		});
 		shell.pack();
 	}
 
-	private class MenuListener implements Listener {
-		private MenuItem item;
-
-		public MenuListener(MenuItem item) {
-			this.item = item;
+	public void updateRoadBook() {
+		String checkpts = " Road Book: \n\n";
+		for (Checkpoint s : checkpointsList) {
+			checkpts += "\t" + s + "\n";
 		}
-
-		public void handleEvent(Event arg0) {
-			 new JoinDialog(shell, synapse);
-			//			IOverlay overlay = null;
-			//			String ip = synapse.getThisNode().getIp();
-			//			String trackerResponse = "null";
-			//			if (item.getText().equals("student")) {
-			//				overlay = new ChordNodePlugin(ip, 0, synapse, "student");
-			//				trackerResponse = synapse.getTransport().sendRequest(
-			//						ITracker.GETCONNECTION + "," + "student",
-			//						new Node(ITracker.TRACKER_HOST, 0,
-			//								ITracker.TRACKER_PORT));
-			//			} else {
-			//				overlay = new ChordNodePlugin(ip, 0, synapse, "enterprise");
-			//				trackerResponse = synapse.getTransport().sendRequest(
-			//						ITracker.GETCONNECTION + "," + "enterprise",
-			//						new Node(ITracker.TRACKER_HOST, 0,
-			//								ITracker.TRACKER_PORT));
-			//			}
-			//			synapse.getNetworks().add(overlay);
-			//
-			//			// CONNECT ON TRACKER
-			//			synapse.getTransport().sendRequest(
-			//					ITracker.ADDNODE + "," + overlay.getIdentifier() + ","
-			//					+ overlay.getThisNode(),
-			//					new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
-			//			if (!trackerResponse.equals("null")) {
-			//				Node n = new Node(trackerResponse);
-			//				System.out.println("join to " + trackerResponse);
-			//				overlay.join(n.getIp(), n.getPort());
-			//			}
-			//			System.out.println("join ok!");
-			//
-			//			// Set GUI Text
-			//			checkpoints.setForeground(new Color(null, 0, 180, 0));
-			//			String text = "Services enabled: ";
-			//			for (IOverlay o : synapse.getNetworks()) {
-			//				text += o.getIdentifier() + "["
-			//				+ ((AbstractChord) o).getThisNode().getId() + ","
-			//				+ ((AbstractChord) o).getPredecessor().getId() + "], ";
-			//			}
-			//			checkpoints.setText(text);
-//			System.out.println("do nothings...");
-		}
+		result.setText(checkpts);
+		shell.pack();
 	}
 
 	public void start() {
@@ -660,12 +629,12 @@ public class StudentNetwork {
 		for (IOverlay o : synapse.getNetworks()) {
 			synapse.getTransport().sendRequest(
 					ITracker.REMOVENODE + "," + o.getIdentifier() + ","
-					+ o.getThisNode(),
+							+ o.getThisNode(),
 					new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 		}
 		synapse.getTransport().sendRequest(
 				ITracker.REMOVENODE + "," + synapse.getIdentifier() + ","
-				+ synapse.getThisNode(),
+						+ synapse.getThisNode(),
 				new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 		synapse.kill();
 		System.exit(0);
@@ -677,19 +646,18 @@ public class StudentNetwork {
 			System.out.print("MyTransport's Launching, please wait... ");
 			String ip = InfoConsole.getIp();
 			Synapse synapse = new Synapse(ip, 0);
-			ChordNodePlugin overlay = new ChordNodePlugin(ip, 0, synapse, "student");
+			ChordNodePlugin overlay = new ChordNodePlugin(ip, 0, synapse,
+					"student");
 
 			/* TRACKER */
 			// control network
 			String trackerResponse = synapse.getTransport().sendRequest(
 					ITracker.GETCONNECTION + "," + synapse.getIdentifier(),
-					new Node(ITracker.TRACKER_HOST, 0,
-							ITracker.TRACKER_PORT));
+					new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 			synapse.getTransport().sendRequest(
 					ITracker.ADDNODE + "," + synapse.getIdentifier() + ","
-					+ synapse.getThisNode(),
-					new Node(ITracker.TRACKER_HOST, 0,
-							ITracker.TRACKER_PORT));
+							+ synapse.getThisNode(),
+					new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 			if (!trackerResponse.equals("null")) {
 				Node n = new Node(trackerResponse);
 				synapse.join(n.getIp(), n.getPort());
@@ -698,12 +666,11 @@ public class StudentNetwork {
 			// overlay network
 			trackerResponse = synapse.getTransport().sendRequest(
 					ITracker.GETCONNECTION + "," + "student",
-					new Node(ITracker.TRACKER_HOST, 0,
-							ITracker.TRACKER_PORT));
+					new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 			synapse.getNetworks().add(overlay);
 			synapse.getTransport().sendRequest(
 					ITracker.ADDNODE + "," + overlay.getIdentifier() + ","
-					+ overlay.getThisNode(),
+							+ overlay.getThisNode(),
 					new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 			if (!trackerResponse.equals("null")) {
 				Node n = new Node(trackerResponse);

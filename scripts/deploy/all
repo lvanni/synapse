@@ -1,5 +1,11 @@
 export CURRENT_PATH=`pwd`
 
+mkdir -p $SYNAPSE_HOME/jSynapse/trunk/dist
+mkdir -p $SYNAPSE_HOME/tracker/dist
+mkdir -p $SYNAPSE_HOME/jSynapse/trunk/lib
+mkdir -p $SYNAPSE_HOME/myTransport/lib
+mkdir -p $SYNAPSE_HOME/tracker/lib
+
 echo "--------------------------------------"
 echo "|      generate jSynapse library     |"
 echo "--------------------------------------" 
