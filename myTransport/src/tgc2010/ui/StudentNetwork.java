@@ -44,6 +44,7 @@ public class StudentNetwork {
 	private Color red = new Color(null, 255, 0, 0);
 	private Color white = new Color(null, 220, 190, 130);
 	private Synapse synapse;
+	private Button locate;
 	private StyledText result;
 	private Browser browser = null;
 	private List<Checkpoint> checkpointsList = new ArrayList<Checkpoint>();
@@ -83,6 +84,24 @@ public class StudentNetwork {
 		locateItem.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event arg0) {
 				new LocateDialog(shell);
+			}
+		});
+		final MenuItem hideItem = new MenuItem(menuBar, SWT.PUSH);
+		hideItem.setText("HideMap");
+		shell.setMenuBar(menuBar);
+		hideItem.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event arg0) {
+				if(locate.getEnabled()){
+					locate.setEnabled(false);
+					locateItem.setEnabled(false);
+					result.setVisible(true);
+					hideItem.setText("showMap");
+				} else {
+					locate.setEnabled(true);
+					locateItem.setEnabled(true);
+					result.setVisible(false);
+					hideItem.setText("HideMap");
+				}
 			}
 		});
 
@@ -319,7 +338,7 @@ public class StudentNetwork {
 		removeTextFormData.left = new FormAttachment(addCheckPoint, 0);
 		removeCheckPoint.setLayoutData(removeTextFormData);
 
-		final Button locate = new Button(shell, SWT.PUSH);
+		locate = new Button(shell, SWT.PUSH);
 		locate.setText("Locate");
 		FormData locateFormData = new FormData();
 		locateFormData.top = new FormAttachment(minText, 0);
@@ -427,6 +446,7 @@ public class StudentNetwork {
 			messageBox.open();
 			locate.setEnabled(false);
 			locateItem.setEnabled(false);
+			hideItem.setEnabled(false);
 			result.setVisible(true);
 		}
 
@@ -634,7 +654,7 @@ public class StudentNetwork {
 					error.setVisible(false);
 					checkpointsList.clear();
 					composite.setVisible(true);
-					if(browser != null)
+					if(locate.getEnabled())
 						result.setVisible(false);
 					shell.pack();
 				}
