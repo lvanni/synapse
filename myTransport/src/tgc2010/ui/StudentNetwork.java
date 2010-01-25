@@ -544,7 +544,7 @@ public class StudentNetwork {
 							+ checkpointsList.get(i).formatToKey()
 							+ checkpointsList.get(j).formatToKey();
 							if (checkPublish.getSelection()) {
-								String value = Value.serializeValue(checkpointsList.get(i), checkpointsList.get(j), contactText.getText(), informationsText.getText(), "STUDENT NETWORK");
+								String value = Value.serializeValue(checkpointsList.get(i), checkpointsList.get(j), contactText.getText(), informationsText.getText(), "\tSTUDENT NETWORK");
 								synapse.put(key, value);
 								resultStr += Value.deserializeValue(value) + "\n";
 								if (i + 2 >= checkpointsList.size()) {
@@ -553,7 +553,8 @@ public class StudentNetwork {
 							} else {
 								System.out.println("Search: key = " + key);
 								String found = synapse.get(key);
-								if ((found == null || found.equals("null")) && !key.equals("Every")) {
+								if ((found == null || found.equals("null") || found.split("\\+").length < 4)
+										&& !key.equals("Every")) {
 									key = "Every"
 										+ checkpointsList.get(i)
 										.formatToKey()
@@ -561,7 +562,7 @@ public class StudentNetwork {
 										.formatToKey();
 									found = synapse.get(key);
 								}
-								if (found != null && !found.equals("null")) {
+								if (found != null && !found.equals("null") && found.split("\\+").length >= 4)  {
 									System.out.println(found);
 									hasFound = true;
 									String[] founds = found
