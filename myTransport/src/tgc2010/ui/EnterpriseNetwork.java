@@ -102,7 +102,7 @@ public class EnterpriseNetwork {
 		checkPrivate.setText("Private");
 		FormData checkPrivateFormData = new FormData();
 		checkPrivateFormData.top = new FormAttachment(0, 0);
-		checkPrivateFormData.left = new FormAttachment(0, 310);
+		checkPrivateFormData.left = new FormAttachment(0, 300);
 		checkPrivate.setLayoutData(checkPrivateFormData);
 
 		final Button checkSearch = new Button(shell, SWT.CHECK);
@@ -210,7 +210,7 @@ public class EnterpriseNetwork {
 		checkAll.setText("Every");
 		FormData checkAllFormData = new FormData();
 		checkAllFormData.top = new FormAttachment(separator, 10);
-		checkAllFormData.left = new FormAttachment(0, 310);
+		checkAllFormData.left = new FormAttachment(0, 300);
 		checkAll.setLayoutData(checkAllFormData);
 
 //		Label check = new Label(shell, SWT.NONE);
@@ -415,8 +415,10 @@ public class EnterpriseNetwork {
 			browser.setUrl("http://maps.google.fr/maps?f=q&hl=fr&q=%20,%20%20nice");
 			FormData browserFormData = new FormData();
 			browserFormData.width = 665;
-			browserFormData.height = 500;
-			browserFormData.top = new FormAttachment(0, -120);
+//			browserFormData.height = 500;
+			browserFormData.height = 565;
+			browserFormData.top = new FormAttachment(0, -185);
+//			browserFormData.top = new FormAttachment(0, -120);
 			browserFormData.left = new FormAttachment(0, -385);
 			browser.setLayoutData(browserFormData);
 		} catch (SWTError e) {
@@ -479,7 +481,7 @@ public class EnterpriseNetwork {
 		error.setText("Date/Time: Bad format number!");
 		error.setVisible(false);
 		FormData errorFormData = new FormData();
-		errorFormData.top = new FormAttachment(separator2, 10);
+		errorFormData.top = new FormAttachment(separator2, 0);
 		errorFormData.left = new FormAttachment(0, 80);
 		error.setLayoutData(errorFormData);
 
@@ -596,7 +598,7 @@ public class EnterpriseNetwork {
 		});
 		FormData okFormData = new FormData();
 		okFormData.width = 80;
-		okFormData.top = new FormAttachment(error, 5);
+		okFormData.top = new FormAttachment(error, 0);
 		okFormData.left = new FormAttachment(0, 100);
 		okButton.setLayoutData(okFormData);
 		shell.setDefaultButton(okButton);
@@ -638,7 +640,7 @@ public class EnterpriseNetwork {
 		});
 		FormData clearFormData = new FormData();
 		clearFormData.width = 80;
-		clearFormData.top = new FormAttachment(error, 5);
+		clearFormData.top = new FormAttachment(error, 0);
 		clearFormData.left = new FormAttachment(okButton, 5);
 		clearButton.setLayoutData(clearFormData);
 

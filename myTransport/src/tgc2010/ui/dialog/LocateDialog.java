@@ -43,8 +43,10 @@ public class LocateDialog extends Dialog{
 			browser = new Browser(composite, SWT.NONE);
 			FormData browserFormData = new FormData();
 			browserFormData.width = 1000;
-			browserFormData.height = 400;
-			browserFormData.top = new FormAttachment(0, -120);
+//			browserFormData.height = 400;
+			browserFormData.height = 465;
+//			browserFormData.top = new FormAttachment(0, -120);
+			browserFormData.top = new FormAttachment(0, -185);
 			browserFormData.left = new FormAttachment(0, -384);
 			browser.setLayoutData(browserFormData);
 		} catch (SWTError e) {
