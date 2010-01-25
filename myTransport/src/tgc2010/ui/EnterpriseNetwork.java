@@ -57,7 +57,7 @@ public class EnterpriseNetwork {
 
 		// BACKGROUND
 		Image background = new Image(display, EnterpriseNetwork.class
-		// .getResourceAsStream("studentBack.png"));
+				// .getResourceAsStream("studentBack.png"));
 				.getResourceAsStream("enterpriseBack.png"));
 
 		/* Init the shell */
@@ -143,12 +143,12 @@ public class EnterpriseNetwork {
 		separator.setLayoutData(separatorFormData);
 
 		// TRIP
-//		Label roadTrip = new Label(shell, SWT.NONE);
-//		roadTrip.setBackgroundImage(background);
-//		roadTrip.setText("Trip: ");
-//		FormData roadTripFormData = new FormData();
-//		roadTripFormData.top = new FormAttachment(separator, 4);
-//		roadTrip.setLayoutData(roadTripFormData);
+		//		Label roadTrip = new Label(shell, SWT.NONE);
+		//		roadTrip.setBackgroundImage(background);
+		//		roadTrip.setText("Trip: ");
+		//		FormData roadTripFormData = new FormData();
+		//		roadTripFormData.top = new FormAttachment(separator, 4);
+		//		roadTrip.setLayoutData(roadTripFormData);
 
 		// DAY
 		final Label day = new Label(shell, SWT.NONE);
@@ -213,13 +213,13 @@ public class EnterpriseNetwork {
 		checkAllFormData.left = new FormAttachment(0, 300);
 		checkAll.setLayoutData(checkAllFormData);
 
-//		Label check = new Label(shell, SWT.NONE);
-//		check.setBackgroundImage(background);
-//		check.setText("Add checkpoint:");
-//		FormData checkFormData = new FormData();
-//		checkFormData.top = new FormAttachment(day, 20);
-//		checkFormData.left = new FormAttachment(0, 0);
-//		check.setLayoutData(checkFormData);
+		//		Label check = new Label(shell, SWT.NONE);
+		//		check.setBackgroundImage(background);
+		//		check.setText("Add checkpoint:");
+		//		FormData checkFormData = new FormData();
+		//		checkFormData.top = new FormAttachment(day, 20);
+		//		checkFormData.left = new FormAttachment(0, 0);
+		//		check.setLayoutData(checkFormData);
 
 		// CHECKPOINTS
 		final Label address = new Label(shell, SWT.NONE);
@@ -389,7 +389,7 @@ public class EnterpriseNetwork {
 		result.setEditable(false);
 		result.setForeground(white);
 		Image font = new Image(display, EnterpriseNetwork.class
-		// .getResourceAsStream("studentRes.png"));
+				// .getResourceAsStream("studentRes.png"));
 				.getResourceAsStream("enterpriseRes.png"));
 		result.setBackgroundImage(font);
 		FormData resultTextFormData = new FormData();
@@ -415,10 +415,10 @@ public class EnterpriseNetwork {
 			browser.setUrl("http://maps.google.fr/maps?f=q&hl=fr&q=%20,%20%20nice");
 			FormData browserFormData = new FormData();
 			browserFormData.width = 665;
-//			browserFormData.height = 500;
+			//			browserFormData.height = 500;
 			browserFormData.height = 565;
 			browserFormData.top = new FormAttachment(0, -185);
-//			browserFormData.top = new FormAttachment(0, -120);
+			//			browserFormData.top = new FormAttachment(0, -120);
 			browserFormData.left = new FormAttachment(0, -385);
 			browser.setLayoutData(browserFormData);
 		} catch (SWTError e) {
@@ -520,59 +520,59 @@ public class EnterpriseNetwork {
 					for (int i = 0; i < checkpointsList.size(); i++) {
 						for (int j = i + 1; j < checkpointsList.size(); j++) {
 							String key = header
-									+ checkpointsList.get(i).formatToKey()
-									+ checkpointsList.get(j).formatToKey();
+							+ checkpointsList.get(i).formatToKey()
+							+ checkpointsList.get(j).formatToKey();
 							if (checkPublish.getSelection()) {
 								String value = checkpointsList.get(i) + "+"
-										+ checkpointsList.get(j) + "+"
-										+ contactText.getText() + "+"
-										+ informationsText.getText();
+								+ checkpointsList.get(j) + "+"
+								+ contactText.getText() + "+"
+								+ informationsText.getText();
 								System.out.println("Publish: \n\tkey = " + key + "\n\tvalue = " + value );
 								synapse.put(key, value);
 								resultStr += "\t--------------------------------"
-										+ "\n\t" + Checkpoint.formatToPrint(checkpointsList.get(i).toString())
-										+ "\n\t" + Checkpoint.formatToPrint(checkpointsList.get(j).toString());
+									+ "\n\t" + Checkpoint.formatToPrint(checkpointsList.get(i).toString())
+									+ "\n\t" + Checkpoint.formatToPrint(checkpointsList.get(j).toString());
 								if (i + 2 >= checkpointsList.size()) {
 									resultStr += "\t--------------------------------"
-											+ "\n\n\tContact: "
-											+ contactText.getText()
-											+ "\n\tInformation: "
-											+ informationsText.getText();
+										+ "\n\n\tContact: "
+										+ contactText.getText()
+										+ "\n\tInformation: "
+										+ informationsText.getText();
 									resultStr += "\n\n===> Published!";
 								}
 							} else {
 								System.out.println("Search: key = " + key);
 								String found = synapse.get(key);
-								if (found == null || found.equals("null")) {
+								if ((found == null || found.equals("null")) && !key.equals("Every")) {
 									key = "Every"
-											+ checkpointsList.get(i)
-													.formatToKey()
-											+ checkpointsList.get(j)
-													.formatToKey();
+										+ checkpointsList.get(i)
+										.formatToKey()
+										+ checkpointsList.get(j)
+										.formatToKey();
 									found = synapse.get(key);
 								}
 								if (found != null && !found.equals("null")) {
 									System.out.println(found);
 									hasFound = true;
 									String[] founds = found
-											.split("\\*\\*\\*\\*");
+									.split("\\*\\*\\*\\*");
 									for (String f : founds) {
 										if (f != null && !f.equals("null")) {
 											String[] args = f.split("\\+");
-											if (args.length == 4) {
+											if (args.length >= 3) {
 												resultStr += "\t--------------------------------"
-														+ "\n\t"
-														+ Checkpoint.formatToPrint(args[0])
-														+ "\n\t" + Checkpoint.formatToPrint(args[1]);
+													+ "\n\t"
+													+ Checkpoint.formatToPrint(args[0])
+													+ "\n\t" + Checkpoint.formatToPrint(args[1]);
 												resultStr += "\n\tContact: "
-														+ args[2]
-														+ "\n\tInformation: "
-														+ args[3] + "\n";
+													+ args[2]
+													+ "\n\tInformation: ";
+												resultStr += args.length == 4 ? args[3] + "\n" : "\n";
 												cpt++;
 											} else {
 												System.err
-														.println("args.length != 4 on "
-																+ f);
+												.println("args.length < 3 on "
+														+ f);
 											}
 										}
 									}
@@ -584,7 +584,7 @@ public class EnterpriseNetwork {
 										resultStr += (cpt > 1) ? "\n\n===> "
 												+ cpt + " results found!"
 												: "\n\n===> " + cpt
-														+ " result found!";
+												+ " result found!";
 									}
 								}
 							}
@@ -736,12 +736,12 @@ public class EnterpriseNetwork {
 		for (IOverlay o : synapse.getNetworks()) {
 			synapse.getTransport().sendRequest(
 					ITracker.REMOVENODE + "," + o.getIdentifier() + ","
-							+ o.getThisNode(),
+					+ o.getThisNode(),
 					new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 		}
 		synapse.getTransport().sendRequest(
 				ITracker.REMOVENODE + "," + synapse.getIdentifier() + ","
-						+ synapse.getThisNode(),
+				+ synapse.getThisNode(),
 				new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 		synapse.kill();
 		System.exit(0);
@@ -754,7 +754,7 @@ public class EnterpriseNetwork {
 			String ip = InfoConsole.getIp();
 			Synapse synapse = new Synapse(ip, 0);
 			ChordNodePlugin overlay = new ChordNodePlugin(ip, 0, synapse,
-					"enterprise");
+			"enterprise");
 
 			/* TRACKER */
 			// control network
@@ -763,7 +763,7 @@ public class EnterpriseNetwork {
 					new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 			synapse.getTransport().sendRequest(
 					ITracker.ADDNODE + "," + synapse.getIdentifier() + ","
-							+ synapse.getThisNode(),
+					+ synapse.getThisNode(),
 					new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 			if (!trackerResponse.equals("null")) {
 				Node n = new Node(trackerResponse);
@@ -777,7 +777,7 @@ public class EnterpriseNetwork {
 			synapse.getNetworks().add(overlay);
 			synapse.getTransport().sendRequest(
 					ITracker.ADDNODE + "," + overlay.getIdentifier() + ","
-							+ overlay.getThisNode(),
+					+ overlay.getThisNode(),
 					new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 			if (!trackerResponse.equals("null")) {
 				Node n = new Node(trackerResponse);

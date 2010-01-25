@@ -542,7 +542,7 @@ public class StudentNetwork {
 							} else {
 								System.out.println("Search: key = " + key);
 								String found = synapse.get(key);
-								if (found == null || found.equals("null")) {
+								if ((found == null || found.equals("null")) && !key.equals("Every")) {
 									key = "Every"
 											+ checkpointsList.get(i)
 													.formatToKey()
@@ -558,19 +558,19 @@ public class StudentNetwork {
 									for (String f : founds) {
 										if (f != null && !f.equals("null")) {
 											String[] args = f.split("\\+");
-											if (args.length == 4) {
+											if (args.length >= 3) {
 												resultStr += "\t--------------------------------"
 														+ "\n\t"
 														+ Checkpoint.formatToPrint(args[0])
 														+ "\n\t" + Checkpoint.formatToPrint(args[1]);
 												resultStr += "\n\tContact: "
 														+ args[2]
-														+ "\n\tInformation: "
-														+ args[3] + "\n";
+														+ "\n\tInformation: ";
+												resultStr += args.length == 4 ? args[3] + "\n" : "\n";
 												cpt++;
 											} else {
 												System.err
-														.println("args.length != 4 on "
+												.println("args.length < 3 on "
 																+ f);
 											}
 										}
