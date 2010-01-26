@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import ui.gui.maemo.dialog.ConsoleDialog;
-import core.experiments.tools.ITracker;
+import core.ITracker;
 import core.experiments.tools.InfoConsole;
 import core.mytansport.MyTransport;
 import core.mytansport.plugins.MyConcert;
@@ -34,10 +34,6 @@ import core.protocols.p2p.Node;
 import core.protocols.p2p.chord.AbstractChord;
 
 public class MyTransportSWTMaemo {
-
-	/** address on the tracker which give the peerSet*/
-	private static String TRACKER_HOST = "localhost";
-	private static int 	  TRACKER_PORT = 8000;
 
 	private final Shell shell;
 	private Display display;
@@ -379,16 +375,16 @@ public class MyTransportSWTMaemo {
 			String trackerResponse = "null";
 			if(item.getText().equals("Concert")){
 				overlay = new MyConcert(ip, 0, myTransport);
-				trackerResponse = myTransport.getTransport().forward(ITracker.GETCONNECTION + "," + Concert.OVERLAY_IDENTIFIER, new Node(TRACKER_HOST, 0, TRACKER_PORT));
+				trackerResponse = myTransport.getTransport().forward(ITracker.GETCONNECTION + "," + Concert.OVERLAY_IDENTIFIER, new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 			} else {
 				overlay = new MyFoot(ip, 0, myTransport);
-				trackerResponse = myTransport.getTransport().forward(ITracker.GETCONNECTION + "," + Foot.OVERLAY_IDENTIFIER, new Node(TRACKER_HOST, 0, TRACKER_PORT));
+				trackerResponse = myTransport.getTransport().forward(ITracker.GETCONNECTION + "," + Foot.OVERLAY_IDENTIFIER, new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 			}
 			new Thread((Runnable) overlay).start();
 			Thread.yield();
 			myTransport.getNetworks().add(overlay);
 			// CONNECT ON TRACKER
-			myTransport.getTransport().forward(ITracker.ADDNODE + "," + overlay.getIdentifier() + "," + overlay.getThisNode(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
+			myTransport.getTransport().forward(ITracker.ADDNODE + "," + overlay.getIdentifier() + "," + overlay.getThisNode(), new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 			if(!trackerResponse.equals("null")) {
 				Node n = new Node(trackerResponse);
 				System.out.println("join to " + trackerResponse);
@@ -413,9 +409,9 @@ public class MyTransportSWTMaemo {
 		}
 		display.dispose();
 		for(IOverlay o : myTransport.getNetworks()){
-			myTransport.getTransport().forward(ITracker.REMOVENODE + "," + o.getIdentifier() + "," + o.getThisNode(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
+			myTransport.getTransport().forward(ITracker.REMOVENODE + "," + o.getIdentifier() + "," + o.getThisNode(), new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 		}
-		myTransport.getTransport().forward(ITracker.REMOVENODE + "," + myTransport.getIdentifier() + "," + myTransport.getThisNode(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
+		myTransport.getTransport().forward(ITracker.REMOVENODE + "," + myTransport.getIdentifier() + "," + myTransport.getThisNode(), new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 		myTransport.kill();
 	}
 
@@ -435,8 +431,8 @@ public class MyTransportSWTMaemo {
 				myTransport.join(hostToJoin, portToJoin);
 			} else {
 				// CONNECT ON TRACKER
-				String trackerResponse = myTransport.getTransport().forward(ITracker.GETCONNECTION + "," + myTransport.getIdentifier(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
-				myTransport.getTransport().forward(ITracker.ADDNODE + "," + myTransport.getIdentifier() + "," + myTransport.getThisNode(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
+				String trackerResponse = myTransport.getTransport().forward(ITracker.GETCONNECTION + "," + myTransport.getIdentifier(), new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
+				myTransport.getTransport().forward(ITracker.ADDNODE + "," + myTransport.getIdentifier() + "," + myTransport.getThisNode(), new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 				if(!trackerResponse.equals("null")) {
 					Node n = new Node(trackerResponse);
 					myTransport.join(n.getIp(), n.getPort());

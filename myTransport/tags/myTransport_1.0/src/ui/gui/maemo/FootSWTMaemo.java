@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Text;
 
 import ui.gui.maemo.dialog.ConsoleDialog;
 import ui.gui.maemo.dialog.JoinDialog;
-import core.experiments.tools.ITracker;
+import core.ITracker;
 import core.experiments.tools.InfoConsole;
 import core.overlay.foot.Foot;
 import core.protocols.p2p.Node;
@@ -31,10 +31,6 @@ import core.protocols.p2p.chord.IChord;
 
 
 public class FootSWTMaemo {
-
-	/** address on the tracker which give the peerSet*/
-	private static String TRACKER_HOST = "localhost";
-	private static int 	  TRACKER_PORT = 8000;
 
 	private final Shell shell;
 	private Display display;
@@ -371,7 +367,7 @@ public class FootSWTMaemo {
 				display.sleep();
 		}
 		display.dispose();
-		foot.getTransport().forward(ITracker.REMOVENODE + "," + foot.getIdentifier() + "," + foot.getThisNode(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
+		foot.getTransport().forward(ITracker.REMOVENODE + "," + foot.getIdentifier() + "," + foot.getThisNode(), new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 		foot.kill();
 	}
 
@@ -394,8 +390,8 @@ public class FootSWTMaemo {
 			} else {
 
 				// CONNECT ON TRACKER
-				String trackerResponse = foot.getTransport().forward(ITracker.GETCONNECTION + "," + foot.getIdentifier(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
-				foot.getTransport().forward(ITracker.ADDNODE + "," + foot.getIdentifier() + "," + foot.getThisNode(), new Node(TRACKER_HOST, 0, TRACKER_PORT));
+				String trackerResponse = foot.getTransport().forward(ITracker.GETCONNECTION + "," + foot.getIdentifier(), new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
+				foot.getTransport().forward(ITracker.ADDNODE + "," + foot.getIdentifier() + "," + foot.getThisNode(), new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 				if(!trackerResponse.equals("null")) {
 					Node n = new Node(trackerResponse);
 					foot.join(n.getIp(), n.getPort());

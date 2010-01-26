@@ -1,4 +1,4 @@
-package ui.gui.maemo;
+package blackbox.ui.gui;
 
 import java.util.ArrayList;
 
@@ -21,15 +21,16 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import ui.gui.maemo.dialog.ConsoleDialog;
-import ui.gui.maemo.dialog.JoinDialog;
+import blackbox.core.overlay.concert.Concert;
+import blackbox.ui.gui.dialog.ConsoleDialog;
+import blackbox.ui.gui.dialog.JoinDialog;
+
 import core.ITracker;
 import core.experiments.tools.InfoConsole;
-import core.overlay.concert.Concert;
 import core.protocols.p2p.Node;
 import core.protocols.p2p.chord.IChord;
 
-public class ConcertSWTMaemo{
+public class ConcertSWT{
 
 	private final Shell shell;
 	private Display display;
@@ -38,7 +39,7 @@ public class ConcertSWTMaemo{
 	private Label id;
 	private Text idText;
 
-	public ConcertSWTMaemo(final Concert concert) {
+	public ConcertSWT(final Concert concert) {
 		this.concert = concert;
 		display = Display.getDefault();
 		shell = new Shell(display);
@@ -96,7 +97,7 @@ public class ConcertSWTMaemo{
 
 		// ERROR
 		final Label error = new Label(shell, SWT.NONE);
-		error.setForeground(ConcertSWTMaemo.this.error);
+		error.setForeground(ConcertSWT.this.error);
 		error.setText("Bad format number!");
 		error.setVisible(false);
 		FormData errorFormData = new FormData();
@@ -239,7 +240,7 @@ public class ConcertSWTMaemo{
 		final StyledText result = new StyledText(shell, SWT.BORDER);
 		result.setEditable(false);
 		Image font = new Image(display,
-				ConcertSWTMaemo.class.getResourceAsStream(
+				ConcertSWT.class.getResourceAsStream(
 				"concert.png"));
 		result.setBackgroundImage(font);
 		FormData resultTextFormData = new FormData();
@@ -368,7 +369,7 @@ public class ConcertSWTMaemo{
 				display.sleep();
 		}
 		display.dispose();
-		concert.getTransport().forward(ITracker.REMOVENODE + "," + concert.getIdentifier() + "," + concert.getThisNode(), new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
+		concert.getTransport().sendRequest(ITracker.REMOVENODE + "," + concert.getIdentifier() + "," + concert.getThisNode(), new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 		concert.kill();
 	}
 
@@ -383,10 +384,6 @@ public class ConcertSWTMaemo{
 			System.out.print("Concert's Launching, please wait... ");
 			String ip = InfoConsole.getIp();
 			Concert concert = new Concert(ip, 0);
-			new Thread(concert).start();
-			do{
-				Thread.sleep(1000);
-			} while(concert.getTransport() == null);
 
 			// IF ARGS
 			if(args.length > 1 && args[1].equals("-j")){
@@ -396,8 +393,9 @@ public class ConcertSWTMaemo{
 			} else {
 
 				// CONNECT ON TRACKER
-				String trackerResponse = concert.getTransport().forward(ITracker.GETCONNECTION + "," + concert.getIdentifier(), new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
-				concert.getTransport().forward(ITracker.ADDNODE + "," + concert.getIdentifier() + "," + concert.getThisNode(), new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
+				Node tracker = new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT);
+				String trackerResponse = concert.getTransport().sendRequest(ITracker.GETCONNECTION + "," + concert.getIdentifier(), tracker);
+				concert.getTransport().sendRequest(ITracker.ADDNODE + "," + concert.getIdentifier() + "," + concert.getThisNode(), tracker);
 				if(!trackerResponse.equals("null")) {
 					Node n = new Node(trackerResponse);
 					concert.join(n.getIp(), n.getPort());
@@ -406,7 +404,7 @@ public class ConcertSWTMaemo{
 
 			System.out.println("ok!");
 
-			ConcertSWTMaemo concertGUI = new ConcertSWTMaemo(concert);
+			ConcertSWT concertGUI = new ConcertSWT(concert);
 			concertGUI.start();
 		} catch(Exception e){
 			e.printStackTrace();

@@ -1,10 +1,10 @@
 export CURRENT_PATH=`pwd`
 
 mkdir -p $SYNAPSE_HOME/jSynapse/trunk/dist
-mkdir -p $SYNAPSE_HOME/tracker/dist
 mkdir -p $SYNAPSE_HOME/jSynapse/trunk/lib
-mkdir -p $SYNAPSE_HOME/myTransport/lib
-mkdir -p $SYNAPSE_HOME/tracker/lib
+mkdir -p $SYNAPSE_HOME/tracker/tags/tracker_1.0/dist
+mkdir -p $SYNAPSE_HOME/tracker/tags/tracker_1.0/lib
+mkdir -p $SYNAPSE_HOME/myTransport/trunk/myTransport_1.1/lib
 
 echo "--------------------------------------"
 echo "|      generate jSynapse library     |"
@@ -21,11 +21,11 @@ echo "--------------------------------------"
 echo "|       deploy jSynapse library      |"
 echo "--------------------------------------"
 echo ""
-echo "cp $SYNAPSE_HOME/jSynapse/trunk/dist/jSynapse.jar $SYNAPSE_HOME/myTransport/lib/"
-cp $SYNAPSE_HOME/jSynapse/trunk/dist/jSynapse.jar $SYNAPSE_HOME/myTransport/lib/
+echo "cp $SYNAPSE_HOME/jSynapse/trunk/dist/jSynapse.jar $SYNAPSE_HOME/myTransport/trunk/myTransport_1.1/lib/"
+cp $SYNAPSE_HOME/jSynapse/trunk/dist/jSynapse.jar $SYNAPSE_HOME/myTransport/trunk/myTransport_1.1/lib/
 sleep 1
-echo "cp $SYNAPSE_HOME/jSynapse/trunk/dist/jSynapse.jar $SYNAPSE_HOME/tracker/lib/"
-cp $SYNAPSE_HOME/jSynapse/trunk/dist/jSynapse.jar $SYNAPSE_HOME/tracker/lib/
+echo "cp $SYNAPSE_HOME/jSynapse/trunk/dist/jSynapse.jar $SYNAPSE_HOME/tracker/tags/tracker_1.0/lib/"
+cp $SYNAPSE_HOME/jSynapse/trunk/dist/jSynapse.jar $SYNAPSE_HOME/tracker/tags/tracker_1.0/lib/
 
 sleep 1
 echo ""
@@ -33,10 +33,10 @@ echo "--------------------------------------"
 echo "|      generate tracker library      |"
 echo "--------------------------------------"
 echo ""
-cd $SYNAPSE_HOME/tracker/bin
-echo "jar -cfv $SYNAPSE_HOME/tracker/dist/tracker.jar $SYNAPSE_HOME/tracker/bin/*"
+cd $SYNAPSE_HOME/tracker/tags/tracker_1.0/bin
+echo "jar -cfv $SYNAPSE_HOME/tracker/tags/tracker_1.0/dist/tracker.jar $SYNAPSE_HOME/tracker/tags/tracker_1.0/bin/*"
 sleep 2
-jar -cfv $SYNAPSE_HOME/tracker/dist/tracker.jar *
+jar -cfv $SYNAPSE_HOME/tracker/tags/tracker_1.0/dist/tracker.jar *
 
 sleep 1
 echo ""
@@ -44,11 +44,11 @@ echo "--------------------------------------"
 echo "|       deploy tracker library       |"
 echo "--------------------------------------"
 echo ""
-echo "cp $SYNAPSE_HOME/tracker/dist/tracker.jar $SYNAPSE_HOME/myTransport/lib/"
-cp $SYNAPSE_HOME/tracker/dist/tracker.jar $SYNAPSE_HOME/myTransport/lib/
+echo "cp $SYNAPSE_HOME/tracker/dist/tracker.jar $SYNAPSE_HOME/myTransport/trunk/myTransport_1.1/lib/"
+cp $SYNAPSE_HOME/tracker/tags/tracker_1.0/dist/tracker.jar $SYNAPSE_HOME/myTransport/trunk/myTransport_1.1/lib/
 sleep 1
-echo "cp $SYNAPSE_HOME/tracker/dist/tracker.jar $SYNAPSE_HOME/jSynapse/trunk/lib/"
-cp $SYNAPSE_HOME/tracker/dist/tracker.jar $SYNAPSE_HOME/jSynapse/trunk/lib/
+echo "cp $SYNAPSE_HOME/tracker/tags/tracker_1.0/dist/tracker.jar $SYNAPSE_HOME/jSynapse/trunk/lib/"
+cp $SYNAPSE_HOME/tracker/tags/tracker_1.0/dist/tracker.jar $SYNAPSE_HOME/jSynapse/trunk/lib/
 
 sleep 1
 echo ""
