@@ -11,7 +11,6 @@ import core.protocols.transport.ITransport;
 
 public class RMImpl implements ITransport, java.rmi.Remote{
 
-	private static final long serialVersionUID = -923635613325196936L;
 	private int port;
 	private IOverlay o;
 
