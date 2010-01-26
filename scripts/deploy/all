@@ -4,7 +4,7 @@ mkdir -p $SYNAPSE_HOME/jSynapse/trunk/dist
 mkdir -p $SYNAPSE_HOME/jSynapse/trunk/lib
 mkdir -p $SYNAPSE_HOME/tracker/tags/tracker_1.0/dist
 mkdir -p $SYNAPSE_HOME/tracker/tags/tracker_1.0/lib
-mkdir -p $SYNAPSE_HOME/myTransport/trunk/myTransport_1.1/lib
+mkdir -p $SYNAPSE_HOME/myTransport/trunk/lib
 
 echo "--------------------------------------"
 echo "|      generate jSynapse library     |"
@@ -21,8 +21,8 @@ echo "--------------------------------------"
 echo "|       deploy jSynapse library      |"
 echo "--------------------------------------"
 echo ""
-echo "cp $SYNAPSE_HOME/jSynapse/trunk/dist/jSynapse.jar $SYNAPSE_HOME/myTransport/trunk/myTransport_1.1/lib/"
-cp $SYNAPSE_HOME/jSynapse/trunk/dist/jSynapse.jar $SYNAPSE_HOME/myTransport/trunk/myTransport_1.1/lib/
+echo "cp $SYNAPSE_HOME/jSynapse/trunk/dist/jSynapse.jar $SYNAPSE_HOME/myTransport/trunk/lib/"
+cp $SYNAPSE_HOME/jSynapse/trunk/dist/jSynapse.jar $SYNAPSE_HOME/myTransport/trunk/lib/
 sleep 1
 echo "cp $SYNAPSE_HOME/jSynapse/trunk/dist/jSynapse.jar $SYNAPSE_HOME/tracker/tags/tracker_1.0/lib/"
 cp $SYNAPSE_HOME/jSynapse/trunk/dist/jSynapse.jar $SYNAPSE_HOME/tracker/tags/tracker_1.0/lib/
@@ -44,8 +44,8 @@ echo "--------------------------------------"
 echo "|       deploy tracker library       |"
 echo "--------------------------------------"
 echo ""
-echo "cp $SYNAPSE_HOME/tracker/dist/tracker.jar $SYNAPSE_HOME/myTransport/trunk/myTransport_1.1/lib/"
-cp $SYNAPSE_HOME/tracker/tags/tracker_1.0/dist/tracker.jar $SYNAPSE_HOME/myTransport/trunk/myTransport_1.1/lib/
+echo "cp $SYNAPSE_HOME/tracker/dist/tracker.jar $SYNAPSE_HOME/myTransport/trunk/lib/"
+cp $SYNAPSE_HOME/tracker/tags/tracker_1.0/dist/tracker.jar $SYNAPSE_HOME/myTransport/trunk/lib/
 sleep 1
 echo "cp $SYNAPSE_HOME/tracker/tags/tracker_1.0/dist/tracker.jar $SYNAPSE_HOME/jSynapse/trunk/lib/"
 cp $SYNAPSE_HOME/tracker/tags/tracker_1.0/dist/tracker.jar $SYNAPSE_HOME/jSynapse/trunk/lib/
