@@ -4,3 +4,6 @@
 .project
 jSynapse/trunk/bin
 *~
+*.aux
+*.log
+*.pdf

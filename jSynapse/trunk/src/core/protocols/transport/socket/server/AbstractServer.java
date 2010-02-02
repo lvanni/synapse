@@ -13,7 +13,6 @@ import core.protocols.transport.socket.request.RequestQueue;
 public abstract class AbstractServer extends Thread implements ITransport {
 	protected ServerSocket serverSocket;
 	protected RequestQueue requestQueue;
-	protected boolean running;
 	protected int port;
 	/** how many connections are queued */
 	protected int backlog;
@@ -40,7 +39,6 @@ public abstract class AbstractServer extends Thread implements ITransport {
 
 	public void stopServer() {
 		try {
-			this.running = false;
 			this.serverSocket.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -48,13 +46,12 @@ public abstract class AbstractServer extends Thread implements ITransport {
 	}
 
 	public void run() {
-		this.running = true;
-		while (running) {
+		while (!serverSocket.isClosed()) {
 			try {
 				Socket s = serverSocket.accept();
 				this.requestQueue.add(s);
 			} catch (SocketException e) {
-				if (this.running) {
+				if(!serverSocket.isClosed()){
 					e.printStackTrace();
 				}
 			} catch (Exception e) {

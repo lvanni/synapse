@@ -26,6 +26,9 @@ cp $SYNAPSE_HOME/jSynapse/trunk/dist/jSynapse.jar $SYNAPSE_HOME/myTransport/trun
 sleep 1
 echo "cp $SYNAPSE_HOME/jSynapse/trunk/dist/jSynapse.jar $SYNAPSE_HOME/tracker/tags/tracker_1.0/lib/"
 cp $SYNAPSE_HOME/jSynapse/trunk/dist/jSynapse.jar $SYNAPSE_HOME/tracker/tags/tracker_1.0/lib/
+sleep 1
+echo "cp $SYNAPSE_HOME/jSynapse/trunk/dist/jSynapse.jar $SYNAPSE_HOME/tracker/trunk/WebContent/WEB-INF/lib/"
+cp $SYNAPSE_HOME/jSynapse/trunk/dist/jSynapse.jar $SYNAPSE_HOME/tracker/trunk/WebContent/WEB-INF/lib/
 
 sleep 1
 echo ""

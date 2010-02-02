@@ -1,5 +1,11 @@
 package tgc2010.ui;
 
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +49,7 @@ public class StudentNetwork {
 	private final Shell shell;
 	private Display display;
 	private Color red = new Color(null, 255, 0, 0);
-//	private Color white = new Color(null, 0, 0, 0);
+	//	private Color white = new Color(null, 0, 0, 0);
 	private Synapse synapse;
 	private Button locate;
 	private StyledText result;
@@ -58,8 +64,8 @@ public class StudentNetwork {
 
 		// BACKGROUND
 		Image background = new Image(display, EnterpriseNetwork.class
-		 .getResourceAsStream("studentBack.png"));
-//				.getResourceAsStream("enterpriseBack.png"));
+				.getResourceAsStream("studentBack.png"));
+		//				.getResourceAsStream("enterpriseBack.png"));
 
 		/* Init the shell */
 		shell.setText("MyTransport: Student Network");
@@ -162,12 +168,12 @@ public class StudentNetwork {
 		separator.setLayoutData(separatorFormData);
 
 		// TRIP
-//		Label roadTrip = new Label(shell, SWT.NONE);
-//		roadTrip.setBackgroundImage(background);
-//		roadTrip.setText("Trip: ");
-//		FormData roadTripFormData = new FormData();
-//		roadTripFormData.top = new FormAttachment(separator, 4);
-//		roadTrip.setLayoutData(roadTripFormData);
+		//		Label roadTrip = new Label(shell, SWT.NONE);
+		//		roadTrip.setBackgroundImage(background);
+		//		roadTrip.setText("Trip: ");
+		//		FormData roadTripFormData = new FormData();
+		//		roadTripFormData.top = new FormAttachment(separator, 4);
+		//		roadTrip.setLayoutData(roadTripFormData);
 
 		// DAY
 		final Label day = new Label(shell, SWT.NONE);
@@ -232,13 +238,13 @@ public class StudentNetwork {
 		checkAllFormData.left = new FormAttachment(0, 300);
 		checkAll.setLayoutData(checkAllFormData);
 
-//		Label check = new Label(shell, SWT.NONE);
-//		check.setBackgroundImage(background);
-//		check.setText("Add checkpoint:");
-//		FormData checkFormData = new FormData();
-//		checkFormData.top = new FormAttachment(day, 20);
-//		checkFormData.left = new FormAttachment(0, 0);
-//		check.setLayoutData(checkFormData);
+		//		Label check = new Label(shell, SWT.NONE);
+		//		check.setBackgroundImage(background);
+		//		check.setText("Add checkpoint:");
+		//		FormData checkFormData = new FormData();
+		//		checkFormData.top = new FormAttachment(day, 20);
+		//		checkFormData.left = new FormAttachment(0, 0);
+		//		check.setLayoutData(checkFormData);
 
 		// CHECKPOINTS
 		final Label address = new Label(shell, SWT.NONE);
@@ -407,10 +413,10 @@ public class StudentNetwork {
 		result.setText(" Road Book: \n\n\tEmpty...");
 		result.setBackgroundImage(background);
 		result.setEditable(false);
-//		result.setForeground(white);
+		//		result.setForeground(white);
 		Image font = new Image(display, EnterpriseNetwork.class
-		 .getResourceAsStream("studentRes.png"));
-//				.getResourceAsStream("enterpriseRes.png"));
+				.getResourceAsStream("studentRes.png"));
+		//				.getResourceAsStream("enterpriseRes.png"));
 		result.setBackgroundImage(font);
 		FormData resultTextFormData = new FormData();
 		resultTextFormData.width = 279;
@@ -435,10 +441,10 @@ public class StudentNetwork {
 			browser.setUrl("http://maps.google.fr/maps?f=q&hl=fr&q=%20,%20%20nice");
 			FormData browserFormData = new FormData();
 			browserFormData.width = 665;
-//			browserFormData.height = 500;
+			//			browserFormData.height = 500;
 			browserFormData.height = 565;
 			browserFormData.top = new FormAttachment(0, -185);
-//			browserFormData.top = new FormAttachment(0, -120);
+			//			browserFormData.top = new FormAttachment(0, -120);
 			browserFormData.left = new FormAttachment(0, -385);
 			browser.setLayoutData(browserFormData);
 		} catch (SWTError e) {
@@ -733,12 +739,12 @@ public class StudentNetwork {
 		for (IOverlay o : synapse.getNetworks()) {
 			synapse.getTransport().sendRequest(
 					ITracker.REMOVENODE + "," + o.getIdentifier() + ","
-							+ o.getThisNode(),
+					+ o.getThisNode(),
 					new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 		}
 		synapse.getTransport().sendRequest(
 				ITracker.REMOVENODE + "," + synapse.getIdentifier() + ","
-						+ synapse.getThisNode(),
+				+ synapse.getThisNode(),
 				new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 		synapse.kill();
 		System.exit(0);
@@ -751,17 +757,48 @@ public class StudentNetwork {
 			String ip = InfoConsole.getIp();
 			Synapse synapse = new Synapse(ip, 0);
 			ChordNodePlugin overlay = new ChordNodePlugin(ip, 0, synapse,
-					"student");
+			"student");
 
-			/* TRACKER */
+			// CONFIGURE THE TRACKER ROUTE
+			String trackerHost = ITracker.TRACKER_HOST;
+			int trackerPort = ITracker.TRACKER_PORT;
+			if (args.length == 2) { // if there is a tracker configuration file
+				if (args[0].equals("-tc")
+						|| args[0].equals("--trackerConfiguration")) {
+					File file = new File(args[1]);
+					FileInputStream fis = null;
+					BufferedInputStream bis = null;
+					DataInputStream dis = null;
+					try {
+						fis = new FileInputStream(file);
+						bis = new BufferedInputStream(fis);
+						dis = new DataInputStream(bis);					
+						String[] address = dis.readLine().split(":");
+						trackerHost = address[0];
+						trackerPort = Integer.parseInt(address[1]);
+						fis.close();
+						bis.close();
+						dis.close();
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				} else {
+					System.err
+					.println("wrong parametter: (-tc | --trackerConfiguration) <fileName>");
+				}
+			}
+
+			// CONNECT TO THE TRACKER
 			// control network
 			String trackerResponse = synapse.getTransport().sendRequest(
 					ITracker.GETCONNECTION + "," + synapse.getIdentifier(),
-					new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
+					new Node(trackerHost, 0, trackerPort));
 			synapse.getTransport().sendRequest(
 					ITracker.ADDNODE + "," + synapse.getIdentifier() + ","
-							+ synapse.getThisNode(),
-					new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
+					+ synapse.getThisNode(),
+					new Node(trackerHost, 0, trackerPort));
 			if (!trackerResponse.equals("null")) {
 				Node n = new Node(trackerResponse);
 				synapse.join(n.getIp(), n.getPort());
@@ -770,12 +807,12 @@ public class StudentNetwork {
 			// overlay network
 			trackerResponse = synapse.getTransport().sendRequest(
 					ITracker.GETCONNECTION + "," + "student",
-					new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
+					new Node(trackerHost, 0, trackerPort));
 			synapse.getNetworks().add(overlay);
 			synapse.getTransport().sendRequest(
 					ITracker.ADDNODE + "," + overlay.getIdentifier() + ","
-							+ overlay.getThisNode(),
-					new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
+					+ overlay.getThisNode(),
+					new Node(trackerHost, 0, trackerPort));
 			if (!trackerResponse.equals("null")) {
 				Node n = new Node(trackerResponse);
 				overlay.join(n.getIp(), n.getPort());

@@ -47,6 +47,8 @@ public class RMImpl implements ITransport, java.rmi.Remote{
 		return "";
 	}
 
+	public void stopServer(){ /* do nothing*/ }
+	
 	public int getPort() {
 		return port;
 	}

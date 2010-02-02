@@ -1,0 +1,27 @@
+body {
+	font-size: 12px;
+}
+
+.container {
+	height: 850px;
+	width: 850px;
+	text-align: left;
+	background-image: url("../img/background.jpg");
+}
+
+a {
+	text-decoration: none;
+	font-style: italic;
+}
+
+a:LINK {
+	color: #000979;
+}
+
+a:VISITED {
+	color: #000979;
+}
+
+a:HOVER {
+	color: #4b71ff;
+}

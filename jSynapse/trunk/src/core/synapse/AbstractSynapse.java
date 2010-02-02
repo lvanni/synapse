@@ -104,7 +104,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse{
 		synapseGet(key, "");
 		// WAIT FOR COLLECTING VALUES AND REMOVE CACHE TABLE
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(500);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

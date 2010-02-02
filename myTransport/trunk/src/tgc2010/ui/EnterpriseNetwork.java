@@ -1,5 +1,11 @@
 package tgc2010.ui;
 
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +50,7 @@ public class EnterpriseNetwork {
 	private final Shell shell;
 	private Display display;
 	private Color red = new Color(null, 255, 0, 0);
-//	private Color white = new Color(null, 255, 255, 255);
+	// private Color white = new Color(null, 255, 255, 255);
 	private Synapse synapse;
 	private Button locate;
 	private StyledText result;
@@ -93,7 +99,7 @@ public class EnterpriseNetwork {
 		shell.setMenuBar(menuBar);
 		hideItem.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event arg0) {
-				if(locate.getEnabled()){
+				if (locate.getEnabled()) {
 					locate.setEnabled(false);
 					locateItem.setEnabled(false);
 					result.setVisible(true);
@@ -163,12 +169,12 @@ public class EnterpriseNetwork {
 		separator.setLayoutData(separatorFormData);
 
 		// TRIP
-		//		Label roadTrip = new Label(shell, SWT.NONE);
-		//		roadTrip.setBackgroundImage(background);
-		//		roadTrip.setText("Trip: ");
-		//		FormData roadTripFormData = new FormData();
-		//		roadTripFormData.top = new FormAttachment(separator, 4);
-		//		roadTrip.setLayoutData(roadTripFormData);
+		// Label roadTrip = new Label(shell, SWT.NONE);
+		// roadTrip.setBackgroundImage(background);
+		// roadTrip.setText("Trip: ");
+		// FormData roadTripFormData = new FormData();
+		// roadTripFormData.top = new FormAttachment(separator, 4);
+		// roadTrip.setLayoutData(roadTripFormData);
 
 		// DAY
 		final Label day = new Label(shell, SWT.NONE);
@@ -400,7 +406,7 @@ public class EnterpriseNetwork {
 		result.setText(" Road Book: \n\n\tEmpty...");
 		result.setBackgroundImage(background);
 		result.setEditable(false);
-//		result.setForeground(white);
+		// result.setForeground(white);
 		Image font = new Image(display, EnterpriseNetwork.class
 				// .getResourceAsStream("studentRes.png"));
 				.getResourceAsStream("enterpriseRes.png"));
@@ -425,17 +431,19 @@ public class EnterpriseNetwork {
 
 		try {
 			browser = new Browser(composite, SWT.NONE);
-			browser.setUrl("http://maps.google.fr/maps?f=q&hl=fr&q=%20,%20%20nice");
+			browser
+			.setUrl("http://maps.google.fr/maps?f=q&hl=fr&q=%20,%20%20nice");
 			FormData browserFormData = new FormData();
 			browserFormData.width = 665;
-			//			browserFormData.height = 500;
+			// browserFormData.height = 500;
 			browserFormData.height = 565;
 			browserFormData.top = new FormAttachment(0, -185);
-			//			browserFormData.top = new FormAttachment(0, -120);
+			// browserFormData.top = new FormAttachment(0, -120);
 			browserFormData.left = new FormAttachment(0, -385);
 			browser.setLayoutData(browserFormData);
 		} catch (SWTError e) {
-			MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+			MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR
+					| SWT.OK);
 			messageBox.setMessage("Browser cannot be initialized.");
 			messageBox.setText("Exit");
 			messageBox.open();
@@ -445,7 +453,6 @@ public class EnterpriseNetwork {
 			result.setVisible(true);
 		}
 
-
 		// CRUD ROADBOOK
 		addCheckPoint.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -453,14 +460,15 @@ public class EnterpriseNetwork {
 					error.setVisible(false);
 					int hour = Integer.parseInt(hourText.getText());
 					int minute = Integer.parseInt(minText.getText());
-					if (cityText.getText().equals("") || hour < 0
-							|| hour >= 24 || minute < 0 || minute >= 60) {
+					if (cityText.getText().equals("") || hour < 0 || hour >= 24
+							|| minute < 0 || minute >= 60) {
 						throw new NumberFormatException();
 					}
 					String address = addressText.getText();
 					String zipCode = zipText.getText();
 					String city = cityText.getText();
-					checkpointsList.add(new Checkpoint(address, zipCode, city, hour, minute));
+					checkpointsList.add(new Checkpoint(address, zipCode, city,
+							hour, minute));
 					updateRoadBook();
 					composite.setVisible(false);
 					result.setVisible(true);
@@ -537,15 +545,21 @@ public class EnterpriseNetwork {
 							+ checkpointsList.get(i).formatToKey()
 							+ checkpointsList.get(j).formatToKey();
 							if (checkPublish.getSelection()) {
-								String value = Value.serializeValue(checkpointsList.get(i), checkpointsList.get(j), contactText.getText(), informationsText.getText(), "\tENTERPRISE NETWORK");
+								String value = Value.serializeValue(
+										checkpointsList.get(i), checkpointsList
+										.get(j), contactText.getText(),
+										informationsText.getText(),
+										"\tENTERPRISE NETWORK");
 								synapse.put(key, value);
-								resultStr += Value.deserializeValue(value) + "\n";
+								resultStr += Value.deserializeValue(value)
+								+ "\n";
 								if (i + 2 >= checkpointsList.size()) {
 									resultStr += "\n\n===> Published!";
 								}
 							} else {
 								String found = synapse.get(key);
-								if ((found == null || found.equals("null") || found.split("\\+").length < 4)
+								if ((found == null || found.equals("null") || found
+										.split("\\+").length < 4)
 										&& !key.equals("Every")) {
 									key = "Every"
 										+ checkpointsList.get(i)
@@ -554,14 +568,17 @@ public class EnterpriseNetwork {
 										.formatToKey();
 									found = synapse.get(key);
 								}
-								if (found != null && !found.equals("null") && found.split("\\+").length >= 4)  {
+								if (found != null && !found.equals("null")
+										&& found.split("\\+").length >= 4) {
 									System.out.println(found);
 									hasFound = true;
 									String[] founds = found
 									.split("\\*\\*\\*\\*");
 									for (String f : founds) {
 										if (f != null && !f.equals("null")) {
-											resultStr += Value.deserializeValue(f) + "\n";
+											resultStr += Value
+											.deserializeValue(f)
+											+ "\n";
 											cpt++;
 										}
 									}
@@ -601,7 +618,8 @@ public class EnterpriseNetwork {
 		clearButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (informationsText.getText().equals("DebugOn")
-						|| informationsText.getText().equals("debugOn")) { // DEBUG MODE!
+						|| informationsText.getText().equals("debugOn")) { // DEBUG
+					// MODE!
 					id.setVisible(true);
 					idText.setVisible(true);
 					ConsoleDialog console = new ConsoleDialog(shell, synapse);
@@ -624,7 +642,7 @@ public class EnterpriseNetwork {
 					error.setVisible(false);
 					checkpointsList.clear();
 					composite.setVisible(true);
-					if(locate.getEnabled())
+					if (locate.getEnabled())
 						result.setVisible(false);
 					shell.pack();
 				}
@@ -745,15 +763,47 @@ public class EnterpriseNetwork {
 			ChordNodePlugin overlay = new ChordNodePlugin(ip, 0, synapse,
 			"enterprise");
 
-			/* TRACKER */
+			// CONFIGURE THE TRACKER ROUTE
+			String trackerHost = ITracker.TRACKER_HOST;
+			int trackerPort = ITracker.TRACKER_PORT;
+			if (args.length == 2) { // if there is a tracker configuration file
+				if (args[0].equals("-tc")
+						|| args[0].equals("--trackerConfiguration")) {
+					File file = new File(args[1]);
+					FileInputStream fis = null;
+					BufferedInputStream bis = null;
+					DataInputStream dis = null;
+					try {
+						fis = new FileInputStream(file);
+						bis = new BufferedInputStream(fis);
+						dis = new DataInputStream(bis);					
+						String[] address = dis.readLine().split(":");
+						trackerHost = address[0];
+						trackerPort = Integer.parseInt(address[1]);
+						fis.close();
+						bis.close();
+						dis.close();
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				} else {
+					System.err
+					.println("wrong parametter: (-tc | --trackerConfiguration) <fileName>");
+				}
+			}
+
+
+			// CONNECT TO THE TRACKER
 			// control network
 			String trackerResponse = synapse.getTransport().sendRequest(
 					ITracker.GETCONNECTION + "," + synapse.getIdentifier(),
-					new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
+					new Node(trackerHost, 0, trackerPort));
 			synapse.getTransport().sendRequest(
 					ITracker.ADDNODE + "," + synapse.getIdentifier() + ","
 					+ synapse.getThisNode(),
-					new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
+					new Node(trackerHost, 0, trackerPort));
 			if (!trackerResponse.equals("null")) {
 				Node n = new Node(trackerResponse);
 				synapse.join(n.getIp(), n.getPort());
@@ -762,12 +812,12 @@ public class EnterpriseNetwork {
 			// overlay network
 			trackerResponse = synapse.getTransport().sendRequest(
 					ITracker.GETCONNECTION + "," + "enterprise",
-					new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
+					new Node(trackerHost, 0, trackerPort));
 			synapse.getNetworks().add(overlay);
 			synapse.getTransport().sendRequest(
 					ITracker.ADDNODE + "," + overlay.getIdentifier() + ","
 					+ overlay.getThisNode(),
-					new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
+					new Node(trackerHost, 0, trackerPort));
 			if (!trackerResponse.equals("null")) {
 				Node n = new Node(trackerResponse);
 				overlay.join(n.getIp(), n.getPort());

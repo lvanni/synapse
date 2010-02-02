@@ -12,6 +12,7 @@ import java.net.Socket;
 import core.protocols.p2p.Node;
 import core.protocols.transport.ITransport;
 
+@Deprecated
 public class SimpleSocketImpl implements ITransport{
 
 	private int serverPort;
@@ -69,6 +70,8 @@ public class SimpleSocketImpl implements ITransport{
 			}
 		}
 	}
+	
+	public void stopServer(){ /* do nothing*/ }
 
 	// /////////////////////////////////////////// //
 	//              GETTER AND SETTER              //
