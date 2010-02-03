@@ -516,87 +516,95 @@ public class EnterpriseNetwork {
 		okButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				try {
-					error.setVisible(false);
-					if (!checkAll.getSelection()) {
-						int day = Integer.parseInt(dayText.getText());
-						int mounth = Integer.parseInt(mounthText.getText());
-						int year = Integer.parseInt(yearText.getText());
-						if (day < 0 || day > 31 || mounth < 0 || mounth > 12
-								|| year < 2010) {
-							throw new NumberFormatException();
-						}
-					}
-
-					// Format header
-					String header = "Every";
-					if (!checkAll.getSelection()) {
-						header = dayText.getText();
-						header += "/" + mounthText.getText();
-						header += "/" + yearText.getText();
-					}
-
-					// Format key/value and send
-					String resultStr = " Summary:\n\n\tDay: " + header + "\n";
-					boolean hasFound = false;
-					int cpt = 0;
-					for (int i = 0; i < checkpointsList.size(); i++) {
-						for (int j = i + 1; j < checkpointsList.size(); j++) {
-							String key = header
-							+ checkpointsList.get(i).formatToKey()
-							+ checkpointsList.get(j).formatToKey();
-							if (checkPublish.getSelection()) {
-								String value = Value.serializeValue(
-										checkpointsList.get(i), checkpointsList
-										.get(j), contactText.getText(),
-										informationsText.getText(),
-										"\tENTERPRISE NETWORK");
-								synapse.put(key, value);
-								resultStr += Value.deserializeValue(value)
-								+ "\n";
-								if (i + 2 >= checkpointsList.size()) {
-									resultStr += "\n\n===> Published!";
+					display.asyncExec(new Runnable() {
+						@Override
+						public void run() {
+							error.setVisible(false);
+							if (!checkAll.getSelection()) {
+								int day = Integer.parseInt(dayText.getText());
+								int mounth = Integer.parseInt(mounthText.getText());
+								int year = Integer.parseInt(yearText.getText());
+								if (day < 0 || day > 31 || mounth < 0 || mounth > 12
+										|| year < 2010) {
+									throw new NumberFormatException();
 								}
-							} else {
-								String found = synapse.get(key);
-								if ((found == null || found.equals("null") || found
-										.split("\\+").length < 4)
-										&& !key.equals("Every")) {
-									key = "Every"
-										+ checkpointsList.get(i)
-										.formatToKey()
-										+ checkpointsList.get(j)
-										.formatToKey();
-									found = synapse.get(key);
-								}
-								if (found != null && !found.equals("null")
-										&& found.split("\\+").length >= 4) {
-									System.out.println(found);
-									hasFound = true;
-									String[] founds = found
-									.split("\\*\\*\\*\\*");
-									for (String f : founds) {
-										if (f != null && !f.equals("null")) {
-											resultStr += Value
-											.deserializeValue(f)
-											+ "\n";
-											cpt++;
+							}
+
+							// Format header
+							String header = "Every";
+							if (!checkAll.getSelection()) {
+								header = dayText.getText();
+								header += "/" + mounthText.getText();
+								header += "/" + yearText.getText();
+							}
+
+							// Format key/value and send
+							String resultStr = " Summary:\n\n\tDay: " + header + "\n";
+							boolean hasFound = false;
+							int cpt = 0;
+
+							for (int i = 0; i < checkpointsList.size(); i++) {
+								for (int j = i + 1; j < checkpointsList.size(); j++) {
+									String key = header
+									+ checkpointsList.get(i).formatToKey()
+									+ checkpointsList.get(j).formatToKey();
+									if (checkPublish.getSelection()) {
+										String value = Value.serializeValue(
+												checkpointsList.get(i), checkpointsList
+												.get(j), contactText.getText(),
+												informationsText.getText(),
+												"\tENTERPRISE NETWORK");
+										synapse.put(key, value);
+										resultStr += Value.deserializeValue(value)
+										+ "\n";
+										if (i + 2 >= checkpointsList.size()) {
+											resultStr += "\n\n===> Published!";
+										}
+									} else {
+										String found = synapse.get(key);
+										if ((found == null || found.equals("null") || found
+												.split("\\+").length < 4)
+												&& !key.equals("Every")) {
+											key = "Every"
+												+ checkpointsList.get(i)
+												.formatToKey()
+												+ checkpointsList.get(j)
+												.formatToKey();
+											found = synapse.get(key);
+										}
+										if (found != null && !found.equals("null")
+												&& found.split("\\+").length >= 4) {
+											System.out.println(found);
+											hasFound = true;
+											String[] founds = found
+											.split("\\*\\*\\*\\*");
+											for (String f : founds) {
+												if (f != null && !f.equals("null")) {
+													resultStr += Value
+													.deserializeValue(f)
+													+ "\n";
+													cpt++;
+												}
+											}
+										}
+										if (i + 2 >= checkpointsList.size()) {
+											if (!hasFound) {
+												resultStr = "No result found...";
+											} else {
+												resultStr += (cpt > 1) ? "\n\n===> "
+														+ cpt + " results found!"
+														: "\n\n===> " + cpt
+														+ " result found!";
+											}
 										}
 									}
-								}
-								if (i + 2 >= checkpointsList.size()) {
-									if (!hasFound) {
-										resultStr = "No result found...";
-									} else {
-										resultStr += (cpt > 1) ? "\n\n===> "
-												+ cpt + " results found!"
-												: "\n\n===> " + cpt
-												+ " result found!";
-									}
+									result.setText(resultStr);
+									result.redraw();
+									display.update();
 								}
 							}
 						}
-					}
-					result.setText(resultStr);
+					});
 				} catch (NumberFormatException excep) {
 					error.setVisible(true);
 				} catch (Exception excep) {
