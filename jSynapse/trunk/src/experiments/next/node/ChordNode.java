@@ -1,4 +1,4 @@
-package core.experiments.next.node;
+package experiments.next.node;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

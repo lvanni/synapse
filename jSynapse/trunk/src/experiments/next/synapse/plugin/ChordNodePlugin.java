@@ -1,9 +1,9 @@
-package core.experiments.next.synapse.plugin;
+package experiments.next.synapse.plugin;
 
 
-import core.experiments.next.node.ChordNode;
-import core.experiments.next.synapse.Synapse;
 import core.protocols.p2p.chord.IChord;
+import experiments.next.node.ChordNode;
+import experiments.next.synapse.Synapse;
 
 public class ChordNodePlugin extends ChordNode{
 

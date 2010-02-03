@@ -1,12 +1,12 @@
-package core.experiments.networks2010;
+package experiments.networks2010;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-import core.experiments.networks2010.nodes.ChordNode;
-import core.experiments.tools.InfoConsole;
 import core.protocols.p2p.Node;
 import core.protocols.transport.socket.SimpleSocketImpl;
+import experiments.networks2010.nodes.ChordNode;
+import experiments.tools.InfoConsole;
 
 //public class CreateNode implements Runnable{
 

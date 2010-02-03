@@ -1,4 +1,4 @@
-package core.experiments.next.synapse;
+package experiments.networks2010.synapse;
 
 import core.synapse.AbstractSynapse;
 

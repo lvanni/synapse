@@ -1,17 +1,17 @@
-package core.experiments.next;
+package experiments.next;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 import core.ITracker;
-import core.experiments.next.node.ChordNode;
-import core.experiments.next.synapse.Synapse;
-import core.experiments.next.synapse.plugin.ChordNodePlugin;
-import core.experiments.tools.InfoConsole;
 import core.protocols.p2p.IOverlay;
 import core.protocols.p2p.Node;
 import core.protocols.p2p.chord.AbstractChord;
+import experiments.next.node.ChordNode;
+import experiments.next.synapse.Synapse;
+import experiments.next.synapse.plugin.ChordNodePlugin;
+import experiments.tools.InfoConsole;
 
 public class Create {
 

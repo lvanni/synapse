@@ -1,4 +1,4 @@
-package core.experiments.networks2010;
+package experiments.networks2010;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -11,12 +11,12 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-import core.experiments.networks2010.synapse.Synapse;
-import core.experiments.networks2010.synapse.plugins.ChordNodePlugin;
-import core.experiments.tools.InfoConsole;
 import core.protocols.p2p.Node;
 import core.protocols.transport.ITransport;
 import core.protocols.transport.socket.SimpleSocketImpl;
+import experiments.networks2010.synapse.Synapse;
+import experiments.networks2010.synapse.plugins.ChordNodePlugin;
+import experiments.tools.InfoConsole;
 
 //public class CreateSynapse implements Runnable{
 //

@@ -1,4 +1,4 @@
-package core.experiments.networks2010.nodes;
+package experiments.networks2010.nodes;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

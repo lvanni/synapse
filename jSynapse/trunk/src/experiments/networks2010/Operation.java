@@ -1,4 +1,4 @@
-package core.experiments.networks2010;
+package experiments.networks2010;
 
 import java.io.IOException;
 

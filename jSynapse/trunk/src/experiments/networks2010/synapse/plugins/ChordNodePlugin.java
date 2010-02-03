@@ -1,8 +1,8 @@
-package core.experiments.networks2010.synapse.plugins;
+package experiments.networks2010.synapse.plugins;
 
-import core.experiments.networks2010.nodes.ChordNode;
-import core.experiments.networks2010.synapse.Synapse;
 import core.protocols.p2p.chord.IChord;
+import experiments.networks2010.nodes.ChordNode;
+import experiments.networks2010.synapse.Synapse;
 
 public class ChordNodePlugin extends ChordNode{
 
