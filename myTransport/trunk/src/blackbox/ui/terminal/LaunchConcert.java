@@ -5,8 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import blackbox.core.overlay.concert.Concert;
-
-import core.experiments.tools.InfoConsole;
+import experiments.tools.InfoConsole;
 
 public class LaunchConcert {
 	public static void main(String[] args) {

@@ -41,9 +41,9 @@ import tgc2010.ui.dialog.LocateDialog;
 import tgc2010.ui.tool.GeoLoc;
 import tgc2010.ui.tool.Value;
 import core.ITracker;
-import core.experiments.tools.InfoConsole;
 import core.protocols.p2p.IOverlay;
 import core.protocols.p2p.Node;
+import experiments.tools.InfoConsole;
 
 public class StudentNetwork {
 	private final Shell shell;

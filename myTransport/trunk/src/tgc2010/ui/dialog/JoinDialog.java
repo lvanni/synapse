@@ -17,8 +17,8 @@ import org.eclipse.swt.widgets.Text;
 import tgc2010.core.synapse.Synapse;
 import tgc2010.core.synapse.plugin.ChordNodePlugin;
 import core.ITracker;
-import core.experiments.tools.InfoConsole;
 import core.protocols.p2p.Node;
+import experiments.tools.InfoConsole;
 
 public class JoinDialog extends Dialog{
 	

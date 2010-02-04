@@ -24,11 +24,10 @@ import org.eclipse.swt.widgets.Text;
 import blackbox.core.overlay.foot.Foot;
 import blackbox.ui.gui.dialog.ConsoleDialog;
 import blackbox.ui.gui.dialog.JoinDialog;
-
 import core.ITracker;
-import core.experiments.tools.InfoConsole;
 import core.protocols.p2p.Node;
 import core.protocols.p2p.chord.IChord;
+import experiments.tools.InfoConsole;
 
 
 public class FootSWT {

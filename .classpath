@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" output="jSynapse/trunk/bin" path="jSynapse/trunk/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="tracker/tags/tracker_1.0/dist/tracker.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

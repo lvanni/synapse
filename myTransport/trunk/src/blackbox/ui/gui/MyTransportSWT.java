@@ -27,12 +27,11 @@ import blackbox.core.mytansport.plugins.MyFoot;
 import blackbox.core.overlay.concert.Concert;
 import blackbox.core.overlay.foot.Foot;
 import blackbox.ui.gui.dialog.ConsoleDialog;
-
 import core.ITracker;
-import core.experiments.tools.InfoConsole;
 import core.protocols.p2p.IOverlay;
 import core.protocols.p2p.Node;
 import core.protocols.p2p.chord.AbstractChord;
+import experiments.tools.InfoConsole;
 
 public class MyTransportSWT {
 

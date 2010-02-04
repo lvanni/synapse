@@ -1,9 +1,3 @@
 *.class
-*.jar
-.classpath
-.project
-jSynapse/trunk/bin
 *~
-*.aux
-*.log
-*.pdf
+

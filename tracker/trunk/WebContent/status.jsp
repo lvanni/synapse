@@ -34,14 +34,23 @@ function onTR(elementId){
 	var tr = document.getElementById(elementId);
 	tr.style.background = "#4b71ff";
 }
+
 function outTR(elementId){
 	var tr = document.getElementById(elementId);
 	tr.style.background = "white";
 }
-$("a").click(function(event){
-	   event.preventDefault();
-	   $(this).hide("slow");
-	 });
+
+function start(){
+	document.formCommand.command.value = "start";
+}
+
+function stop(){
+	document.formCommand.command.value = "stop";
+}
+
+function join(){
+	document.formCommand.command.value = "join";
+}
 </script>
 
 </head>
@@ -79,72 +88,61 @@ $("a").click(function(event){
 			</ul>
 			
 			<div style="position:relative; top:-86px; left:280px; width: 536px; height: 634px; overflow: auto;">
-			<h3>Tracker manage page:</h3>
-			<% if(tracker != null){ %>
-				Status: <b style="color:green;">Started, Synchronized</b><br />
-				Tracker running on : http://cycloid.inria.fr:<%= tracker.getPort() %>
-				<br /><br />
-				<hr style="width: 515px; margin-left:0px;" />
-				<% for (String key : tracker.getPeerSet().keySet()) { %>
-					<br />
-					<% if (key.equals("synapse")){ %>
-						<b>Control Network</b> <a onclick="document.getElementById('controlTable').style.display = 'table'" > + </a>
-						<a onclick="document.getElementById('controlTable').style.display = 'none'" > - </a>
+				<h3>Tracker manage page:</h3>
+				<% if(tracker != null){ %>
+					Status: <b style="color:green;">Started, Synchronized</b><br />
+					Tracker running on : http://cycloid.inria.fr:<%= tracker.getPort() %>
+					<br /><br />
+					<hr style="width: 515px; margin-left:0px;" />
+					<% for (String key : tracker.getPeerSet().keySet()) { %>
 						<br />
-						<table id="controlTable" border="1"  cellpadding="10" style="display: none;">
-					<% } else { %>
-						<b><%= key + " Network" %></b>
-						<br />
-						<table border="1"  cellpadding="10">
-					<% } %>
-					<tr>
-						<td>IP</td><td>Port</td><td>Node ID</td><td>Status</td>
-					</tr>
-					<% for (Node n : tracker.getPeerSet().get(key)) { %>
-						<tr id="<%= n.getIp() + n.getPort() + n.getId()%>" onmouseover="onTR('<%= n.getIp() + n.getPort() + n.getId()%>');" onmouseout="outTR('<%= n.getIp() + n.getPort() + n.getId()%>');">
-							<td><%= n.getIp() %></td>
-							<td><%= n.getPort() %></td>
-							<td><%= n.getId() %></td>
-							<td><span style="color: green;">Running</span></td>
+						<% if (key.equals("synapse")){ %>
+							<b>Control Network</b> <a onclick="document.getElementById('controlTable').style.display = 'table'" > + </a>
+							<a onclick="document.getElementById('controlTable').style.display = 'none'" > - </a>
+							<br />
+							<table id="controlTable" border="1"  cellpadding="10" style="display: none;">
+						<% } else { %>
+							<b><%= key + " Network" %></b>
+							<br />
+							<table border="1"  cellpadding="10">
+						<% } %>
+						<tr>
+							<td>IP</td><td>Port</td><td>Node ID</td><td>Status</td>
 						</tr>
+						<% for (Node n : tracker.getPeerSet().get(key)) { %>
+							<tr id="<%= n.getIp() + n.getPort() + n.getId()%>" onmouseover="onTR('<%= n.getIp() + n.getPort() + n.getId()%>');" onmouseout="outTR('<%= n.getIp() + n.getPort() + n.getId()%>');">
+								<td><%= n.getIp() %></td>
+								<td><%= n.getPort() %></td>
+								<td><%= n.getId() %></td>
+								<td><span style="color: green;">Running</span></td>
+							</tr>
+						<% } %>
+						</table>
 					<% } %>
-					</table>
+				<% } else { %>
+					Status: <b style="color:red;">Stopped...</b><br />
 				<% } %>
-			<% } else { %>
-				Status: <b style="color:red;">Stopped...</b><br />
-			<% } %>
-			<br />
-			<hr style="width: 515px; margin-left:0px;" />
-			<h3>Commands:</h3>
-			<form name="formCommand">
-			<input type="hidden" name="command">
-			<table>
-			<tr>
-				<td>Start the tracker :</td><td><input type="submit" value="send" onclick="start();" /></td>
-			</tr>
-			<tr>
-				<td>Stop the tracker :</td><td><input type="submit" value="send" onclick="stop();" /></td>
-			</tr>
-			<tr>
-				<td>Add invitation to :</td><td><input type="text" name="invitation"></td>
-			</tr>
-			<tr>
-				<td>password :</td><td><input type="text" name="pass"> <input type="submit" value="send" onclick="join()"></td>
-			</tr>
-			</table>
-			</form>
-			<br />
-			<script type="text/javascript">
-			function start(){
-				document.formCommand.command.value = "start";
-			}
-			function stop(){
-				document.formCommand.command.value = "stop";
-			}
-			function join(){
-				document.formCommand.command.value = "join";
-			}
-			</script>
+				<br />
+				<hr style="width: 515px; margin-left:0px;" />
+				<h3>Commands:</h3>
+				<form name="formCommand">
+				<input type="hidden" name="command">
+				<table>
+				<tr>
+					<td>Start the tracker :</td><td><input type="submit" value="send" onclick="start();" /></td>
+				</tr>
+				<tr>
+					<td>Stop the tracker :</td><td><input type="submit" value="send" onclick="stop();" /></td>
+				</tr>
+				<tr>
+					<td>Add invitation to :</td><td><input type="text" name="invitation"></td>
+				</tr>
+				<tr>
+					<td>password :</td><td><input type="text" name="pass"> <input type="submit" value="send" onclick="join()"></td>
+				</tr>
+				</table>
+				<br />
+				</form>
 			</div>
 		</div>
 		<a><i style="font-size:12px; ">Supported by AEOLUS FP6-IST-15964-FET Proactive and DEUKS JEP-41099 TEMPUS.</i></a>

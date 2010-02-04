@@ -7,9 +7,8 @@ import java.io.InputStreamReader;
 import blackbox.core.mytansport.MyTransport;
 import blackbox.core.mytansport.plugins.MyConcert;
 import blackbox.core.mytansport.plugins.MyFoot;
-
-import core.experiments.tools.InfoConsole;
 import core.protocols.p2p.IOverlay;
+import experiments.tools.InfoConsole;
 
 public class LaunchMyTransport {
 	public static void main(String[] args) {
