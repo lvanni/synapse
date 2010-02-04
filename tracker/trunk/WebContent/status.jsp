@@ -18,13 +18,21 @@ Tracker tracker = null;
 if(Tracker.started){
 	tracker = Tracker.getTracker();
 }
+// FORM COMMANDS
 if(request.getParameter("command") != null) {
 	tracker = Tracker.getTracker(); 
 	if(request.getParameter("command").equals("stop")){
 		tracker.kill(); 
 		tracker = null;
-	} else if(request.getParameter("command").equals("join")){
+	} else if(request.getParameter("command").equals("addInvitation")){
 		tracker.addInvitation(request.getParameter("invitation"), request.getParameter("pass"));
+	}
+	System.out.println(request.getParameter("command"));
+}
+// HTTP REQUEST
+if(request.getParameter("request") != null) {
+	if(tracker != null){
+		tracker.handleHttpRequest(request.getParameter("request"));
 	}
 }%> 
 
@@ -48,8 +56,8 @@ function stop(){
 	document.formCommand.command.value = "stop";
 }
 
-function join(){
-	document.formCommand.command.value = "join";
+function addInvitation(){
+	document.formCommand.command.value = "addInvitation";
 }
 </script>
 
@@ -119,13 +127,27 @@ function join(){
 						<% } %>
 						</table>
 					<% } %>
+					<br />
+					<% if(tracker.getInvitations().size() != 0){ %>
+						Invitation:<br />
+						<table border="1"  cellpadding="10">
+							<tr>
+								<td>NetworkID</td><td>pass</td>
+							</tr>
+							<% for(Invitation i : tracker.getInvitations()){ %>
+								<tr>
+									<td><%= i.getNetworkID() %></td><td><%= i.getAccessPass() %></td>
+								</tr>
+							<% } %>
+						</table>
+					<% } %>
 				<% } else { %>
 					Status: <b style="color:red;">Stopped...</b><br />
 				<% } %>
 				<br />
 				<hr style="width: 515px; margin-left:0px;" />
 				<h3>Commands:</h3>
-				<form name="formCommand">
+				<form name="formCommand" method="post">
 				<input type="hidden" name="command">
 				<table>
 				<tr>
@@ -138,7 +160,7 @@ function join(){
 					<td>Add invitation to :</td><td><input type="text" name="invitation"></td>
 				</tr>
 				<tr>
-					<td>password :</td><td><input type="text" name="pass"> <input type="submit" value="send" onclick="join()"></td>
+					<td>password :</td><td><input type="text" name="pass"> <input type="submit" value="send" onclick="addInvitation()"></td>
 				</tr>
 				</table>
 				<br />

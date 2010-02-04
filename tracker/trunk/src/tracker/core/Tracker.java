@@ -6,12 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import tracker.api.TrackerAPI;
-
 import core.protocols.p2p.Node;
 import core.protocols.transport.IRequestHandler;
 import core.protocols.transport.ITransport;
-import core.protocols.transport.socket.request.RequestHandler;
-import core.protocols.transport.socket.server.SocketImpl;
+import core.protocols.transport.http.HttpImpl;
 
 /**
  * The MyMed Tracker core
@@ -37,9 +35,12 @@ public class Tracker implements TrackerAPI, IRequestHandler {
 	 * Default constructor
 	 */
 	private Tracker() {
-		transport = new SocketImpl(TRACKER_PORT, 10, RequestHandler.class.getName(),
-				10, 1, 50, this);
-		((SocketImpl) transport).launchServer();
+		// TRANSPORT LAYER
+//		transport = new SocketImpl(TRACKER_PORT, 10, RequestHandler.class.getName(),
+//				10, 1, 50, this);
+//		((SocketImpl) transport).launchServer();
+		
+		transport = new HttpImpl();
 		peerSet = new HashMap<String, List<Node>>();
 		invitations = new ArrayList<Invitation>();
 	}
@@ -106,6 +107,13 @@ public class Tracker implements TrackerAPI, IRequestHandler {
 	public synchronized void addInvitation(String networkID, String accessPass){
 		invitations.add(new Invitation(networkID, accessPass));
 	}
+	
+	public void handleHttpRequest(String request){
+		System.out.println("Request: " + request);
+		String args[] = request.split(",");
+		transport.sendRequest("callback from cycloid", new Node(args[0], Integer.parseInt(args[1])));
+//		System.out.println("response to send: " + handleRequest(request));
+	}
 
 	/**
 	 * @param code, the request code to handle
@@ -128,7 +136,6 @@ public class Tracker implements TrackerAPI, IRequestHandler {
 			peerSet.get(args[1]).remove(n);
 			break;
 		case JOIN:
-			System.out.println("receive a join");
 			result = "null";
 			Invitation toRemove = null;
 			for(Invitation i : invitations){
@@ -147,6 +154,9 @@ public class Tracker implements TrackerAPI, IRequestHandler {
 		return result;
 	}
 
+	/**
+	 * 
+	 */
 	public void kill() { 
 		started = false;
 		peerSet.clear();
