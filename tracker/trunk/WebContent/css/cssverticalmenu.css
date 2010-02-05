@@ -19,6 +19,7 @@ width: auto;
 padding: 10px 0;
 padding-left: 10px;
 text-decoration: none;
+opacity:0.8;
 }
 
 .glossymenu li ul{ /*SUB MENU STYLE*/

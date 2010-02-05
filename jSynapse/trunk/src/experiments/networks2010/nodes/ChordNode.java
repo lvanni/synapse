@@ -53,7 +53,7 @@ public class ChordNode extends AbstractChord implements Runnable{
 			System.out.println("port " + port + " already in use: exit(1)");
 			System.exit(1);
 		} // TRANSPORT CHOICE
-		initialise(ip, id, transport.getPort());
+		initialize(ip, id, transport.getPort());
 	}
 
 	// /////////////////////////////////////////// //

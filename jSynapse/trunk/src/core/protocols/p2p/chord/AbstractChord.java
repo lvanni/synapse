@@ -8,9 +8,7 @@ import core.tools.Range;
 
 public abstract class AbstractChord implements IChord {
 
-	// /////////////////////////////////////////// //
-	//                 ATTRIBUTES                  //
-	// /////////////////////////////////////////// //
+	/** the degree of the address space of the chord */
 	public static int SPACESIZE = 10;
 
 	/** represent this node */
@@ -34,12 +32,16 @@ public abstract class AbstractChord implements IChord {
 	/** Time between each stabilization/fix fingerstable */
 	private int timeToCheck = 200;
 
+	/** The status of the node*/
 	private boolean alive = true;
 
-	// /////////////////////////////////////////// //
-	//                  INITIALISE                 //
-	// /////////////////////////////////////////// //
-	public void initialise(String ip, int id, int port){
+	/**
+	 * Initialize a chord node
+	 * @param ip, the address ip of the node
+	 * @param id, the id of the node
+	 * @param port, the port number of the node to listen request
+	 */
+	public void initialize(String ip, int id, int port){
 		thisNode = new Node(ip, id, port);
 		successor = thisNode;
 		predecessor = thisNode;
@@ -51,6 +53,7 @@ public abstract class AbstractChord implements IChord {
 	// /////////////////////////////////////////// //
 	//               CHORD ALGORITHM               //
 	// /////////////////////////////////////////// //
+
 	public Node findSuccessor(int id) {
 		if (Range.inside(id, thisNode.getId() + 1, successor.getId())) {
 			return successor;
@@ -61,6 +64,7 @@ public abstract class AbstractChord implements IChord {
 		} 
 	}
 
+
 	public Node closestPrecedingNode(int id) {
 		for (int i = SPACESIZE - 1; i > 0; i--) {
 			if (Range.inside(fingersTable[i].getId(), thisNode.getId() + 1, id - 1)) // && fingersTable[i].isAlive()
@@ -68,6 +72,7 @@ public abstract class AbstractChord implements IChord {
 		}
 		return successor;
 	}
+
 
 	public void join(Node chord) {
 		predecessor = null;
@@ -84,6 +89,7 @@ public abstract class AbstractChord implements IChord {
 		forward(JOIN + "," + thisNode, successor);
 	}
 
+
 	public void stabilize() {
 		String pred = forward(GETPRED + "", successor);
 		if(!pred.equals(thisNode.toString())){ // PRED != NULL
@@ -95,12 +101,15 @@ public abstract class AbstractChord implements IChord {
 		}
 	}
 
-	public void notify(Node n) {
-		if ((predecessor == null) || (Range.inside(n.getId(), predecessor.getId() + 1, thisNode.getId() - 1)))
-			predecessor = n;
-		// RemoveKey......
+
+	public void notify(Node node) {
+		if ((predecessor == null) || (Range.inside(node.getId(), predecessor.getId() + 1, thisNode.getId() - 1)))
+			predecessor = node;
 	}
 
+	/**
+	 * Fix the fingers table
+	 */
 	private void fixFingersTable(){
 		next++;
 		if (next > SPACESIZE - 1)
@@ -112,24 +121,29 @@ public abstract class AbstractChord implements IChord {
 	 * checks whether predecessor has failed.
 	 */
 	public void checkPredecessor() {
-		// if(fail(predecessor)){
-		// predecessor = null;
-		// }
+		/* not yet implemented */
 	}
 
 	// /////////////////////////////////////////// //
 	//                  ALGORITHM +                //
 	// /////////////////////////////////////////// //
-	protected void getObjectOnJoin(Node n){
+	/**
+	 * Get the objects to the node responsible for
+	 * @param node
+	 */
+	protected void getObjectOnJoin(Node node){
 		Object[] keys = table.keySet().toArray();
 		for(Object key : keys){
-			if(!Range.inside((Integer)key, n.getId(), getThisNode().getId())){
-				forward(PUT + "," + (Integer)key + "," + table.get(key), n);
+			if(!Range.inside((Integer)key, node.getId(), getThisNode().getId())){
+				forward(PUT + "," + (Integer)key + "," + table.get(key), node);
 				table.remove(key);
 			}
 		}
 	}
 
+	/**
+	 * "Fairplay" kill of the node 
+	 */
 	public void kill() {
 		this.alive = false;
 		forward(SETSUCC + "," + successor, predecessor);
@@ -144,9 +158,11 @@ public abstract class AbstractChord implements IChord {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-//		System.exit(0);
 	}
 
+	/**
+	 * Create a new thread to call periodically the stabilization algorithm
+	 */
 	public void checkStable() {
 		new Thread(new Runnable() {
 			public void run() {
@@ -166,6 +182,12 @@ public abstract class AbstractChord implements IChord {
 	// /////////////////////////////////////////// //
 	//              ABSTRACT METHODS               //
 	// /////////////////////////////////////////// //
+	/**
+	 * forward a message to an other node
+	 * @param message
+	 * @param destination
+	 * @return the response to this message
+	 */
 	public abstract String forward(String message, Node destination);
 
 	// /////////////////////////////////////////// //
@@ -200,18 +222,32 @@ public abstract class AbstractChord implements IChord {
 	// /////////////////////////////////////////// //
 	//              GETTER AND SETTER              //
 	// /////////////////////////////////////////// //
+	/**
+	 * @return a instance of the node
+	 */
 	public Node getThisNode() {
 		return thisNode;
 	}
 
+	/**
+	 * @return the predecessor of the node
+	 */
 	public Node getPredecessor() {
 		return predecessor;
 	}
 	
+	/**
+	 * Set the predecessor of the node
+	 * @param n
+	 */
 	public void setPredecessor(Node n){
 		predecessor = n;
 	}
 	
+	/**
+	 * Set the successor of the node
+	 * @param n
+	 */
 	public void setSuccessor(Node n){
 		successor = n;
 	}

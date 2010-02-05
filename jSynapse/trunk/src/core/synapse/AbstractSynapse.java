@@ -55,7 +55,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse{
 
 		this.transport = new SocketImpl(port, 10, RequestHandler.class.getName(), 10, 1, 50, this);
 		((SocketImpl) transport).launchServer();
-		initialise(ip, id, transport.getPort());
+		initialize(ip, id, transport.getPort());
 		checkStable();
 	}
 

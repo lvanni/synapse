@@ -8,6 +8,7 @@
 <link rel="stylesheet" type="text/css" href="css/cssverticalmenu.css" />
 <script type="text/javascript" src="javascript/cssverticalmenu.js"></script>
 <script type="text/javascript" src="javascript/jquery/dist/jquery.js"></script>
+<script type="text/javascript" src="javascript/tools.js"></script>
 
 <% /********************* JAVA DECLARATION *********************/ %>
 <%@ page import="java.util.*" %>
@@ -30,36 +31,11 @@ if(request.getParameter("command") != null) {
 	System.out.println(request.getParameter("command"));
 }
 // HTTP REQUEST
-if(request.getParameter("request") != null) {
+if(request.getParameter("request") != null && request.getParameter("from") != null) {
 	if(tracker != null){
-		tracker.handleHttpRequest(request.getParameter("request"));
+		tracker.handleHttpRequest(request.getParameter("request"), request.getParameter("from"));
 	}
 }%> 
-
-<% /********************* JAVASCRIPT DECLARATION *********************/ %>
-<script type="text/javascript">
-function onTR(elementId){
-	var tr = document.getElementById(elementId);
-	tr.style.background = "#4b71ff";
-}
-
-function outTR(elementId){
-	var tr = document.getElementById(elementId);
-	tr.style.background = "white";
-}
-
-function start(){
-	document.formCommand.command.value = "start";
-}
-
-function stop(){
-	document.formCommand.command.value = "stop";
-}
-
-function addInvitation(){
-	document.formCommand.command.value = "addInvitation";
-}
-</script>
 
 </head>
 

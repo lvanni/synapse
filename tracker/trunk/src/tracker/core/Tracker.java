@@ -10,6 +10,8 @@ import core.protocols.p2p.Node;
 import core.protocols.transport.IRequestHandler;
 import core.protocols.transport.ITransport;
 import core.protocols.transport.http.HttpImpl;
+import core.protocols.transport.socket.request.RequestHandler;
+import core.protocols.transport.socket.server.SocketImpl;
 
 /**
  * The MyMed Tracker core
@@ -21,8 +23,9 @@ public class Tracker implements TrackerAPI, IRequestHandler {
 	/* ************** ATTRIBUTES ************** */
 	/** peerSet<networkID, List<Node>> */
 	private Map<String, List<Node>> peerSet;
-	/** The transport level */
-	private ITransport transport;
+	/** Transport layer */
+	private ITransport socketTransport;
+	private ITransport httpTransport;
 	/** The list of the available invitation from a network to an other*/
 	private List<Invitation> invitations;
 	/** The tracker singleton */
@@ -36,11 +39,12 @@ public class Tracker implements TrackerAPI, IRequestHandler {
 	 */
 	private Tracker() {
 		// TRANSPORT LAYER
-//		transport = new SocketImpl(TRACKER_PORT, 10, RequestHandler.class.getName(),
-//				10, 1, 50, this);
-//		((SocketImpl) transport).launchServer();
+		socketTransport = new SocketImpl(TRACKER_PORT, 10, RequestHandler.class.getName(),
+				10, 1, 50, this);
+		((SocketImpl) socketTransport).launchServer();
+		httpTransport = new HttpImpl();
 		
-		transport = new HttpImpl();
+		// TRACKER INIT
 		peerSet = new HashMap<String, List<Node>>();
 		invitations = new ArrayList<Invitation>();
 	}
@@ -108,11 +112,16 @@ public class Tracker implements TrackerAPI, IRequestHandler {
 		invitations.add(new Invitation(networkID, accessPass));
 	}
 	
-	public void handleHttpRequest(String request){
+	/**
+	 * Handle request from peer trough http
+	 * @param request
+	 * @param from
+	 */
+	public void handleHttpRequest(String request, String from){
 		System.out.println("Request: " + request);
-		String args[] = request.split(",");
-		transport.sendRequest("callback from cycloid", new Node(args[0], Integer.parseInt(args[1])));
-//		System.out.println("response to send: " + handleRequest(request));
+		String args[] = from.split(",");
+		String response = handleRequest(request);
+		httpTransport.sendRequest(response, new Node(args[0], Integer.parseInt(args[1])));
 	}
 
 	/**
@@ -161,7 +170,7 @@ public class Tracker implements TrackerAPI, IRequestHandler {
 		started = false;
 		peerSet.clear();
 		invitations.clear();
-		transport.stopServer();
+		socketTransport.stopServer();
 		tracker = null; 
 	}
 	
@@ -178,7 +187,8 @@ public class Tracker implements TrackerAPI, IRequestHandler {
 	 * @return String, The port number used by the tracker to listen
 	 */
 	public String getPort(){
-		return transport.getPort() + "";
+		int port = socketTransport.getPort();
+		return port == 0 ? "8080" : port + "";
 	}
 	
 	/**
