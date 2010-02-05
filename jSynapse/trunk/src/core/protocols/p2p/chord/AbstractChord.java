@@ -6,6 +6,13 @@ import java.util.Map;
 import core.protocols.p2p.Node;
 import core.tools.Range;
 
+/**
+ * This abstract class represent a node in the jChord protocol
+ * 
+ * @author laurent.vanni@sophia.inria.fr - logNet team 2010 - INRIA
+ *         Sophia-Antipolis - France
+ * 
+ */
 public abstract class AbstractChord implements IChord {
 
 	/** the degree of the address space of the chord */
@@ -32,16 +39,20 @@ public abstract class AbstractChord implements IChord {
 	/** Time between each stabilization/fix fingerstable */
 	private int timeToCheck = 200;
 
-	/** The status of the node*/
+	/** The status of the node */
 	private boolean alive = true;
 
 	/**
 	 * Initialize a chord node
-	 * @param ip, the address ip of the node
-	 * @param id, the id of the node
-	 * @param port, the port number of the node to listen request
+	 * 
+	 * @param ip
+	 *            the address ip of the node
+	 * @param id
+	 *            the id of the node
+	 * @param port
+	 *            the port number of the node to listen request
 	 */
-	public void initialize(String ip, int id, int port){
+	public void initialize(String ip, int id, int port) {
 		thisNode = new Node(ip, id, port);
 		successor = thisNode;
 		predecessor = thisNode;
@@ -51,70 +62,86 @@ public abstract class AbstractChord implements IChord {
 	}
 
 	// /////////////////////////////////////////// //
-	//               CHORD ALGORITHM               //
+	// CHORD ALGORITHM
 	// /////////////////////////////////////////// //
-
+	/**
+	 * @see core.protocols.p2p.chord.IChord#findSuccessor(int)
+	 */
 	public Node findSuccessor(int id) {
 		if (Range.inside(id, thisNode.getId() + 1, successor.getId())) {
 			return successor;
 		} else {
 			Node pred = closestPrecedingNode(id);
-			String succ = forward(FINDSUCC + "," + id, pred);
+			String succ = sendRequest(FINDSUCC + "," + id, pred);
 			return new Node(succ);
-		} 
+		}
 	}
 
-
+	/**
+	 * @see core.protocols.p2p.chord.IChord#closestPrecedingNode(int)
+	 */
 	public Node closestPrecedingNode(int id) {
 		for (int i = SPACESIZE - 1; i > 0; i--) {
-			if (Range.inside(fingersTable[i].getId(), thisNode.getId() + 1, id - 1)) // && fingersTable[i].isAlive()
+			if (Range.inside(fingersTable[i].getId(), thisNode.getId() + 1,
+					id - 1)) // && fingersTable[i].isAlive()
 				return fingersTable[i];
 		}
 		return successor;
 	}
 
-
+	/**
+	 * @see core.protocols.p2p.chord.IChord#join(Node)
+	 */
 	public void join(Node chord) {
 		predecessor = null;
-		String succ = forward(FINDSUCC + "," + thisNode.getId(), chord);
+		String succ = sendRequest(FINDSUCC + "," + thisNode.getId(), chord);
 		successor = new Node(succ);
 		// GET OBJECT ON JOIN
-		while(getPredecessor() == null){
+		while (getPredecessor() == null) {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		forward(JOIN + "," + thisNode, successor);
+		sendRequest(JOIN + "," + thisNode, successor);
 	}
 
-
+	/**
+	 * @see core.protocols.p2p.chord.IChord#stabilize()
+	 */
 	public void stabilize() {
-		String pred = forward(GETPRED + "", successor);
-		if(!pred.equals(thisNode.toString())){ // PRED != NULL
+		String pred = sendRequest(GETPRED + "", successor);
+		if (!pred.equals(thisNode.toString())) { // PRED != NULL
 			Node x = new Node(pred);
-			if (Range.inside(x.getId(), thisNode.getId() + 1, successor.getId() - 1)) {
+			if (Range.inside(x.getId(), thisNode.getId() + 1,
+					successor.getId() - 1)) {
 				successor = x;
 			}
-			forward(NOTIF + "," + thisNode, successor);
+			sendRequest(NOTIF + "," + thisNode, successor);
 		}
 	}
 
-
+	/**
+	 * @see core.protocols.p2p.chord.IChord#notify()
+	 */
 	public void notify(Node node) {
-		if ((predecessor == null) || (Range.inside(node.getId(), predecessor.getId() + 1, thisNode.getId() - 1)))
+		if ((predecessor == null)
+				|| (Range.inside(node.getId(), predecessor.getId() + 1,
+						thisNode.getId() - 1)))
 			predecessor = node;
 	}
 
 	/**
 	 * Fix the fingers table
 	 */
-	private void fixFingersTable(){
+	private void fixFingersTable() {
 		next++;
 		if (next > SPACESIZE - 1)
 			next = 1;
-		fingersTable[next] = findSuccessor((thisNode.getId() + (int) Math.pow(2, next - 1))% (int) Math.pow(2, SPACESIZE - 1));
+		fingersTable[next] = findSuccessor((thisNode.getId() + (int) Math.pow(
+				2, next - 1))
+				% (int) Math.pow(2, SPACESIZE - 1));
 	}
 
 	/**
@@ -125,32 +152,34 @@ public abstract class AbstractChord implements IChord {
 	}
 
 	// /////////////////////////////////////////// //
-	//                  ALGORITHM +                //
+	// ALGORITHM +
 	// /////////////////////////////////////////// //
 	/**
 	 * Get the objects to the node responsible for
+	 * 
 	 * @param node
 	 */
-	protected void getObjectOnJoin(Node node){
+	protected void getObjectOnJoin(Node node) {
 		Object[] keys = table.keySet().toArray();
-		for(Object key : keys){
-			if(!Range.inside((Integer)key, node.getId(), getThisNode().getId())){
-				forward(PUT + "," + (Integer)key + "," + table.get(key), node);
+		for (Object key : keys) {
+			if (!Range.inside((Integer) key, node.getId(), getThisNode()
+					.getId())) {
+				sendRequest(PUT + "," + (Integer) key + "," + table.get(key), node);
 				table.remove(key);
 			}
 		}
 	}
 
 	/**
-	 * "Fairplay" kill of the node 
+	 * @see core.protocols.p2p.chord.IChord#kill()
 	 */
 	public void kill() {
 		this.alive = false;
-		forward(SETSUCC + "," + successor, predecessor);
-		forward(SETPRED + "," + predecessor, successor);
+		sendRequest(SETSUCC + "," + successor, predecessor);
+		sendRequest(SETPRED + "," + predecessor, successor);
 		Object[] keys = table.keySet().toArray();
-		for(Object key : keys){
-			forward(PUT + "," + (Integer)key + "," + table.get(key), successor);
+		for (Object key : keys) {
+			sendRequest(PUT + "," + (Integer) key + "," + table.get(key), successor);
 		}
 		System.out.println("bye bye...");
 		try {
@@ -180,24 +209,25 @@ public abstract class AbstractChord implements IChord {
 	}
 
 	// /////////////////////////////////////////// //
-	//              ABSTRACT METHODS               //
+	// ABSTRACT METHODS
 	// /////////////////////////////////////////// //
 	/**
 	 * forward a message to an other node
+	 * 
 	 * @param message
 	 * @param destination
 	 * @return the response to this message
 	 */
-	public abstract String forward(String message, Node destination);
+	public abstract String sendRequest(String message, Node destination);
 
 	// /////////////////////////////////////////// //
-	//                   DISPLAY                   //
+	// DISPLAY
 	// /////////////////////////////////////////// //
 	public String toString() {
-		String res = "<NODE: " + thisNode.getId() + ", PRED: "	
-		+ (predecessor == null ? predecessor : predecessor.getId())
-		+ ", SUCC: "
-		+ (successor == null ? successor : successor.getId()) + "> ";
+		String res = "<NODE: " + thisNode.getId() + ", PRED: "
+				+ (predecessor == null ? predecessor : predecessor.getId())
+				+ ", SUCC: "
+				+ (successor == null ? successor : successor.getId()) + "> ";
 		res += "\n\tFingers Table: ";
 		if (fingersTable[1] != null) {
 			res += "[";
@@ -220,35 +250,37 @@ public abstract class AbstractChord implements IChord {
 	}
 
 	// /////////////////////////////////////////// //
-	//              GETTER AND SETTER              //
+	// GETTER AND SETTER //
 	// /////////////////////////////////////////// //
 	/**
-	 * @return a instance of the node
+	 * @see core.protocols.p2p.chord.IChord#getThisNode()
 	 */
 	public Node getThisNode() {
 		return thisNode;
 	}
 
 	/**
-	 * @return the predecessor of the node
+	 * @see core.protocols.p2p.chord.IChord#getPredecessor()
 	 */
 	public Node getPredecessor() {
 		return predecessor;
 	}
-	
+
 	/**
 	 * Set the predecessor of the node
+	 * 
 	 * @param n
 	 */
-	public void setPredecessor(Node n){
+	public void setPredecessor(Node n) {
 		predecessor = n;
 	}
-	
+
 	/**
 	 * Set the successor of the node
+	 * 
 	 * @param n
 	 */
-	public void setSuccessor(Node n){
+	public void setSuccessor(Node n) {
 		successor = n;
 	}
 }

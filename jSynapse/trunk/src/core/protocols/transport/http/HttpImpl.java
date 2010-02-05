@@ -8,38 +8,50 @@ import java.net.URLEncoder;
 import core.protocols.p2p.Node;
 import core.protocols.transport.ITransport;
 
-public class HttpImpl implements ITransport{
-	public HttpImpl(){}
+/**
+ * This class represent the http transport layer
+ * 
+ * @author laurent.vanni@sophia.inria.fr - logNet team 2010 - INRIA
+ *         Sophia-Antipolis - France
+ * 
+ */
+public class HttpImpl implements ITransport {
 
-	@Override
+	/**
+	 * Default contructor
+	 */
+	public HttpImpl() {
+	}
+
+	/**
+	 * @see core.protocols.transport.ITransport#getPort()
+	 */
 	public int getPort() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	@Override
+	/**
+	 * @see core.protocols.transport.ITransport#sendRequest(String, Node)
+	 */
 	public String sendRequest(String message, Node destination) {
 		String response = "";
 		try {
-		    // Construct data
-		    String data = URLEncoder.encode("code", "UTF-8") + "=" + URLEncoder.encode(message, "UTF-8");
+			// Construct data
+			String data = URLEncoder.encode("code", "UTF-8") + "="
+					+ URLEncoder.encode(message, "UTF-8");
 
-		    // Send data
-		    URL url = new URL("http://" + destination.getIp() + ":" + destination.getPort() + "/requesthandler");
-		    URLConnection conn = url.openConnection();
-		    conn.setDoOutput(true);
-		    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-		    wr.write(data);
-		    wr.flush();
+			// Send data
+			URL url = new URL("http://" + destination.getIp() + ":"
+					+ destination.getPort() + "/requesthandler");
+			URLConnection conn = url.openConnection();
+			conn.setDoOutput(true);
+			OutputStreamWriter wr = new OutputStreamWriter(conn
+					.getOutputStream());
+			wr.write(data);
+			wr.flush();
 
-		    // Get the response
-//		    BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-//		    String line;
-//		    while ((line = rd.readLine()) != null) {
-//		    	response += line;
-//		    }
-		    wr.close();
-//		    rd.close();
+			wr.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -47,7 +59,9 @@ public class HttpImpl implements ITransport{
 		return response;
 	}
 
-	@Override
+	/**
+	 * @see core.protocols.transport.ITransport#stopServer()
+	 */
 	public void stopServer() {
 		// TODO Auto-generated method stub
 	}

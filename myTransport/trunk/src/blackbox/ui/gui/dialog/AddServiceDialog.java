@@ -16,8 +16,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import blackbox.core.mytansport.MyTransport;
-
-import core.protocols.p2p.IOverlay;
+import core.protocols.p2p.IDHT;
 import core.protocols.p2p.chord.AbstractChord;
 
 public class AddServiceDialog extends Dialog{
@@ -90,7 +89,7 @@ public class AddServiceDialog extends Dialog{
 //						myTransport.join(OverlayID.MYFOOT, Integer.parseInt(portToStartText.getText()), addressArgs[0], Integer.parseInt(addressArgs[1]));
 				services.setForeground(new Color(null, 0, 180, 0));
 				String text = "Services enabled: ";
-				for(IOverlay o : myTransport.getNetworks()){
+				for(IDHT o : myTransport.getNetworks()){
 					text += o.getIdentifier()+ "[" + ((AbstractChord) o).getThisNode().getId() + "," + ((AbstractChord) o).getPredecessor().getId() + "], ";
 				}
 				services.setText(text);

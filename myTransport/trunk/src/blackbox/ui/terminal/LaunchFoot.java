@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import blackbox.core.overlay.foot.Foot;
-import experiments.tools.InfoConsole;
+import core.tools.InfoConsole;
 
 public class LaunchFoot {
 	public static void main(String[] args) {

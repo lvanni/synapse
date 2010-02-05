@@ -27,7 +27,7 @@ import blackbox.ui.gui.dialog.JoinDialog;
 import core.ITracker;
 import core.protocols.p2p.Node;
 import core.protocols.p2p.chord.IChord;
-import experiments.tools.InfoConsole;
+import core.tools.InfoConsole;
 
 public class ConcertSWT{
 

@@ -51,7 +51,7 @@ public abstract class AbstractServer extends Thread implements ITransport {
 				Socket s = serverSocket.accept();
 				this.requestQueue.add(s);
 			} catch (SocketException e) {
-				if(!serverSocket.isClosed()){
+				if (!serverSocket.isClosed()) {
 					e.printStackTrace();
 				}
 			} catch (Exception e) {
@@ -61,6 +61,9 @@ public abstract class AbstractServer extends Thread implements ITransport {
 		this.requestQueue.shutdown();
 	}
 
+	/**
+	 * @see core.protocols.transport.ITransport#getPort()
+	 */
 	public int getPort() {
 		return port;
 	}

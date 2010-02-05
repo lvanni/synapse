@@ -14,11 +14,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import tgc2010.core.synapse.Synapse;
-import tgc2010.core.synapse.plugin.ChordNodePlugin;
 import core.ITracker;
 import core.protocols.p2p.Node;
-import experiments.tools.InfoConsole;
+import core.tools.InfoConsole;
+import experiments.current.synapse.Synapse;
+import experiments.current.synapse.plugin.ChordNodePlugin;
 
 public class JoinDialog extends Dialog{
 	

@@ -14,9 +14,9 @@ import java.util.List;
 import core.protocols.p2p.Node;
 import core.protocols.transport.ITransport;
 import core.protocols.transport.socket.SimpleSocketImpl;
+import core.tools.InfoConsole;
 import experiments.networks2010.synapse.Synapse;
 import experiments.networks2010.synapse.plugins.ChordNodePlugin;
-import experiments.tools.InfoConsole;
 
 //public class CreateSynapse implements Runnable{
 //

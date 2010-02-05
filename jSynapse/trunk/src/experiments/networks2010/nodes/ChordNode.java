@@ -59,7 +59,7 @@ public class ChordNode extends AbstractChord implements Runnable{
 	// /////////////////////////////////////////// //
 	//               PUBLIC METHODS                //
 	// /////////////////////////////////////////// //
-	public String forward(String message, Node destination){
+	public String sendRequest(String message, Node destination){
 		String res = "";
 		res = transport.sendRequest(getIdentifier() + "," + message, destination);
 		if(res == null || res.equals(""))
@@ -91,7 +91,7 @@ public class ChordNode extends AbstractChord implements Runnable{
 			}
 //			System.out.println("New entry in the hash table...");
 		} else {
-			forward(IChord.PUT + "," + hKey + "," + value, findSuccessor(hKey));
+			sendRequest(IChord.PUT + "," + hKey + "," + value, findSuccessor(hKey));
 		}
 	}
 
@@ -107,7 +107,7 @@ public class ChordNode extends AbstractChord implements Runnable{
 		if(Range.inside(hKey, getPredecessor().getId() + 1, getThisNode().getId())){
 			return table.get(hKey);
 		} else {
-			return forward(IChord.GET + "," + hKey, findSuccessor(hKey));
+			return sendRequest(IChord.GET + "," + hKey, findSuccessor(hKey));
 		}
 	}
 

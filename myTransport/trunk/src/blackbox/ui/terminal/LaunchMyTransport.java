@@ -7,8 +7,8 @@ import java.io.InputStreamReader;
 import blackbox.core.mytansport.MyTransport;
 import blackbox.core.mytansport.plugins.MyConcert;
 import blackbox.core.mytansport.plugins.MyFoot;
-import core.protocols.p2p.IOverlay;
-import experiments.tools.InfoConsole;
+import core.protocols.p2p.IDHT;
+import core.tools.InfoConsole;
 
 public class LaunchMyTransport {
 	public static void main(String[] args) {
@@ -90,7 +90,7 @@ public class LaunchMyTransport {
 					}
 				}
 				if (!subMenu) {
-					for (IOverlay o : myTransport.getNetworks()) {
+					for (IDHT o : myTransport.getNetworks()) {
 						System.out.println(++i + ") " + o.getIdentifier());
 					}
 					if (i != 1) {

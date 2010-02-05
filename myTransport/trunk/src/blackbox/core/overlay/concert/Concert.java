@@ -42,14 +42,14 @@ public class Concert extends AbstractChord {
 		
 		transport = new SocketImpl(port, 10, RequestHandler.class.getName(), 10, 1, 50, this);
 		((SocketImpl) transport).launchServer();
-		initialise(ip, id, transport.getPort());
+		initialize(ip, id, transport.getPort());
 		checkStable();
 	}
 
 	// /////////////////////////////////////////// //
 	//               PUBLIC METHODS                //
 	// /////////////////////////////////////////// //
-	public String forward(String message, Node destination){
+	public String sendRequest(String message, Node destination){
 		String res = "";
 		res = transport.sendRequest(getIdentifier() + "," + message, destination);
 		if(res == null || res.equals(""))
@@ -77,7 +77,7 @@ public class Concert extends AbstractChord {
 			}
 			System.out.println("New entry in the hash table...");
 		} else {
-			forward(IChord.PUT + "," + hKey + "," + value, findSuccessor(hKey));
+			sendRequest(IChord.PUT + "," + hKey + "," + value, findSuccessor(hKey));
 		}
 	}
 
@@ -93,7 +93,7 @@ public class Concert extends AbstractChord {
 		if(Range.inside(hKey, getPredecessor().getId() + 1, getThisNode().getId())){
 			return table.get(hKey);
 		} else {
-			return forward(IChord.GET + "," + hKey, findSuccessor(hKey));
+			return sendRequest(IChord.GET + "," + hKey, findSuccessor(hKey));
 		}
 	}
 

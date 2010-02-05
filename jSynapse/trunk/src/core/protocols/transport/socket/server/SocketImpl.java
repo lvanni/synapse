@@ -11,30 +11,58 @@ import java.net.Socket;
 import core.protocols.p2p.Node;
 import core.protocols.transport.IRequestHandler;
 
+/**
+ * This class represent the socket transport layer
+ * 
+ * @author laurent.vanni@sophia.inria.fr - logNet team 2010 - INRIA
+ *         Sophia-Antipolis - France
+ * 
+ */
 public class SocketImpl extends AbstractServer {
-	
-	private static int MAX_TTL 	= 200;
-	private static int TTL 		= MAX_TTL;
-	
+
+	/** The max TTL when a destination is unreachable */
+	private static int MAX_TTL = 200;
+	/** The current TTL */
+	private static int TTL = MAX_TTL;
+	/** The request handler to use when a request is received */
 	private IRequestHandler overlay = null;
 
+	/**
+	 * Default contructor
+	 * 
+	 * @see core.protocols.transport.socket.server.AbstractServer#AbstractServer(int,
+	 *      int, String, int, int, int, IRequestHandler);
+	 * @param port
+	 * @param backlog
+	 * @param requestHandlerClassName
+	 * @param maxQueueLength
+	 * @param minThreads
+	 * @param maxThreads
+	 * @param overlay
+	 */
 	public SocketImpl(int port, int backlog, String requestHandlerClassName,
-			int maxQueueLength, int minThreads, int maxThreads, IRequestHandler overlay) {
+			int maxQueueLength, int minThreads, int maxThreads,
+			IRequestHandler overlay) {
 		super(port, backlog, requestHandlerClassName, maxQueueLength,
 				minThreads, maxThreads, overlay);
 		this.overlay = overlay;
 	}
 
+	/**
+	 * @see core.protocols.transport.ITransport#sendRequest(String, Node)
+	 */
 	public String sendRequest(String message, Node destination) {
-		if(TTL == 0){
+		if (TTL == 0) {
 			overlay.kill();
 		}
 		Socket socket = null;
 		BufferedReader pin = null;
 		PrintWriter pout = null;
 		try {
-			while ((socket = new Socket(destination.getIp(), destination.getPort())) == null) {
-				System.out.println("can not create a socket to " + destination.getIp() + ":" + destination.getPort());
+			while ((socket = new Socket(destination.getIp(), destination
+					.getPort())) == null) {
+				System.out.println("can not create a socket to "
+						+ destination.getIp() + ":" + destination.getPort());
 			}
 			pin = new BufferedReader(new InputStreamReader(socket
 					.getInputStream()));

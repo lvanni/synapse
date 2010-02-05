@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import core.protocols.p2p.IOverlay;
+import core.protocols.p2p.IDHT;
 import core.protocols.p2p.Node;
 import core.protocols.p2p.chord.AbstractChord;
 import core.protocols.p2p.chord.IChord;
@@ -17,88 +17,103 @@ import core.protocols.transport.socket.server.SocketImpl;
 import core.tools.HashFunction;
 import core.tools.Range;
 
-public abstract class AbstractSynapse extends AbstractChord implements ISynapse{
+/**
+ * This abstract class represent a synapse peer
+ * 
+ * @author laurent.vanni@sophia.inria.fr - logNet team 2010 - INRIA
+ *         Sophia-Antipolis - France
+ * 
+ */
+public abstract class AbstractSynapse extends AbstractChord implements ISynapse {
 
-	/** Collection of networks*/
-	protected List<IOverlay> networks;
-
-	private static SimpleDateFormat formater = new SimpleDateFormat( "dd/MM/yy_H:mm:ss" );
-	protected static String time = formater.format( new Date() );
+	/** networks where the synapse is registered */
+	protected List<IDHT> networks;
+	/** information to construct an unique identifier */
+	private static SimpleDateFormat formater = new SimpleDateFormat(
+			"dd/MM/yy_H:mm:ss");
+	protected static String time = formater.format(new Date());
+	/** The control network identifier */
 	public String identifier;
-
 	/** Hash function */
 	protected HashFunction h;
-
+	/** The transport layer */
 	protected ITransport transport;
-
-	/* just for the dev */
+	/* just to debug */
 	public static boolean debugMode = false;
-
 	/** cleanKeyTable */
 	private Map<Integer, String> cleanKeyTable;
-
 	/** cacheTable */
 	private Map<String, Cache> cacheTable;
 
-	// /////////////////////////////////////////// //
-	//                 CONSTRUCTOR                 //
-	// /////////////////////////////////////////// //
-	public AbstractSynapse(){}
-
-	public AbstractSynapse(String ip, int port, String identifier) {
+	/**
+	 * The default constructor
+	 * 
+	 * @param ip
+	 * @param port
+	 * @param identifier
+	 */
+	protected AbstractSynapse(String ip, int port, String identifier) {
 		this.identifier = identifier;
 		this.h = new HashFunction(identifier);
-		int id = h.SHA1ToInt(ip+port+time);
-		networks = new ArrayList<IOverlay>();
+		int id = h.SHA1ToInt(ip + port + time);
+		networks = new ArrayList<IDHT>();
 		cleanKeyTable = new HashMap<Integer, String>();
 		cacheTable = new HashMap<String, Cache>();
-
-		this.transport = new SocketImpl(port, 10, RequestHandler.class.getName(), 10, 1, 50, this);
+		// The transport layer
+		this.transport = new SocketImpl(port, 10, RequestHandler.class
+				.getName(), 10, 1, 50, this);
 		((SocketImpl) transport).launchServer();
 		initialize(ip, id, transport.getPort());
 		checkStable();
 	}
 
-	// /////////////////////////////////////////// //
-	//              SYNAPSE ALGORITHM              //
-	// /////////////////////////////////////////// //
+	/**
+	 * @see core.synapse.ISynapse#invite()
+	 */
 	public void invite() {
 		// TODO Auto-generated method stub
 	}
 
+	/**
+	 * @see core.synapse.ISynapse#join(String, int)
+	 */
 	public void join(String host, int port) {
-		Node chord = new Node(host,  h.SHA1ToInt(host+port+identifier), port);
+		Node chord = new Node(host, h.SHA1ToInt(host + port + identifier), port);
 		join(chord); // chord join
 	}
 
-	public void kill(){
-		for(IOverlay o : networks){
+	/**
+	 * @see core.protocols.p2p.chord.IChord#kill()
+	 */
+	public void kill() {
+		for (IDHT o : networks) {
 			((AbstractChord) o).kill();
 		}
 		super.kill();
 	}
 
-	// /////////////////////////////////////////// //
-	//                     PUT                     //
-	// /////////////////////////////////////////// //
-	@Deprecated /* multiPut */
-	public void put(final String key, final String value){
-		for(final IOverlay o : networks){
+	/**
+	 * @see core.protocols.p2p.IDHT#put(String, String)
+	 */
+	@Deprecated
+	/* multiPut */
+	public void put(final String key, final String value) {
+		for (final IDHT o : networks) {
 			new Thread(new Runnable() {
 				public void run() {
-					int hKey = keyToH(o.keyToH(key)+"|"+o.getIdentifier()); // h(key)|IDENT
-					putInCleanTable(hKey, key);     						// SAVE THE CLEAN KEY
-					o.put(key, value);  									// MULTIPUT	
+					int hKey = keyToH(o.keyToH(key) + "|" + o.getIdentifier()); // h(key)|IDENT
+					putInCleanTable(hKey, key); // SAVE THE CLEAN KEY
+					o.put(key, value); // MULTIPUT
 				}
 			}).start();
 		}
 	}
 
-	// /////////////////////////////////////////// //
-	//                     GET                     //
-	// /////////////////////////////////////////// //
-	public String get(String key){
-		// 	INIT CACHE TABLE
+	/**
+	 * @see core.protocols.p2p.IDHT#get(String)
+	 */
+	public String get(String key) {
+		// INIT CACHE TABLE
 		initCacheTable(key);
 		// FIND RESULTS
 		synapseGet(key, "");
@@ -112,29 +127,42 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse{
 		removeCacheTable(key);
 		return res;
 	}
-	
-	public void synapseGet(String key, String overlayIntifier){
-		for(int i = 0 ; i < networks.size() ; i++){
-			IOverlay o = networks.get(i);
-			if(!o.getIdentifier().equals(overlayIntifier)){
+
+	/**
+	 * Bypass the initialization of the cache table
+	 * 
+	 * @see core.protocols.p2p.IDHT#get(String)
+	 * @param key
+	 * @param overlayIntifier
+	 *            the overlay where the request come from
+	 */
+	public void synapseGet(String key, String overlayIntifier) {
+		for (int i = 0; i < networks.size(); i++) {
+			IDHT o = networks.get(i);
+			if (!o.getIdentifier().equals(overlayIntifier)) {
 				System.out.println("find in " + o.getIdentifier());
 				new Thread(new Get(key, o, this)).start();
 			}
 		}
 	}
 
-	private class Get implements Runnable{
+	/**
+	 * InnerClass , define a threaded get request
+	 */
+	private class Get implements Runnable {
 		private String key;
 		private AbstractSynapse s;
-		private  IOverlay o;
-		public Get(String key, IOverlay o, AbstractSynapse s){
+		private IDHT o;
+
+		public Get(String key, IDHT o, AbstractSynapse s) {
 			this.key = key;
 			this.s = s;
 			this.o = o;
 		}
+
 		public void run() {
 			// CLEAN TABLE
-			int hCleanKey = keyToH(o.keyToH(key)+"|"+o.getIdentifier()); // h(key)|IDENT
+			int hCleanKey = keyToH(o.keyToH(key) + "|" + o.getIdentifier()); // h(key)|IDENT
 			putInCleanTable(hCleanKey, key);
 
 			// ADD VALUE IN THE CACHE TABLE
@@ -142,160 +170,212 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse{
 		}
 	}
 
-	// GET CLEAN KEY
-	public String getInCleanTable(String key){
+	/**
+	 * Get back the value of the key (in plain text: no hashed)
+	 * 
+	 * @param key
+	 *            construct from h(ovrelayID|h(key))
+	 * @return the key in plain text
+	 */
+	public String getInCleanTable(String key) {
 		int hKey = h.SHA1ToInt(key);
-		if(Range.inside(hKey, getPredecessor().getId() + 1, getThisNode().getId())){
+		if (Range.inside(hKey, getPredecessor().getId() + 1, getThisNode()
+				.getId())) {
 			return cleanKeyTable.get(hKey);
 		} else {
-			return forward(ISynapse.GETCleanKey + "," + key, findSuccessor(hKey));
+			return sendRequest(ISynapse.GETCleanKey + "," + key,
+					findSuccessor(hKey));
 		}
 	}
 
-	// PUT CLEAN KEY
-	public void putInCleanTable(int hKey, String key){
-		if(Range.inside(hKey, getPredecessor().getId() + 1, getThisNode().getId())){
+	/**
+	 * Memorize in the control network the key in plain text
+	 * 
+	 * @param hKey
+	 *            = h(key)
+	 * @param key
+	 */
+	public void putInCleanTable(int hKey, String key) {
+		if (Range.inside(hKey, getPredecessor().getId() + 1, getThisNode()
+				.getId())) {
 			cleanKeyTable.put(hKey, key);
 		} else {
-			forward(ISynapse.PUTCleanKey + "," + hKey + "," + key, findSuccessor(hKey));
+			sendRequest(ISynapse.PUTCleanKey + "," + hKey + "," + key,
+					findSuccessor(hKey));
 		}
 	}
 
-	// INIT CACHE TABLE
-	public void initCacheTable(String key){
+	/**
+	 * Initialize the cache for new key in the cache table
+	 * 
+	 * @param key
+	 */
+	public void initCacheTable(String key) {
 		int hKey = h.SHA1ToInt(key);
-		if(Range.inside(hKey, getPredecessor().getId() + 1, getThisNode().getId())){
+		if (Range.inside(hKey, getPredecessor().getId() + 1, getThisNode()
+				.getId())) {
 			cacheTable.put(key, new Cache());
 		} else {
-			forward(ISynapse.INITCacheTable + "," + key, findSuccessor(hKey));
+			sendRequest(ISynapse.INITCacheTable + "," + key,
+					findSuccessor(hKey));
 		}
-	}
-	
-	// CACHE TABLE EXIST 
-	public String cacheTableExist(String key){
-		int hKey = h.SHA1ToInt(key);
-		if(Range.inside(hKey, getPredecessor().getId() + 1, getThisNode().getId())){
-			return cacheTable.containsKey(key) ? "1" : "0";
-		} else {
-			return forward(ISynapse.CacheTableExist + "," + key, findSuccessor(hKey));
-		}
-	}
-	
-	// REMOVE CACHE TABLE
-	public void removeCacheTable(String key){
-		int hKey = h.SHA1ToInt(key);
-		if(Range.inside(hKey, getPredecessor().getId() + 1, getThisNode().getId())){
-			cacheTable.remove(key);
-		} else {
-			forward(ISynapse.REMOVECacheTable + "," + key, findSuccessor(hKey));
-		}
-		
 	}
 
-	// ADD CACHE VALUE
-	public void addValue(String key, String value){
+	/**
+	 * 
+	 * @param key
+	 * @return true if a cache exist for the key, false otherwise
+	 */
+	public String cacheTableExist(String key) {
 		int hKey = h.SHA1ToInt(key);
-		if(Range.inside(hKey, getPredecessor().getId() + 1, getThisNode().getId())){
-			if(cacheTable.get(key) != null){
+		if (Range.inside(hKey, getPredecessor().getId() + 1, getThisNode()
+				.getId())) {
+			return cacheTable.containsKey(key) ? "1" : "0";
+		} else {
+			return sendRequest(ISynapse.CacheTableExist + "," + key,
+					findSuccessor(hKey));
+		}
+	}
+
+	/**
+	 * Remove the cache of the key in the control network
+	 * 
+	 * @param key
+	 */
+	public void removeCacheTable(String key) {
+		int hKey = h.SHA1ToInt(key);
+		if (Range.inside(hKey, getPredecessor().getId() + 1, getThisNode()
+				.getId())) {
+			cacheTable.remove(key);
+		} else {
+			sendRequest(ISynapse.REMOVECacheTable + "," + key,
+					findSuccessor(hKey));
+		}
+
+	}
+
+	/**
+	 * Add a value in cache for the key in the control network
+	 * 
+	 * @param key
+	 * @param value
+	 */
+	public void addValue(String key, String value) {
+		int hKey = h.SHA1ToInt(key);
+		if (Range.inside(hKey, getPredecessor().getId() + 1, getThisNode()
+				.getId())) {
+			if (cacheTable.get(key) != null) {
 				cacheTable.get(key).addValue(value);
 			}
 		} else {
-			forward(ISynapse.ADDCacheValue + "," + key + "," + value, findSuccessor(hKey));
+			sendRequest(ISynapse.ADDCacheValue + "," + key + "," + value,
+					findSuccessor(hKey));
 		}
 	}
 
-	// GET CHACHE VALUES
-	public String getValues(String key){
+	/**
+	 * 
+	 * @param key
+	 * @return the concatenation of all the cache value of the key
+	 */
+	public String getValues(String key) {
 		int hKey = h.SHA1ToInt(key);
-		if(Range.inside(hKey, getPredecessor().getId() + 1, getThisNode().getId())){
+		if (Range.inside(hKey, getPredecessor().getId() + 1, getThisNode()
+				.getId())) {
 			System.out.println("getValues!! + " + key);
-			if(cacheTable.get(key) != null){
+			if (cacheTable.get(key) != null) {
 				return cacheTable.get(key).getValues();
 			} else {
 				return null;
 			}
 		} else {
-			System.out.println("forward getValues...: " + key);
-			return forward(ISynapse.GETCacheValue + "," + key, findSuccessor(hKey));
+			// System.out.println("forward getValues...: " + key);
+			return sendRequest(ISynapse.GETCacheValue + "," + key,
+					findSuccessor(hKey));
 		}
 	}
-	
-	// /////////////////////////////////////////// //
-	//                  TRANSPORT                  //
-	// /////////////////////////////////////////// //
-	public String forward(String message, Node destination){
+
+	/**
+	 * @see core.protocols.p2p.chord.AbstractChord#sendRequest(String, Node)
+	 */
+	public String sendRequest(String message, Node destination) {
 		String res = "";
-		res = transport.sendRequest(getIdentifier() + "," + message, destination);
-		if(res.equals(""))
+		res = transport.sendRequest(getIdentifier() + "," + message,
+				destination);
+		if (res.equals(""))
 			res = getThisNode().toString();
 		return res;
 	}
 
 	/**
-	 * For the transport protocol
+	 * @see core.protocols.transport.IRequestHandler#handleRequest(String)
 	 */
-	public String handleRequest(String code){
-		if(debugMode){
+	public String handleRequest(String code) {
+		if (debugMode) {
 			System.out.println("\n** DEBUG: doStuff\n*\tcode: " + code);
 		}
 		String[] args = code.split(",");
 		String result = "";
-		if(args[0].equals(identifier)){
+		if (args[0].equals(identifier)) {
 			int f = Integer.parseInt(args[1]);
-			switch(f){
+			switch (f) {
 			// CHORD
-			case IChord.GETPRED :
-				if(getPredecessor() != null)
+			case IChord.GETPRED:
+				if (getPredecessor() != null)
 					result = getPredecessor().toString();
 				break;
-			case IChord.FINDSUCC :
+			case IChord.FINDSUCC:
 				result = findSuccessor(Integer.parseInt(args[2])).toString();
 				break;
-			case IChord.NOTIF :
-				notify(new Node(args[2], Integer.parseInt(args[3]), Integer.parseInt(args[4])));
+			case IChord.NOTIF:
+				notify(new Node(args[2], Integer.parseInt(args[3]), Integer
+						.parseInt(args[4])));
 				break;
-			case IChord.JOIN :
-				getObjectOnJoin(new Node(args[2], Integer.parseInt(args[3]), Integer.parseInt(args[4])));
+			case IChord.JOIN:
+				getObjectOnJoin(new Node(args[2], Integer.parseInt(args[3]),
+						Integer.parseInt(args[4])));
 				break;
-			case IChord.SETSUCC :
-				setSuccessor(new Node(args[2], Integer.parseInt(args[3]), Integer.parseInt(args[4])));
+			case IChord.SETSUCC:
+				setSuccessor(new Node(args[2], Integer.parseInt(args[3]),
+						Integer.parseInt(args[4])));
 				break;
-			case IChord.SETPRED :
-				setPredecessor(new Node(args[2], Integer.parseInt(args[3]), Integer.parseInt(args[4])));
+			case IChord.SETPRED:
+				setPredecessor(new Node(args[2], Integer.parseInt(args[3]),
+						Integer.parseInt(args[4])));
 				break;
-				// SYNAPSE
-			case ISynapse.PUTCleanKey :
+			// SYNAPSE
+			case ISynapse.PUTCleanKey:
 				putInCleanTable(Integer.parseInt(args[2]), args[3]);
 				break;
-			case ISynapse.GETCleanKey :
-				result =  getInCleanTable(args[2]);
+			case ISynapse.GETCleanKey:
+				result = getInCleanTable(args[2]);
 				break;
-			case ISynapse.INITCacheTable :
+			case ISynapse.INITCacheTable:
 				initCacheTable(args[2]);
 				break;
-			case ISynapse.CacheTableExist :
+			case ISynapse.CacheTableExist:
 				result = cacheTableExist(args[2]);
 				break;
-			case ISynapse.REMOVECacheTable :
+			case ISynapse.REMOVECacheTable:
 				removeCacheTable(args[2]);
 				break;
-			case ISynapse.ADDCacheValue :
+			case ISynapse.ADDCacheValue:
 				addValue(args[2], args[3]);
 				break;
-			case ISynapse.GETCacheValue :
+			case ISynapse.GETCacheValue:
 				result = getValues(args[2]);
 				break;
-			default: break;
+			default:
+				break;
 			}
 		}
 		return result;
 	}
 
-	// /////////////////////////////////////////// //
-	//                     OTHER                   //
-	// /////////////////////////////////////////// //
-	public String toString(){
-		String res =  identifier + " on "+ getThisNode().getIp() + ":" + getThisNode().getPort() + "\n" + super.toString();
+	@Override
+	public String toString() {
+		String res = identifier + " on " + getThisNode().getIp() + ":"
+				+ getThisNode().getPort() + "\n" + super.toString();
 		if (!cleanKeyTable.isEmpty()) {
 			res += "\tCleanKey Content : ";
 			for (Map.Entry<Integer, String> entry : cleanKeyTable.entrySet()) {
@@ -311,32 +391,39 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse{
 			}
 		}
 		res += "\n\n";
-		for(IOverlay o : networks){
+		for (IDHT o : networks) {
 			res += "\n\n" + o.toString();
 		}
 		return res;
 	}
 
-	// /////////////////////////////////////////// //
-	//              GETTER AND SETTER              //
-	// /////////////////////////////////////////// //
+	/**
+	 * @see core.protocols.p2p.IDHT#getIdentifier()
+	 */
 	public String getIdentifier() {
 		return identifier;
 	}
 
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
-	}
-
+	/**
+	 * @see core.protocols.p2p.IDHT#getTransport()
+	 */
 	public ITransport getTransport() {
 		return transport;
 	}
 
-	public List<IOverlay> getNetworks() {
+	/**
+	 * 
+	 * @return the list of the networks where the synapse is connected
+	 */
+	public List<IDHT> getNetworks() {
 		return networks;
 	}
 
-	public int keyToH(String key){          // A CHANGER!
+	/**
+	 * @param key
+	 * @return the hash value of the key
+	 */
+	public int keyToH(String key) { // A CHANGER!
 		return h.SHA1ToInt(key);
 	}
 }

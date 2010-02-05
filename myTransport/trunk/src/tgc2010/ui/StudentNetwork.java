@@ -33,23 +33,30 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import tgc2010.core.synapse.Synapse;
-import tgc2010.core.synapse.plugin.ChordNodePlugin;
 import tgc2010.ui.dialog.ConsoleDialog;
 import tgc2010.ui.dialog.JoinDialog;
 import tgc2010.ui.dialog.LocateDialog;
 import tgc2010.ui.tool.GeoLoc;
 import tgc2010.ui.tool.Value;
 import core.ITracker;
-import core.protocols.p2p.IOverlay;
+import core.protocols.p2p.IDHT;
 import core.protocols.p2p.Node;
-import experiments.tools.InfoConsole;
+import core.tools.InfoConsole;
+import experiments.current.synapse.Synapse;
+import experiments.current.synapse.plugin.ChordNodePlugin;
 
+/**
+ * This is a GUI of a simple application based on the DHT architecture
+ * 
+ * @author laurent.vanni@sophia.inria.fr - logNet team 2010 - INRIA
+ *         Sophia-Antipolis - France
+ * 
+ */
 public class StudentNetwork {
 	private final Shell shell;
 	private Display display;
 	private Color red = new Color(null, 255, 0, 0);
-	//	private Color white = new Color(null, 0, 0, 0);
+	// private Color white = new Color(null, 0, 0, 0);
 	private Synapse synapse;
 	private Button locate;
 	private StyledText result;
@@ -65,7 +72,7 @@ public class StudentNetwork {
 		// BACKGROUND
 		Image background = new Image(display, EnterpriseNetwork.class
 				.getResourceAsStream("studentBack.png"));
-		//				.getResourceAsStream("enterpriseBack.png"));
+		// .getResourceAsStream("enterpriseBack.png"));
 
 		/* Init the shell */
 		shell.setText("MyTransport: Student Network");
@@ -98,7 +105,7 @@ public class StudentNetwork {
 		shell.setMenuBar(menuBar);
 		hideItem.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event arg0) {
-				if(locate.getEnabled()){
+				if (locate.getEnabled()) {
 					locate.setEnabled(false);
 					locateItem.setEnabled(false);
 					result.setVisible(true);
@@ -168,12 +175,12 @@ public class StudentNetwork {
 		separator.setLayoutData(separatorFormData);
 
 		// TRIP
-		//		Label roadTrip = new Label(shell, SWT.NONE);
-		//		roadTrip.setBackgroundImage(background);
-		//		roadTrip.setText("Trip: ");
-		//		FormData roadTripFormData = new FormData();
-		//		roadTripFormData.top = new FormAttachment(separator, 4);
-		//		roadTrip.setLayoutData(roadTripFormData);
+		// Label roadTrip = new Label(shell, SWT.NONE);
+		// roadTrip.setBackgroundImage(background);
+		// roadTrip.setText("Trip: ");
+		// FormData roadTripFormData = new FormData();
+		// roadTripFormData.top = new FormAttachment(separator, 4);
+		// roadTrip.setLayoutData(roadTripFormData);
 
 		// DAY
 		final Label day = new Label(shell, SWT.NONE);
@@ -238,13 +245,13 @@ public class StudentNetwork {
 		checkAllFormData.left = new FormAttachment(0, 300);
 		checkAll.setLayoutData(checkAllFormData);
 
-		//		Label check = new Label(shell, SWT.NONE);
-		//		check.setBackgroundImage(background);
-		//		check.setText("Add checkpoint:");
-		//		FormData checkFormData = new FormData();
-		//		checkFormData.top = new FormAttachment(day, 20);
-		//		checkFormData.left = new FormAttachment(0, 0);
-		//		check.setLayoutData(checkFormData);
+		// Label check = new Label(shell, SWT.NONE);
+		// check.setBackgroundImage(background);
+		// check.setText("Add checkpoint:");
+		// FormData checkFormData = new FormData();
+		// checkFormData.top = new FormAttachment(day, 20);
+		// checkFormData.left = new FormAttachment(0, 0);
+		// check.setLayoutData(checkFormData);
 
 		// CHECKPOINTS
 		final Label address = new Label(shell, SWT.NONE);
@@ -413,10 +420,10 @@ public class StudentNetwork {
 		result.setText(" Road Book: \n\n\tEmpty...");
 		result.setBackgroundImage(background);
 		result.setEditable(false);
-		//		result.setForeground(white);
+		// result.setForeground(white);
 		Image font = new Image(display, EnterpriseNetwork.class
 				.getResourceAsStream("studentRes.png"));
-		//				.getResourceAsStream("enterpriseRes.png"));
+		// .getResourceAsStream("enterpriseRes.png"));
 		result.setBackgroundImage(font);
 		FormData resultTextFormData = new FormData();
 		resultTextFormData.width = 279;
@@ -438,17 +445,19 @@ public class StudentNetwork {
 
 		try {
 			browser = new Browser(composite, SWT.NONE);
-			browser.setUrl("http://maps.google.fr/maps?f=q&hl=fr&q=%20,%20%20nice");
+			browser
+					.setUrl("http://maps.google.fr/maps?f=q&hl=fr&q=%20,%20%20nice");
 			FormData browserFormData = new FormData();
 			browserFormData.width = 665;
-			//			browserFormData.height = 500;
+			// browserFormData.height = 500;
 			browserFormData.height = 565;
 			browserFormData.top = new FormAttachment(0, -185);
-			//			browserFormData.top = new FormAttachment(0, -120);
+			// browserFormData.top = new FormAttachment(0, -120);
 			browserFormData.left = new FormAttachment(0, -385);
 			browser.setLayoutData(browserFormData);
 		} catch (SWTError e) {
-			MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+			MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR
+					| SWT.OK);
 			messageBox.setMessage("Browser cannot be initialized.");
 			messageBox.setText("Exit");
 			messageBox.open();
@@ -458,7 +467,6 @@ public class StudentNetwork {
 			result.setVisible(true);
 		}
 
-
 		// CRUD ROADBOOK
 		addCheckPoint.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -466,14 +474,15 @@ public class StudentNetwork {
 					error.setVisible(false);
 					int hour = Integer.parseInt(hourText.getText());
 					int minute = Integer.parseInt(minText.getText());
-					if (cityText.getText().equals("") || hour < 0
-							|| hour >= 24 || minute < 0 || minute >= 60) {
+					if (cityText.getText().equals("") || hour < 0 || hour >= 24
+							|| minute < 0 || minute >= 60) {
 						throw new NumberFormatException();
 					}
 					String address = addressText.getText();
 					String zipCode = zipText.getText();
 					String city = cityText.getText();
-					checkpointsList.add(new Checkpoint(address, zipCode, city, hour, minute));
+					checkpointsList.add(new Checkpoint(address, zipCode, city,
+							hour, minute));
 					updateRoadBook();
 					composite.setVisible(false);
 					result.setVisible(true);
@@ -527,10 +536,11 @@ public class StudentNetwork {
 							error.setVisible(false);
 							if (!checkAll.getSelection()) {
 								int day = Integer.parseInt(dayText.getText());
-								int mounth = Integer.parseInt(mounthText.getText());
+								int mounth = Integer.parseInt(mounthText
+										.getText());
 								int year = Integer.parseInt(yearText.getText());
-								if (day < 0 || day > 31 || mounth < 0 || mounth > 12
-										|| year < 2010) {
+								if (day < 0 || day > 31 || mounth < 0
+										|| mounth > 12 || year < 2010) {
 									throw new NumberFormatException();
 								}
 							}
@@ -544,41 +554,59 @@ public class StudentNetwork {
 							}
 
 							// Format key/value and send
-							String resultStr = " Summary:\n\n\tDay: " + header + "\n";
+							String resultStr = " Summary:\n\n\tDay: " + header
+									+ "\n";
 							boolean hasFound = false;
 							int cpt = 0;
 							for (int i = 0; i < checkpointsList.size(); i++) {
 								for (int j = i + 1; j < checkpointsList.size(); j++) {
 									String key = header
-									+ checkpointsList.get(i).formatToKey()
-									+ checkpointsList.get(j).formatToKey();
+											+ checkpointsList.get(i)
+													.formatToKey()
+											+ checkpointsList.get(j)
+													.formatToKey();
 									if (checkPublish.getSelection()) {
-										String value = Value.serializeValue(checkpointsList.get(i), checkpointsList.get(j), contactText.getText(), informationsText.getText(), "\tSTUDENT NETWORK");
+										String value = Value.serializeValue(
+												checkpointsList.get(i),
+												checkpointsList.get(j),
+												contactText.getText(),
+												informationsText.getText(),
+												"\tSTUDENT NETWORK");
 										synapse.put(key, value);
-										resultStr += Value.deserializeValue(value) + "\n";
+										resultStr += Value
+												.deserializeValue(value)
+												+ "\n";
 										if (i + 2 >= checkpointsList.size()) {
 											resultStr += "\n\n===> Published!";
 										}
 									} else {
-										System.out.println("Search: key = " + key);
+										System.out.println("Search: key = "
+												+ key);
 										String found = synapse.get(key);
-										if ((found == null || found.equals("null") || found.split("\\+").length < 4)
+										if ((found == null
+												|| found.equals("null") || found
+												.split("\\+").length < 4)
 												&& !key.equals("Every")) {
 											key = "Every"
-												+ checkpointsList.get(i)
-												.formatToKey()
-												+ checkpointsList.get(j)
-												.formatToKey();
+													+ checkpointsList.get(i)
+															.formatToKey()
+													+ checkpointsList.get(j)
+															.formatToKey();
 											found = synapse.get(key);
 										}
-										if (found != null && !found.equals("null") && found.split("\\+").length >= 4)  {
+										if (found != null
+												&& !found.equals("null")
+												&& found.split("\\+").length >= 4) {
 											System.out.println(found);
 											hasFound = true;
 											String[] founds = found
-											.split("\\*\\*\\*\\*");
+													.split("\\*\\*\\*\\*");
 											for (String f : founds) {
-												if (f != null && !f.equals("null")) {
-													resultStr += Value.deserializeValue(f) + "\n";
+												if (f != null
+														&& !f.equals("null")) {
+													resultStr += Value
+															.deserializeValue(f)
+															+ "\n";
 													cpt++;
 												}
 											}
@@ -588,9 +616,11 @@ public class StudentNetwork {
 												resultStr = "No result found...";
 											} else {
 												resultStr += (cpt > 1) ? "\n\n===> "
-														+ cpt + " results found!"
-														: "\n\n===> " + cpt
-														+ " result found!";
+														+ cpt
+														+ " results found!"
+														: "\n\n===> "
+																+ cpt
+																+ " result found!";
 											}
 										}
 									}
@@ -622,7 +652,8 @@ public class StudentNetwork {
 		clearButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (informationsText.getText().equals("DebugOn")
-						|| informationsText.getText().equals("debugOn")) { // DEBUG MODE!
+						|| informationsText.getText().equals("debugOn")) { // DEBUG
+																			// MODE!
 					id.setVisible(true);
 					idText.setVisible(true);
 					ConsoleDialog console = new ConsoleDialog(shell, synapse);
@@ -645,7 +676,7 @@ public class StudentNetwork {
 					error.setVisible(false);
 					checkpointsList.clear();
 					composite.setVisible(true);
-					if(locate.getEnabled())
+					if (locate.getEnabled())
 						result.setVisible(false);
 					shell.pack();
 				}
@@ -743,15 +774,15 @@ public class StudentNetwork {
 				display.sleep();
 		}
 		display.dispose();
-		for (IOverlay o : synapse.getNetworks()) {
+		for (IDHT o : synapse.getNetworks()) {
 			synapse.getTransport().sendRequest(
 					ITracker.REMOVENODE + "," + o.getIdentifier() + ","
-					+ o.getThisNode(),
+							+ o.getThisNode(),
 					new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 		}
 		synapse.getTransport().sendRequest(
 				ITracker.REMOVENODE + "," + synapse.getIdentifier() + ","
-				+ synapse.getThisNode(),
+						+ synapse.getThisNode(),
 				new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 		synapse.kill();
 		System.exit(0);
@@ -779,7 +810,7 @@ public class StudentNetwork {
 					try {
 						fis = new FileInputStream(file);
 						bis = new BufferedInputStream(fis);
-						dis = new DataInputStream(bis);					
+						dis = new DataInputStream(bis);
 						String[] address = dis.readLine().split(":");
 						trackerHost = address[0];
 						trackerPort = Integer.parseInt(address[1]);
@@ -793,7 +824,7 @@ public class StudentNetwork {
 					}
 				} else {
 					System.err
-					.println("wrong parametter: (-tc | --trackerConfiguration) <fileName>");
+							.println("wrong parametter: (-tc | --trackerConfiguration) <fileName>");
 				}
 			}
 
@@ -804,7 +835,7 @@ public class StudentNetwork {
 					new Node(trackerHost, 0, trackerPort));
 			synapse.getTransport().sendRequest(
 					ITracker.ADDNODE + "," + synapse.getIdentifier() + ","
-					+ synapse.getThisNode(),
+							+ synapse.getThisNode(),
 					new Node(trackerHost, 0, trackerPort));
 			if (!trackerResponse.equals("null")) {
 				Node n = new Node(trackerResponse);
@@ -818,7 +849,7 @@ public class StudentNetwork {
 			synapse.getNetworks().add(overlay);
 			synapse.getTransport().sendRequest(
 					ITracker.ADDNODE + "," + overlay.getIdentifier() + ","
-					+ overlay.getThisNode(),
+							+ overlay.getThisNode(),
 					new Node(trackerHost, 0, trackerPort));
 			if (!trackerResponse.equals("null")) {
 				Node n = new Node(trackerResponse);

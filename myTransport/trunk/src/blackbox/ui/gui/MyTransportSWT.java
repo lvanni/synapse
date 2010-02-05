@@ -28,10 +28,10 @@ import blackbox.core.overlay.concert.Concert;
 import blackbox.core.overlay.foot.Foot;
 import blackbox.ui.gui.dialog.ConsoleDialog;
 import core.ITracker;
-import core.protocols.p2p.IOverlay;
+import core.protocols.p2p.IDHT;
 import core.protocols.p2p.Node;
 import core.protocols.p2p.chord.AbstractChord;
-import experiments.tools.InfoConsole;
+import core.tools.InfoConsole;
 
 public class MyTransportSWT {
 
@@ -371,7 +371,7 @@ public class MyTransportSWT {
 
 		public void handleEvent(Event arg0) {
 //			new AddServiceDialog(shell, item, myTransport, services);
-			IOverlay overlay = null;
+			IDHT overlay = null;
 			String ip = myTransport.getThisNode().getIp();
 			String trackerResponse = "null";
 			if(item.getText().equals("Concert")){
@@ -395,7 +395,7 @@ public class MyTransportSWT {
 			// Set GUI Text
 			services.setForeground(new Color(null, 0, 180, 0));
 			String text = "Services enabled: ";
-			for(IOverlay o : myTransport.getNetworks()){
+			for(IDHT o : myTransport.getNetworks()){
 				text += o.getIdentifier()+ "[" + ((AbstractChord) o).getThisNode().getId() + "," + ((AbstractChord) o).getPredecessor().getId() + "], ";
 			}
 			services.setText(text);
@@ -409,7 +409,7 @@ public class MyTransportSWT {
 				display.sleep();
 		}
 		display.dispose();
-		for(IOverlay o : myTransport.getNetworks()){
+		for(IDHT o : myTransport.getNetworks()){
 			myTransport.getTransport().sendRequest(ITracker.REMOVENODE + "," + o.getIdentifier() + "," + o.getThisNode(), new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 		}
 		myTransport.getTransport().sendRequest(ITracker.REMOVENODE + "," + myTransport.getIdentifier() + "," + myTransport.getThisNode(), new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));

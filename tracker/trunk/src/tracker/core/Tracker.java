@@ -14,57 +14,60 @@ import core.protocols.transport.socket.request.RequestHandler;
 import core.protocols.transport.socket.server.SocketImpl;
 
 /**
- * The MyMed Tracker core
- * @author lvanni, 2010 LogNet team - INRIA - Sophia-Antipolis - France
- *
+ * Implementation of the tracker
+ * 
+ * @author laurent.vanni@sophia.inria.fr - logNet team 2010 - INRIA
+ *         Sophia-Antipolis - France
+ * 
  */
 public class Tracker implements TrackerAPI, IRequestHandler {
 
-	/* ************** ATTRIBUTES ************** */
 	/** peerSet<networkID, List<Node>> */
 	private Map<String, List<Node>> peerSet;
 	/** Transport layer */
 	private ITransport socketTransport;
 	private ITransport httpTransport;
-	/** The list of the available invitation from a network to an other*/
+	/** The list of the available invitation from a network to an other */
 	private List<Invitation> invitations;
 	/** The tracker singleton */
 	private static Tracker tracker = new Tracker();
 	/** The status of the tracker */
 	public static boolean started = false;
-	
-	/* ************** DEFAULT CONSTRUCTOR ************** */	
+
 	/**
 	 * Default constructor
 	 */
 	private Tracker() {
 		// TRANSPORT LAYER
-		socketTransport = new SocketImpl(TRACKER_PORT, 10, RequestHandler.class.getName(),
-				10, 1, 50, this);
+		// socket
+		socketTransport = new SocketImpl(TRACKER_PORT, 10, RequestHandler.class
+				.getName(), 10, 1, 50, this);
 		((SocketImpl) socketTransport).launchServer();
+		// http
 		httpTransport = new HttpImpl();
-		
+
 		// TRACKER INIT
 		peerSet = new HashMap<String, List<Node>>();
 		invitations = new ArrayList<Invitation>();
 	}
-	
+
 	/**
 	 * Get the tracker instance
+	 * 
 	 * @return Tracker, the singleton instance
 	 */
-	public static Tracker getTracker(){
+	public static Tracker getTracker() {
 		started = true;
-		if(tracker != null){
+		if (tracker != null) {
 			return tracker;
 		} else {
 			return tracker = new Tracker();
 		}
 	}
 
-	/* ************** PUBLIC METHODS ************** */
 	/**
 	 * Allow to add a node to the peerSet
+	 * 
 	 * @param networkID
 	 * @param node
 	 */
@@ -80,7 +83,8 @@ public class Tracker implements TrackerAPI, IRequestHandler {
 	}
 
 	/**
-	 * Return the an entry point of an Network 
+	 * Return the an entry point of an Network
+	 * 
 	 * @param networkID
 	 * @return Node.toString()
 	 */
@@ -92,6 +96,7 @@ public class Tracker implements TrackerAPI, IRequestHandler {
 
 	/**
 	 * Remove the node from the tracker peerSet
+	 * 
 	 * @param networkID
 	 * @param node
 	 */
@@ -102,30 +107,34 @@ public class Tracker implements TrackerAPI, IRequestHandler {
 			peerSet.remove(networkID);
 		}
 	}
-	
+
 	/**
 	 * Add an invitation for a network
+	 * 
 	 * @param networkID
 	 * @param accessPass
 	 */
-	public synchronized void addInvitation(String networkID, String accessPass){
+	public synchronized void addInvitation(String networkID, String accessPass) {
 		invitations.add(new Invitation(networkID, accessPass));
-	}
-	
-	/**
-	 * Handle request from peer trough http
-	 * @param request
-	 * @param from
-	 */
-	public void handleHttpRequest(String request, String from){
-		System.out.println("Request: " + request);
-		String args[] = from.split(",");
-		String response = handleRequest(request);
-		httpTransport.sendRequest(response, new Node(args[0], Integer.parseInt(args[1])));
 	}
 
 	/**
-	 * @param code, the request code to handle
+	 * Handle request from peer trough http
+	 * 
+	 * @param request
+	 * @param from
+	 */
+	public void handleHttpRequest(String request, String from) {
+		System.out.println("Request: " + request);
+		String args[] = from.split(",");
+		String response = handleRequest(request);
+		httpTransport.sendRequest(response, new Node(args[0], Integer
+				.parseInt(args[1])));
+	}
+
+	/**
+	 * @param code
+	 *            , the request code to handle
 	 */
 	public String handleRequest(String code) {
 		String[] args = code.split(",");
@@ -147,14 +156,15 @@ public class Tracker implements TrackerAPI, IRequestHandler {
 		case JOIN:
 			result = "null";
 			Invitation toRemove = null;
-			for(Invitation i : invitations){
-				if(i.getAccessPass().equals(args[1])){
-					result = i.getNetworkID() + "," + getJoinEntry(i.getNetworkID());
+			for (Invitation i : invitations) {
+				if (i.getAccessPass().equals(args[1])) {
+					result = i.getNetworkID() + ","
+							+ getJoinEntry(i.getNetworkID());
 					toRemove = i;
 					break;
 				}
 			}
-			if(toRemove != null)
+			if (toRemove != null)
 				invitations.remove(toRemove);
 			break;
 		default:
@@ -166,35 +176,33 @@ public class Tracker implements TrackerAPI, IRequestHandler {
 	/**
 	 * 
 	 */
-	public void kill() { 
+	public void kill() {
 		started = false;
 		peerSet.clear();
 		invitations.clear();
 		socketTransport.stopServer();
-		tracker = null; 
+		tracker = null;
 	}
-	
 
-	/* ************** GETTERS ************** */
 	/**
 	 * @return List<Invitation>, the list of the invitations known
 	 */
 	public List<Invitation> getInvitations() {
 		return invitations;
 	}
-	
+
 	/**
 	 * @return String, The port number used by the tracker to listen
 	 */
-	public String getPort(){
+	public String getPort() {
 		int port = socketTransport.getPort();
 		return port == 0 ? "8080" : port + "";
 	}
-	
+
 	/**
 	 * @return Map<String, List<Node>>, The peerSet managed by the tracker
 	 */
-	public Map<String, List<Node>> getPeerSet(){
+	public Map<String, List<Node>> getPeerSet() {
 		return peerSet;
 	}
 }

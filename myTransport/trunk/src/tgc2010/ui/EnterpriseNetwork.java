@@ -33,24 +33,30 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import tgc2010.core.synapse.Synapse;
-import tgc2010.core.synapse.plugin.ChordNodePlugin;
 import tgc2010.ui.dialog.ConsoleDialog;
 import tgc2010.ui.dialog.JoinDialog;
 import tgc2010.ui.dialog.LocateDialog;
 import tgc2010.ui.tool.GeoLoc;
 import tgc2010.ui.tool.Value;
 import core.ITracker;
-import core.protocols.p2p.IOverlay;
+import core.protocols.p2p.IDHT;
 import core.protocols.p2p.Node;
-import experiments.tools.InfoConsole;
+import core.tools.InfoConsole;
+import experiments.current.synapse.Synapse;
+import experiments.current.synapse.plugin.ChordNodePlugin;
 
+/**
+ * This is a GUI of a simple application based on the DHT architecture
+ * 
+ * @author laurent.vanni@sophia.inria.fr - logNet team 2010 - INRIA
+ *         Sophia-Antipolis - France
+ * 
+ */
 public class EnterpriseNetwork {
 
 	private final Shell shell;
 	private Display display;
 	private Color red = new Color(null, 255, 0, 0);
-	// private Color white = new Color(null, 255, 255, 255);
 	private Synapse synapse;
 	private Button locate;
 	private StyledText result;
@@ -65,7 +71,7 @@ public class EnterpriseNetwork {
 
 		// BACKGROUND
 		Image background = new Image(display, EnterpriseNetwork.class
-				// .getResourceAsStream("studentBack.png"));
+		// .getResourceAsStream("studentBack.png"));
 				.getResourceAsStream("enterpriseBack.png"));
 
 		/* Init the shell */
@@ -408,7 +414,7 @@ public class EnterpriseNetwork {
 		result.setEditable(false);
 		// result.setForeground(white);
 		Image font = new Image(display, EnterpriseNetwork.class
-				// .getResourceAsStream("studentRes.png"));
+		// .getResourceAsStream("studentRes.png"));
 				.getResourceAsStream("enterpriseRes.png"));
 		result.setBackgroundImage(font);
 		FormData resultTextFormData = new FormData();
@@ -432,7 +438,7 @@ public class EnterpriseNetwork {
 		try {
 			browser = new Browser(composite, SWT.NONE);
 			browser
-			.setUrl("http://maps.google.fr/maps?f=q&hl=fr&q=%20,%20%20nice");
+					.setUrl("http://maps.google.fr/maps?f=q&hl=fr&q=%20,%20%20nice");
 			FormData browserFormData = new FormData();
 			browserFormData.width = 665;
 			// browserFormData.height = 500;
@@ -522,10 +528,11 @@ public class EnterpriseNetwork {
 							error.setVisible(false);
 							if (!checkAll.getSelection()) {
 								int day = Integer.parseInt(dayText.getText());
-								int mounth = Integer.parseInt(mounthText.getText());
+								int mounth = Integer.parseInt(mounthText
+										.getText());
 								int year = Integer.parseInt(yearText.getText());
-								if (day < 0 || day > 31 || mounth < 0 || mounth > 12
-										|| year < 2010) {
+								if (day < 0 || day > 31 || mounth < 0
+										|| mounth > 12 || year < 2010) {
 									throw new NumberFormatException();
 								}
 							}
@@ -539,50 +546,58 @@ public class EnterpriseNetwork {
 							}
 
 							// Format key/value and send
-							String resultStr = " Summary:\n\n\tDay: " + header + "\n";
+							String resultStr = " Summary:\n\n\tDay: " + header
+									+ "\n";
 							boolean hasFound = false;
 							int cpt = 0;
 
 							for (int i = 0; i < checkpointsList.size(); i++) {
 								for (int j = i + 1; j < checkpointsList.size(); j++) {
 									String key = header
-									+ checkpointsList.get(i).formatToKey()
-									+ checkpointsList.get(j).formatToKey();
+											+ checkpointsList.get(i)
+													.formatToKey()
+											+ checkpointsList.get(j)
+													.formatToKey();
 									if (checkPublish.getSelection()) {
 										String value = Value.serializeValue(
-												checkpointsList.get(i), checkpointsList
-												.get(j), contactText.getText(),
+												checkpointsList.get(i),
+												checkpointsList.get(j),
+												contactText.getText(),
 												informationsText.getText(),
 												"\tENTERPRISE NETWORK");
 										synapse.put(key, value);
-										resultStr += Value.deserializeValue(value)
-										+ "\n";
+										resultStr += Value
+												.deserializeValue(value)
+												+ "\n";
 										if (i + 2 >= checkpointsList.size()) {
 											resultStr += "\n\n===> Published!";
 										}
 									} else {
 										String found = synapse.get(key);
-										if ((found == null || found.equals("null") || found
+										if ((found == null
+												|| found.equals("null") || found
 												.split("\\+").length < 4)
 												&& !key.equals("Every")) {
 											key = "Every"
-												+ checkpointsList.get(i)
-												.formatToKey()
-												+ checkpointsList.get(j)
-												.formatToKey();
+													+ checkpointsList.get(i)
+															.formatToKey()
+													+ checkpointsList.get(j)
+															.formatToKey();
 											found = synapse.get(key);
 										}
-										if (found != null && !found.equals("null")
+										if (found != null
+												&& !found.equals("null")
 												&& found.split("\\+").length >= 4) {
 											System.out.println(found);
 											hasFound = true;
 											String[] founds = found
-											.split("\\*\\*\\*\\*");
+													.split("\\*\\*\\*\\*");
 											for (String f : founds) {
-												if (f != null && !f.equals("null")) {
+												if (f != null
+														&& !f.equals("null")) {
 													resultStr += Value
-													.deserializeValue(f)
-													+ "\n";
+															.deserializeValue(f)
+															+ "\n";
 													cpt++;
 												}
 											}
@@ -592,9 +607,11 @@ public class EnterpriseNetwork {
 												resultStr = "No result found...";
 											} else {
 												resultStr += (cpt > 1) ? "\n\n===> "
-														+ cpt + " results found!"
-														: "\n\n===> " + cpt
-														+ " result found!";
+														+ cpt
+														+ " results found!"
+														: "\n\n===> "
+																+ cpt
+																+ " result found!";
 											}
 										}
 									}
@@ -748,15 +765,15 @@ public class EnterpriseNetwork {
 				display.sleep();
 		}
 		display.dispose();
-		for (IOverlay o : synapse.getNetworks()) {
+		for (IDHT o : synapse.getNetworks()) {
 			synapse.getTransport().sendRequest(
 					ITracker.REMOVENODE + "," + o.getIdentifier() + ","
-					+ o.getThisNode(),
+							+ o.getThisNode(),
 					new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 		}
 		synapse.getTransport().sendRequest(
 				ITracker.REMOVENODE + "," + synapse.getIdentifier() + ","
-				+ synapse.getThisNode(),
+						+ synapse.getThisNode(),
 				new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 		synapse.kill();
 		System.exit(0);
@@ -769,7 +786,7 @@ public class EnterpriseNetwork {
 			String ip = InfoConsole.getIp();
 			Synapse synapse = new Synapse(ip, 0);
 			ChordNodePlugin overlay = new ChordNodePlugin(ip, 0, synapse,
-			"enterprise");
+					"enterprise");
 
 			// CONFIGURE THE TRACKER ROUTE
 			String trackerHost = ITracker.TRACKER_HOST;
@@ -784,7 +801,7 @@ public class EnterpriseNetwork {
 					try {
 						fis = new FileInputStream(file);
 						bis = new BufferedInputStream(fis);
-						dis = new DataInputStream(bis);					
+						dis = new DataInputStream(bis);
 						String[] address = dis.readLine().split(":");
 						trackerHost = address[0];
 						trackerPort = Integer.parseInt(address[1]);
@@ -798,10 +815,9 @@ public class EnterpriseNetwork {
 					}
 				} else {
 					System.err
-					.println("wrong parametter: (-tc | --trackerConfiguration) <fileName>");
+							.println("wrong parametter: (-tc | --trackerConfiguration) <fileName>");
 				}
 			}
-
 
 			// CONNECT TO THE TRACKER
 			// control network
@@ -810,7 +826,7 @@ public class EnterpriseNetwork {
 					new Node(trackerHost, 0, trackerPort));
 			synapse.getTransport().sendRequest(
 					ITracker.ADDNODE + "," + synapse.getIdentifier() + ","
-					+ synapse.getThisNode(),
+							+ synapse.getThisNode(),
 					new Node(trackerHost, 0, trackerPort));
 			if (!trackerResponse.equals("null")) {
 				Node n = new Node(trackerResponse);
@@ -824,7 +840,7 @@ public class EnterpriseNetwork {
 			synapse.getNetworks().add(overlay);
 			synapse.getTransport().sendRequest(
 					ITracker.ADDNODE + "," + overlay.getIdentifier() + ","
-					+ overlay.getThisNode(),
+							+ overlay.getThisNode(),
 					new Node(trackerHost, 0, trackerPort));
 			if (!trackerResponse.equals("null")) {
 				Node n = new Node(trackerResponse);
