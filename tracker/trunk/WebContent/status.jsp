@@ -50,28 +50,32 @@ if(request.getParameter("request") != null && request.getParameter("from") != nu
 			<a href="status.jsp">Tracker</a>
 			</div>
 			
-			<ul id="verticalmenu" class="glossymenu" style="position:relative; top:200px; left:40px; z-index: 10;">
+			<ul id="verticalmenu" class="glossymenu" style="position:relative; top:240px; left:50px; z-index: 10;">
 				<li><a href="index.html">Home</a></li>
-				<li><a href="" >Synapse</a></li>
-				<li><a href="">Networks</a>
-				    <ul>
-				    <li><a href="">Enterprise</a></li>
-				    <li><a href="">Student</a></li>
-				    <li><a href="">Old versions</a></li>
-				    </ul>
-				</li>
-				<li><a href="" >Documentation</a></li>
-				<li><a href="">Download</a></li>
 				<li><a href="" >Tracker</a>
 				    <ul>
 				    <li><a href="">Public access</a></li>
 				    <li><a href="status.jsp">Private access</a></li>
 				    </ul>
 				</li>
+				<li><a href="">Networks</a>
+				    <ul>
+					    <li><a href="">Enterprise</a></li>
+					    <li><a href="">Student</a></li>
+					    <li><a href="">Old versions</a>
+					      <ul>
+					      	<li><a href="">MyConcert</a></li>
+					      	<li><a href="">MyFoot</a></li>
+					      </ul>
+					    </li>
+				    </ul>
+				</li>
+				<li><a href="" >Documentation</a></li>
+				<li><a href="">Download</a></li>
 				<li><a href="">Contact</a></li>
 			</ul>
 			
-			<div style="position:relative; top:-86px; left:280px; width: 536px; height: 634px; overflow: auto;">
+			<div style="position:relative; top:-50px; left:280px; width: 536px; height: 634px; overflow: auto;">
 				<h3>Tracker manage page:</h3>
 				<% if(tracker != null){ %>
 					Status: <b style="color:green;">Started, Synchronized</b><br />
@@ -123,7 +127,7 @@ if(request.getParameter("request") != null && request.getParameter("from") != nu
 				<br />
 				<hr style="width: 515px; margin-left:0px;" />
 				<h3>Commands:</h3>
-				<form name="formCommand" method="post">
+				<form name="formCommand">
 				<input type="hidden" name="command">
 				<table>
 				<tr>

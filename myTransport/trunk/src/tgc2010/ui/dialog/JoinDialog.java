@@ -4,6 +4,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -13,6 +14,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+
+import tgc2010.ui.CarPal;
 
 import core.ITracker;
 import core.protocols.p2p.Node;
@@ -24,9 +27,10 @@ public class JoinDialog extends Dialog{
 	
 	private Color red = new Color(null, 255, 0, 0);
 	
-	public JoinDialog(final Shell parent, final Synapse synapse) {
+	public JoinDialog(final Shell parent, final CarPal carPal) {
 		super(parent);
 		Display display = getParent().getDisplay();
+		final Synapse synapse = carPal.getSynapse();
 
 		/* Init the shell */
 		final Shell shell = new Shell(getParent(), SWT.BORDER | SWT.CLOSE);
@@ -80,11 +84,14 @@ public class JoinDialog extends Dialog{
 							new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
 					Node n = new Node(args[1] + "," + args[2] + "," + args[3]);
 					overlay.join(n.getIp(), n.getPort());
-					parent.setText(parent.getText() + "*");
+					parent.setText(parent.getText() + " gold member");
+					carPal.updateBackground("goldBack.png");
 					parent.pack();
 					shell.close();
-				} else {
+				} else if(!trackerResponse.equals("unreachable")) {
 					error.setVisible(true);
+				} else {
+					shell.close();
 				}
 			}
 		});

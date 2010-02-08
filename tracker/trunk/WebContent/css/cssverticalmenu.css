@@ -2,7 +2,7 @@
 list-style-type: none;
 margin: 0;
 padding: 0;
-width: 185px; /*WIDTH OF MAIN MENU ITEMS*/
+width: 180px; /*WIDTH OF MAIN MENU ITEMS*/
 border: 1px solid black;
 }
 
@@ -11,7 +11,7 @@ position: relative;
 }
 
 .glossymenu li a{
-background-color: gray;
+background-color: #1537b5;
 font: bold 12px Verdana, Helvetica, sans-serif;
 color: white;
 display: block;
@@ -49,7 +49,7 @@ color: white;
 }
 
 .glossymenu li a:hover{
-background-color: #2d3e94;
+background-color: #00999f;
 }
 
 /* Holly Hack for IE \*/
