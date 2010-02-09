@@ -45,37 +45,28 @@ if(request.getParameter("request") != null && request.getParameter("from") != nu
 		<div class="container">
 			
 			<div style="position:relative; top:85px; left:450px;">
-			<a href="index.html">Home</a> - 
-			<a href="#">Synapse</a> - 
-			<a href="status.jsp">Tracker</a>
+				<a href="index.html">Home</a> - 
+				<a href="http://www-sop.inria.fr/lognet/synapse/appendix.html">Synapse</a> - 
+				<a href="tracker.jsp">Tracker</a>
 			</div>
 			
 			<ul id="verticalmenu" class="glossymenu" style="position:relative; top:240px; left:50px; z-index: 10;">
 				<li><a href="index.html">Home</a></li>
-				<li><a href="" >Tracker</a>
-				    <ul>
-				    <li><a href="">Public access</a></li>
-				    <li><a href="status.jsp">Private access</a></li>
-				    </ul>
-				</li>
-				<li><a href="">Networks</a>
-				    <ul>
-					    <li><a href="">Enterprise</a></li>
-					    <li><a href="">Student</a></li>
-					    <li><a href="">Old versions</a>
-					      <ul>
-					      	<li><a href="">MyConcert</a></li>
-					      	<li><a href="">MyFoot</a></li>
-					      </ul>
-					    </li>
-				    </ul>
-				</li>
-				<li><a href="" >Documentation</a></li>
-				<li><a href="">Download</a></li>
-				<li><a href="">Contact</a></li>
+				<li><a href="tracker.jsp" >Tracker</a></li>
+				<li><a href="">Download</a>
+				 <ul>
+					<li><a href="download.html">Application</a></li>
+					<li><a href="http://www-sop.inria.fr/lognet/synapse/synapse.pdf">Documentation</a></li>
+				</ul></li>
+				<li><a href="">Contact</a>
+				<ul>
+					<li><a href="mailto:luigi.liquori@sophia.inria.fr">Luigi Liquori</a></li>
+					<li><a href="mailto:vincenzo.ciancaglini@sophia.inria.fr">Vincenzo Ciancaglini</a></li>
+					<li><a href="mailto:laurent.vanni@sophia.inria.fr">Laurent Vanni</a></li>
+				</ul></li>
 			</ul>
 			
-			<div style="position:relative; top:-50px; left:280px; width: 536px; height: 634px; overflow: auto;">
+			<div style="position:relative; top:22px; left:280px; width: 536px; height: 634px; overflow: auto;">
 				<h3>Tracker manage page:</h3>
 				<% if(tracker != null){ %>
 					Status: <b style="color:green;">Started, Synchronized</b><br />
