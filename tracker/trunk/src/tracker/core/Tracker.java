@@ -33,6 +33,7 @@ public class Tracker implements TrackerAPI, IRequestHandler {
 	private static Tracker tracker = new Tracker();
 	/** The status of the tracker */
 	public static boolean started = false;
+	
 
 	/**
 	 * Default constructor
@@ -117,19 +118,16 @@ public class Tracker implements TrackerAPI, IRequestHandler {
 	public synchronized void addInvitation(String networkID, String accessPass) {
 		invitations.add(new Invitation(networkID, accessPass));
 	}
-
+	
 	/**
-	 * Handle request from peer trough http
+	 * Remove an invitation for a network
 	 * 
-	 * @param request
-	 * @param from
+	 * @param networkID
+	 * @param accessPass
 	 */
-	public void handleHttpRequest(String request, String from) {
-		System.out.println("Request: " + request);
-		String args[] = from.split(",");
-		String response = handleRequest(request);
-		httpTransport.sendRequest(response, new Node(args[0], Integer
-				.parseInt(args[1])));
+	public synchronized void removeInvitation(String networkID, String accessPass) {
+		Invitation i = new Invitation(networkID, accessPass);
+		invitations.remove(i);
 	}
 
 	/**

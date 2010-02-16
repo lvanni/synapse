@@ -74,7 +74,7 @@ public class CarPal {
 	 * @param backgroundImagePath
 	 * @param resImagePath
 	 */
-	private CarPal(final Synapse synapse, String network,
+	private CarPal(final Synapse synapse, final String network,
 			String backgroundImagePath, String resImagePath) {
 		this.synapse = synapse;
 		display = Display.getDefault();
@@ -531,7 +531,7 @@ public class CarPal {
 												checkpointsList.get(j),
 												contactText.getText(),
 												informationsText.getText(),
-												"\tENTERPRISE NETWORK");
+												"\t" + network + " NETWORK");
 										synapse.put(key, value);
 										resultStr += Value
 												.deserializeValue(value)

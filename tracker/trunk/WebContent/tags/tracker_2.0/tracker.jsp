@@ -30,12 +30,7 @@ if(request.getParameter("command") != null) {
 	}
 	System.out.println(request.getParameter("command"));
 }
-// HTTP REQUEST
-if(request.getParameter("request") != null && request.getParameter("from") != null) {
-	if(tracker != null){
-		tracker.handleHttpRequest(request.getParameter("request"), request.getParameter("from"));
-	}
-}%> 
+%> 
 
 </head>
 

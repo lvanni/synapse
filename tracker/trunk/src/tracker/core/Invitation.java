@@ -40,4 +40,10 @@ public class Invitation {
 	public String getAccessPass() {
 		return accessPass;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		Invitation i = (Invitation) obj;
+		return i.getNetworkID().equals(networkID) && i.getAccessPass().equals(accessPass);
+	}
 }
