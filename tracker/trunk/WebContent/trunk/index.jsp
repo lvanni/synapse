@@ -238,7 +238,7 @@ if(request.getParameter("command") != null) {
 			<!--Download -->
 			<div id="download" class="drag">
 				<div style="position:absolute; text-align: left;">
-					<span class="menu" onmouseover="menuHover(this, '#dFile');" ><img alt="" src="img/mymed.png" style="position: relative; top:3px;"><span> File </span></span> 
+					<span class="menu" onmouseover="menuHover(this, '#dFile');" ><img alt="" src="img/mymed.png" style="position: relative; top:3px; "><span> File </span></span> 
 				</div>
 				<ul id="dFile" class="menuContent" >
 					<li onclick="hideWindow('#download');"><img alt="" src="img/mymed.png" style="position: relative; top:3px;">&nbsp;&nbsp;<span>Quit</span></li>
