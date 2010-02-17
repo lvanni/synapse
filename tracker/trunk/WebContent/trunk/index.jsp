@@ -266,7 +266,6 @@ if(request.getParameter("command") != null) {
 					</tr>
 				</table>
 				<br />
-				<hr />
 				<br />
 				<h4>Download Old version</h4>
 					<table border=1 cellpadding="10">
@@ -295,6 +294,7 @@ if(request.getParameter("command") != null) {
 							<td><a href="dl/old/myTransport_macosx.jar"><img src="img/dl.png" width="20" height="20"/></a></td>
 						</tr>
 					</table>
+					<br />
 				</div>
 			</div>
 			
