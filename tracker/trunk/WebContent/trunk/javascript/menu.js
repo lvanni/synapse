@@ -1,6 +1,6 @@
 var _backgroundColor;
 
-function hideAll() {
+function restoreAll() {
 	jQuery.noConflict();  
 	jQuery(document).ready(function(){
 		jQuery("#application").hide("slide");

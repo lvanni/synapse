@@ -8,7 +8,7 @@
 <link rel="stylesheet" type="text/css" href="css/menu.css" />
 <link rel="stylesheet" type="text/css" href="css/tracker.css" />
 <script type="text/javascript" src="javascript/jquery/dist/jquery.js"></script>
-<script type="text/javascript" src="javascript/processing-js-0.4/processing-0.4.js"></script>
+<!--  <script type="text/javascript" src="javascript/processing-js-0.4/processing-0.4.js"></script> -->
 <script type="text/javascript" src="javascript/drag.js"></script>
 <script type="text/javascript" src="javascript/time.js"></script>
 <script type="text/javascript" src="javascript/menu.js"></script>
@@ -40,7 +40,7 @@ if(request.getParameter("command") != null) {
 
 </head>
 
-<body onload="showTime('time');" onclick="hideAll();">
+<body onload="showTime('time');" onclick="restoreAll();">
 	<div align="center">
 		<div id="container">
 			
@@ -71,13 +71,13 @@ if(request.getParameter("command") != null) {
 			<span id="time" style="color: #fff6ca;"></span>
 			
 			<!--TRACKER ICON-->
-			<div class="drag" style="background-image: url('img/tracker.png'); text-align: center; width: 80px; height: 100px; margin-left:10px; top:60px;" ondblclick="displayWindow('#tracker');">
+			<div id="trackerIcon" class="drag" style="background-image: url('img/tracker.png'); text-align: center; width: 80px; height: 100px; margin-left:10px; top:60px;" ondblclick="displayWindow('#tracker');">
 			<br /><br /><br /><br /><br />
 			<b>Tracker</b>
 			</div>
 			
-			<!--TRACKER ICON-->
-			<div class="drag" style="background-image: url('img/carPal.png'); text-align: center; width: 80px; height: 100px; margin-left:10px; top:170px;" ondblclick="displayWindow('#carpal');">
+			<!--CARPAL ICON-->
+			<div id="carpalIcon" class="drag" style="background-image: url('img/carPal.png'); text-align: center; width: 80px; height: 100px; margin-left:10px; top:170px;" ondblclick="displayWindow('#carpal');">
 			<br /><br /><br /><br /><br />
 			<b>CarPal</b>
 			</div>
@@ -93,7 +93,7 @@ if(request.getParameter("command") != null) {
 			
 			
 			<!--TRACKER IMPL-->
-			<div id="tracker" class="drag" <%= request.getParameter("showTracker") != null ? "style='display:block;'" : "" %>>
+			<div id="tracker" class="drag" <%= request.getParameter("showTracker") != null ? "style='display:block; top: 100px; left: 100px;'" : "style='top: 100px; left: 100px;'" %>>
 				<div style="position:absolute; text-align: left;">
 					<span class="menu" onmouseover="menuHover(this, '#tFile');" ><img alt="" src="img/mymed.png" style="position: relative; top:3px;"><span> File </span></span> 
 					<span class="menu" onmouseover="menuHover(this, '#tEdit');" ><span> Edition </span></span> 
@@ -165,7 +165,7 @@ if(request.getParameter("command") != null) {
 			</div>
 			
 			<!--CarPal IMPL-->
-			<div id="carpal" class="drag" <%= request.getParameter("showCarPal") == "1" ? "style='display:block;'" : "" %>>
+			<div id="carpal" class="drag" style="top: 150px; left: 150px;">
 				<div style="position:absolute; text-align: left;">
 					<span class="menu" onmouseover="menuHover(this, '#cFile');" ><img alt="" src="img/mymed.png" style="position: relative; top:3px;"><span> File </span></span> 
 					<span class="menu" onmouseover="menuHover(this, '#cEdit');" ><span> Edition </span></span> 
@@ -236,7 +236,7 @@ if(request.getParameter("command") != null) {
 			</div>
 			
 			<!--Download -->
-			<div id="download" class="drag">
+			<div id="download" class="drag" style="top: 100px; left:100px;">
 				<div style="position:absolute; text-align: left;">
 					<span class="menu" onmouseover="menuHover(this, '#dFile');" ><img alt="" src="img/mymed.png" style="position: relative; top:3px; "><span> File </span></span> 
 				</div>
@@ -299,7 +299,7 @@ if(request.getParameter("command") != null) {
 			</div>
 			
 			<!--AddInvitations IMPL-->
-			<div id="addInvitation" class="drag">
+			<div id="addInvitation" class="drag" style="top: 120px; left:120px;">
 				<div style="position:absolute; text-align: left;">
 					<span class="menu" onmouseover="menuHover(this, '#iFile');" ><img alt="" src="img/mymed.png" style="position: relative; top:3px;"><span> File </span></span> 
 				</div>
@@ -325,7 +325,7 @@ if(request.getParameter("command") != null) {
 			</div>
 			
 			<!--removeInvitations IMPL-->
-			<div id="removeInvitation" class="drag">
+			<div id="removeInvitation" class="drag" style="top: 120px; left:120px;">
 				<div style="position:absolute; text-align: left;">
 					<span class="menu" onmouseover="menuHover(this, '#rFile');" ><img alt="" src="img/mymed.png" style="position: relative; top:3px;"><span> File </span></span> 
 				</div>
