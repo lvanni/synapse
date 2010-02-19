@@ -30,7 +30,7 @@ public class Tracker implements TrackerAPI, IRequestHandler {
 	/** The list of the available invitation from a network to an other */
 	private List<Invitation> invitations;
 	/** The tracker singleton */
-	private static Tracker tracker = new Tracker();
+	private static Tracker tracker = null;
 	/** The status of the tracker */
 	public static boolean started = false;
 
