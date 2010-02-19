@@ -33,7 +33,6 @@ public class Tracker implements TrackerAPI, IRequestHandler {
 	private static Tracker tracker = new Tracker();
 	/** The status of the tracker */
 	public static boolean started = false;
-	
 
 	/**
 	 * Default constructor
@@ -118,14 +117,15 @@ public class Tracker implements TrackerAPI, IRequestHandler {
 	public synchronized void addInvitation(String networkID, String accessPass) {
 		invitations.add(new Invitation(networkID, accessPass));
 	}
-	
+
 	/**
 	 * Remove an invitation for a network
 	 * 
 	 * @param networkID
 	 * @param accessPass
 	 */
-	public synchronized void removeInvitation(String networkID, String accessPass) {
+	public synchronized void removeInvitation(String networkID,
+			String accessPass) {
 		Invitation i = new Invitation(networkID, accessPass);
 		invitations.remove(i);
 	}
@@ -202,5 +202,18 @@ public class Tracker implements TrackerAPI, IRequestHandler {
 	 */
 	public Map<String, List<Node>> getPeerSet() {
 		return peerSet;
+	}
+
+	/**
+	 * @return int, The number of registredPeer
+	 */
+	public int getPeerNumber() {
+		int cpt = 0;
+		for (String key : tracker.getPeerSet().keySet()) {
+			if (!key.equals("synapse")) {
+				cpt += peerSet.get(key).size();
+			}
+		}
+		return cpt;
 	}
 }

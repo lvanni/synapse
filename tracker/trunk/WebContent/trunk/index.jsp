@@ -187,7 +187,7 @@ if(request.getParameter("command") != null) {
 				<h3>CarPal manage page:</h3>
 				<% if(tracker != null && tracker.getPeerSet().keySet().size() != 0){ %>
 					CarPal is deployed on <%= tracker.getPeerSet().keySet().size() - 1 %> networks<br />
-					whith <%= tracker.getPeerSet().get("synapse").size() %> peers.
+					whith <%= tracker.getPeerNumber() %> peers.
 					<br /><br />
 					<hr style="width: 515px; margin-left:0px;" />
 					<br />

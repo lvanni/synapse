@@ -1,10 +1,9 @@
-package tgc2010.ui;
+package tgc2010.ui.nokia;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -16,28 +15,20 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import tgc2010.ui.Checkpoint;
 import tgc2010.ui.dialog.ConsoleDialog;
-import tgc2010.ui.dialog.JoinDialog;
-import tgc2010.ui.dialog.LocateDialog;
-import tgc2010.ui.tool.GeoLoc;
 import tgc2010.ui.tool.Value;
 import core.ITracker;
-import core.protocols.p2p.IDHT;
 import core.protocols.p2p.Node;
 import core.tools.InfoConsole;
-import experiments.current.synapse.Synapse;
-import experiments.current.synapse.plugin.ChordNodePlugin;
+import experiments.current.node.ChordNode;
 
 /**
  * This is a GUI of a simple application based on the DHT architecture
@@ -49,7 +40,7 @@ import experiments.current.synapse.plugin.ChordNodePlugin;
 public class CarPal {
 
 	private Color red = new Color(null, 255, 0, 0);
-	private Synapse synapse;
+	private ChordNode chordNode;
 	private List<Checkpoint> checkpointsList = new ArrayList<Checkpoint>();
 
 	private final Shell shell;
@@ -57,7 +48,7 @@ public class CarPal {
 
 	private Browser browser = null;
 	private StyledText result;
-	private final Button locate, checkPublish, checkPrivate, checkSearch,
+	private final Button checkPublish, checkPrivate, checkSearch,
 			checkAll;
 	private final Label error, id, slash1, slash2, address, zip, city, time,
 			day, doubleColon, separator1, separator2, separator3, contact,
@@ -74,9 +65,9 @@ public class CarPal {
 	 * @param backgroundImagePath
 	 * @param resImagePath
 	 */
-	public CarPal(final Synapse synapse, final String network,
+	public CarPal(final ChordNode chordNode, final String network,
 			String backgroundImagePath, String resImagePath) {
-		this.synapse = synapse;
+		this.chordNode = chordNode;
 		display = Display.getDefault();
 		shell = new Shell(display);
 
@@ -86,43 +77,6 @@ public class CarPal {
 		layout.marginHeight = 5;
 		layout.marginWidth = 5;
 		shell.setLayout(layout);
-
-		// MENU
-		Menu menuBar = new Menu(shell, SWT.BAR);
-		final MenuItem joinItem = new MenuItem(menuBar, SWT.PUSH);
-		joinItem.setText("Join");
-		shell.setMenuBar(menuBar);
-		joinItem.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event arg0) {
-				new JoinDialog(shell, getCarPal());
-			}
-		});
-		final MenuItem locateItem = new MenuItem(menuBar, SWT.PUSH);
-		locateItem.setText("Locate");
-		shell.setMenuBar(menuBar);
-		locateItem.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event arg0) {
-				new LocateDialog(shell);
-			}
-		});
-		final MenuItem hideItem = new MenuItem(menuBar, SWT.PUSH);
-		hideItem.setText("HideMap");
-		shell.setMenuBar(menuBar);
-		hideItem.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event arg0) {
-				if (locate.getEnabled()) {
-					locate.setEnabled(false);
-					locateItem.setEnabled(false);
-					result.setVisible(true);
-					hideItem.setText("showMap");
-				} else {
-					locate.setEnabled(true);
-					locateItem.setEnabled(true);
-					result.setVisible(false);
-					hideItem.setText("HideMap");
-				}
-			}
-		});
 
 		// CHECKBOXS
 		checkPublish = new Button(shell, SWT.CHECK);
@@ -323,13 +277,6 @@ public class CarPal {
 		removeTextFormData.left = new FormAttachment(addCheckPoint, 0);
 		removeCheckPoint.setLayoutData(removeTextFormData);
 
-		locate = new Button(shell, SWT.PUSH);
-		locate.setText("Locate");
-		FormData locateFormData = new FormData();
-		locateFormData.top = new FormAttachment(minText, 0);
-		locateFormData.left = new FormAttachment(removeCheckPoint, 0);
-		locate.setLayoutData(locateFormData);
-
 		// SEPARATOR
 		separator2 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL
 				| SWT.LINE_SOLID);
@@ -381,10 +328,9 @@ public class CarPal {
 
 		// RESULT
 		result = new StyledText(shell, SWT.BORDER);
-		result.setVisible(false);
 		result.setText(" Road Book: \n\n\tEmpty...");
 		result.setEditable(false);
-		Image font = new Image(display, CarPal.class
+		Image font = new Image(display, tgc2010.ui.CarPal.class
 				.getResourceAsStream(resImagePath));
 		result.setBackgroundImage(font);
 		FormData resultTextFormData = new FormData();
@@ -393,39 +339,6 @@ public class CarPal {
 		resultTextFormData.top = new FormAttachment(0, 0);
 		resultTextFormData.left = new FormAttachment(0, 400);
 		result.setLayoutData(resultTextFormData);
-
-		// HIDDEN BROWSER
-		final Composite composite = new Composite(shell, SWT.BORDER);
-		FormData compositeFormData = new FormData();
-		compositeFormData.width = 279;
-		compositeFormData.height = 380;
-		compositeFormData.top = new FormAttachment(0, 0);
-		compositeFormData.left = new FormAttachment(0, 400);
-		composite.setLayoutData(compositeFormData);
-		FormLayout compositeFormLayout = new FormLayout();
-		composite.setLayout(compositeFormLayout);
-
-		try {
-			browser = new Browser(composite, SWT.NONE);
-			browser
-					.setUrl("http://maps.google.fr/maps?f=q&hl=fr&q=%20,%20%20nice");
-			FormData browserFormData = new FormData();
-			browserFormData.width = 665;
-			browserFormData.height = 565;
-			browserFormData.top = new FormAttachment(0, -185);
-			browserFormData.left = new FormAttachment(0, -385);
-			browser.setLayoutData(browserFormData);
-		} catch (SWTError e) {
-			MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR
-					| SWT.OK);
-			messageBox.setMessage("Browser cannot be initialized.");
-			messageBox.setText("Exit");
-			messageBox.open();
-			locate.setEnabled(false);
-			locateItem.setEnabled(false);
-			hideItem.setEnabled(false);
-			result.setVisible(true);
-		}
 
 		// CRUD ROADBOOK
 		addCheckPoint.addSelectionListener(new SelectionAdapter() {
@@ -444,7 +357,6 @@ public class CarPal {
 					checkpointsList.add(new Checkpoint(address, zipCode, city,
 							hour, minute));
 					updateRoadBook();
-					composite.setVisible(false);
 					result.setVisible(true);
 				} catch (NumberFormatException excep) {
 					error.setVisible(true);
@@ -456,19 +368,8 @@ public class CarPal {
 				if (checkpointsList.size() > 0) {
 					checkpointsList.remove(checkpointsList.size() - 1);
 					updateRoadBook();
-					composite.setVisible(false);
 					result.setVisible(true);
 				}
-			}
-		});
-		locate.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				String address = addressText.getText();
-				String zipCode = zipText.getText();
-				String city = cityText.getText();
-				GeoLoc.search(browser, address, zipCode, city);
-				composite.setVisible(true);
-				result.setVisible(false);
 			}
 		});
 
@@ -532,7 +433,7 @@ public class CarPal {
 												contactText.getText(),
 												informationsText.getText(),
 												"\t" + network + " NETWORK");
-										synapse.put(key, value);
+										chordNode.put(key, value);
 										resultStr += Value
 												.deserializeValue(value)
 												+ "\n";
@@ -540,7 +441,7 @@ public class CarPal {
 											resultStr += "\n\n===> Published!";
 										}
 									} else {
-										String found = synapse.get(key);
+										String found = chordNode.get(key);
 										if ((found == null
 												|| found.equals("null") || found
 												.split("\\+").length < 4)
@@ -550,7 +451,7 @@ public class CarPal {
 															.formatToKey()
 													+ checkpointsList.get(j)
 															.formatToKey();
-											found = synapse.get(key);
+											found = chordNode.get(key);
 										}
 										if (found != null
 												&& !found.equals("null")
@@ -613,7 +514,7 @@ public class CarPal {
 					// MODE!
 					id.setVisible(true);
 					idText.setVisible(true);
-					ConsoleDialog console = new ConsoleDialog(shell, synapse);
+					ConsoleDialog console = new ConsoleDialog(shell, chordNode);
 					console.start();
 				} else if (informationsText.getText().equals("DebugOff")
 						|| informationsText.getText().equals("debugOff")) {
@@ -632,9 +533,6 @@ public class CarPal {
 					okButton.setEnabled(false);
 					error.setVisible(false);
 					checkpointsList.clear();
-					composite.setVisible(true);
-					if (locate.getEnabled())
-						result.setVisible(false);
 					shell.pack();
 				}
 			}
@@ -717,7 +615,7 @@ public class CarPal {
 	}
 
 	public void updateBackground(String backgroundImagePath) {
-		Image background = new Image(display, CarPal.class
+		Image background = new Image(display, tgc2010.ui.CarPal.class
 				.getResourceAsStream(backgroundImagePath));
 
 		shell.setBackgroundImage(background);
@@ -773,17 +671,11 @@ public class CarPal {
 				display.sleep();
 		}
 		display.dispose();
-		for (IDHT o : synapse.getNetworks()) {
-			synapse.getTransport().sendRequest(
-					ITracker.REMOVENODE + "," + o.getIdentifier() + ","
-							+ o.getThisNode(),
-					new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
-		}
-		synapse.getTransport().sendRequest(
-				ITracker.REMOVENODE + "," + synapse.getIdentifier() + ","
-						+ synapse.getThisNode(),
+		chordNode.getTransport().sendRequest(
+				ITracker.REMOVENODE + "," + chordNode.getIdentifier() + ","
+						+ chordNode.getThisNode(),
 				new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT));
-		synapse.kill();
+		chordNode.kill();
 		System.exit(0);
 	}
 
@@ -801,51 +693,30 @@ public class CarPal {
 			// LAUNCHING CHORD
 			System.out.print("CarPal Launching, please wait... ");
 			String ip = InfoConsole.getIp();
-			Synapse synapse = new Synapse(ip, 0);
-			ChordNodePlugin overlay = new ChordNodePlugin(ip, 0, synapse,
-					network);
+			ChordNode node = new ChordNode(ip, 0, network);
 
 			// CONNECT TO THE TRACKER
-			// control network
-			String trackerResponse = synapse.getTransport().sendRequest(
-					ITracker.GETCONNECTION + "," + synapse.getIdentifier(),
+			String trackerResponse = node.getTransport().sendRequest(
+					ITracker.GETCONNECTION + "," + node.getIdentifier(),
 					new Node(trackerHost, 0, trackerPort));
-			synapse.getTransport().sendRequest(
-					ITracker.ADDNODE + "," + synapse.getIdentifier() + ","
-							+ synapse.getThisNode(),
-					new Node(trackerHost, 0, trackerPort));
-			if (!trackerResponse.equals("null")) {
-				Node n = new Node(trackerResponse);
-				synapse.join(n.getIp(), n.getPort());
-			}
-
-			// overlay network
-			trackerResponse = synapse.getTransport().sendRequest(
-					ITracker.GETCONNECTION + "," + network,
-					new Node(trackerHost, 0, trackerPort));
-			synapse.getNetworks().add(overlay);
-			synapse.getTransport().sendRequest(
-					ITracker.ADDNODE + "," + overlay.getIdentifier() + ","
-							+ overlay.getThisNode(),
+			node.getTransport().sendRequest(
+					ITracker.ADDNODE + "," + node.getIdentifier() + ","
+							+ node.getThisNode(),
 					new Node(trackerHost, 0, trackerPort));
 			if (!trackerResponse.equals("null")) {
 				Node n = new Node(trackerResponse);
-				overlay.join(n.getIp(), n.getPort());
+				node.join(n.getIp(), n.getPort());
 			}
 
 			System.out.println("ok!");
 			Thread.sleep(300);
 
-			CarPal carPal = new CarPal(synapse, network, backgroundImagePath,
+			CarPal carPal = new CarPal(node, network, backgroundImagePath,
 					resImagePath);
 			carPal.start();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	public Synapse getSynapse() {
-		return synapse;
 	}
 
 	public CarPal getCarPal() {
