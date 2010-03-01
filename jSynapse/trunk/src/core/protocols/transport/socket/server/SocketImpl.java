@@ -88,6 +88,7 @@ public class SocketImpl extends AbstractServer {
 			return res;
 		} catch (IOException e) {
 			System.err.println("\n\n[" + TTL-- + "] : time to live");
+			System.out.println("trying to send: " + message + "\nto: " + destination);
 			System.err.println(e.getMessage() + " => cached");
 			System.err.println("\t\"unreachable\" message is sent!");
 			return "unreachable";
