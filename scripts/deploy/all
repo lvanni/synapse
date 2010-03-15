@@ -1,5 +1,7 @@
 export CURRENT_PATH=`pwd`
 
+SYNAPSE_HOME=$SYNAPSE_HOME_DEV
+
 mkdir -p $SYNAPSE_HOME/jSynapse/trunk/dist
 mkdir -p $SYNAPSE_HOME/jSynapse/trunk/lib
 mkdir -p $SYNAPSE_HOME/tracker/tags/tracker_1.0/dist
