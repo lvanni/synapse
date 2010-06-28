@@ -103,6 +103,7 @@ public class Create {
 			BufferedReader input = new BufferedReader(new InputStreamReader(
 					System.in));
 			while (true) {
+				System.out.println("0) Status");
 				System.out.println("1) Publish");
 				System.out.println("2) Search");
 				System.out.println("3) Quit");
