@@ -1,4 +1,4 @@
-package experiments.current.node;
+package experiments.current.node.chord;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,7 +24,7 @@ public class ChordNode extends AbstractChord {
 	private static SimpleDateFormat formater = new SimpleDateFormat(
 			"dd/MM/yy_H:mm:ss");
 	protected static String time = formater.format(new Date());
-	public String overlayIntifier = "chord"; // use an unique ID is possible
+	public String overlayIntifier = "chordNetwork"; // use an unique ID is possible
 	/** Transport protocol */
 	protected ITransport transport;
 	/** Hash function */
@@ -214,6 +214,10 @@ public class ChordNode extends AbstractChord {
 	 * @return the hash value of the key
 	 */
 	public int keyToH(String key) { // A CHANGER!
-		return h.SHA1ToInt(key);
+		try {
+			return Integer.parseInt(key);
+		} catch (NumberFormatException e) {
+			return h.SHA1ToInt(key);
+		}
 	}
 }

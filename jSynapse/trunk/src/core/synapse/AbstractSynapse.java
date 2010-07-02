@@ -139,8 +139,8 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse 
 	public void synapseGet(String key, String overlayIntifier) {
 		for (int i = 0; i < networks.size(); i++) {
 			IDHT o = networks.get(i);
+			System.out.println(o.getIdentifier() + " Vs " + overlayIntifier);
 			if (!o.getIdentifier().equals(overlayIntifier)) {
-				System.out.println("find in " + o.getIdentifier());
 				new Thread(new Get(key, o, this)).start();
 			}
 		}
@@ -162,8 +162,9 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse 
 
 		public void run() {
 			// CLEAN TABLE
-			int hCleanKey = keyToH(o.keyToH(key) + "|" + o.getIdentifier()); // h(key)|IDENT
-			putInCleanTable(hCleanKey, key);
+//			int hCleanKey = keyToH(o.keyToH(key) + "|" + o.getIdentifier()); // h(key)|IDENT
+//			putInCleanTable(hCleanKey, key);
+			putInCleanTable(o.keyToH(key), key);
 
 			// ADD VALUE IN THE CACHE TABLE
 			addValue(key, o.get(key));
@@ -424,6 +425,10 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse 
 	 * @return the hash value of the key
 	 */
 	public int keyToH(String key) { // A CHANGER!
-		return h.SHA1ToInt(key);
+		try {
+			return Integer.parseInt(key);
+		} catch (NumberFormatException e) {
+			return h.SHA1ToInt(key);
+		}
 	}
 }

@@ -1,7 +1,7 @@
-package experiments.current.synapse.plugin;
+package experiments.current.synapse.plugin.chord;
 
 import core.protocols.p2p.chord.IChord;
-import experiments.current.node.ChordNode;
+import experiments.current.node.chord.ChordNode;
 import experiments.current.synapse.Synapse;
 
 /**
@@ -52,8 +52,9 @@ public class ChordNodePlugin extends ChordNode {
 			int f = Integer.parseInt(args[1]);
 			switch (f) {
 			case IChord.GET:
-				String cleanKey = synapse.getInCleanTable(args[2] + "|"
-						+ overlayIntifier);
+//				String cleanKey = synapse.getInCleanTable(args[2] + "|"
+//						+ overlayIntifier);
+				String cleanKey = synapse.getInCleanTable(args[2]);
 				if (cleanKey != null && !cleanKey.equals("null")
 						&& !cleanKey.equals("")) {
 					if (synapse.cacheTableExist(cleanKey).equals("1")) {

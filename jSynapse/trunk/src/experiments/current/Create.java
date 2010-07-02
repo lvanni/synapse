@@ -9,9 +9,11 @@ import core.protocols.p2p.IDHT;
 import core.protocols.p2p.Node;
 import core.protocols.p2p.chord.AbstractChord;
 import core.tools.InfoConsole;
-import experiments.current.node.ChordNode;
+import experiments.current.node.chord.ChordNode;
+import experiments.current.node.kademlia.KadNode;
 import experiments.current.synapse.Synapse;
-import experiments.current.synapse.plugin.ChordNodePlugin;
+import experiments.current.synapse.plugin.chord.ChordNodePlugin;
+import experiments.current.synapse.plugin.kademlia.KadNodePlugin;
 
 /**
  * This a very simple User Interface to allow to create Synapse, node and
@@ -27,7 +29,7 @@ public class Create {
 	 * 
 	 */
 	private static enum NodeType {
-		CHORD, CHORDPLUGIN, SYNAPSE
+		CHORD, CHORDPLUGIN, KAD, KADPLUGIN, SYNAPSE
 	}
 
 	/**
@@ -56,17 +58,26 @@ public class Create {
 				break;
 			}
 			overlay = node;
+		} else if (protocol.equals("kad")) {
+			switch (t) {
+			case KAD:
+				overlay = new KadNode(id);
+				break;
+			case KADPLUGIN:
+				overlay = new KadNodePlugin(id, s);
+				break;
+			}
 		}
 
 		// CONNECT ON TRACKER
 		Node tracker = new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT);
 		String trackerResponse = overlay.getTransport()
-				.sendRequest(
-						ITracker.GETCONNECTION + "," + overlay.getIdentifier(),
-						tracker);
+		.sendRequest(
+				ITracker.GETCONNECTION + "," + overlay.getIdentifier(),
+				tracker);
 		overlay.getTransport().sendRequest(
 				ITracker.ADDNODE + "," + overlay.getIdentifier() + ","
-						+ overlay.getThisNode(), tracker);
+				+ overlay.getThisNode(), tracker);
 		if (!trackerResponse.equals("null")) {
 			Node n = new Node(trackerResponse);
 			overlay.join(n.getIp(), n.getPort());
@@ -83,7 +94,11 @@ public class Create {
 		try {
 			IDHT overlay = null;
 			if (args[0].equals("node")) {
-				overlay = getNode(args[1], args[2], NodeType.CHORD, null);
+				if(args[1].equals("chord")) {
+					overlay = getNode(args[1], args[2], NodeType.CHORD, null);
+				} else { 
+					overlay = getNode(args[1], args[2], NodeType.KAD, null);
+				}
 			} else if (args[0].equals("synapse")) {
 				Synapse synapse = (Synapse) getNode("chord", "ControlNetwork",
 						NodeType.SYNAPSE, null);
@@ -93,8 +108,12 @@ public class Create {
 							IDHT o = getNode("chord", args[i + 2],
 									NodeType.CHORDPLUGIN, synapse);
 							synapse.getNetworks().add(o);
+						} else if (args[i + 1].equals("kad")) {
+							IDHT o = getNode("kad", args[i + 2],
+									NodeType.KADPLUGIN, synapse);
+							synapse.getNetworks().add(o);
 						}
-					}
+					} 
 				}
 				overlay = synapse;
 			}
@@ -138,8 +157,8 @@ public class Create {
 							for (IDHT o : ((Synapse) overlay).getNetworks()) {
 								overlay.getTransport().sendRequest(
 										ITracker.REMOVENODE + ","
-												+ o.getIdentifier() + ","
-												+ o.getThisNode(),
+										+ o.getIdentifier() + ","
+										+ o.getThisNode(),
 										new Node(ITracker.TRACKER_HOST, 0,
 												ITracker.TRACKER_PORT));
 							}
@@ -147,8 +166,8 @@ public class Create {
 						}
 						overlay.getTransport().sendRequest(
 								ITracker.REMOVENODE + ","
-										+ overlay.getIdentifier() + ","
-										+ overlay.getThisNode(),
+								+ overlay.getIdentifier() + ","
+								+ overlay.getThisNode(),
 								new Node(ITracker.TRACKER_HOST, 0,
 										ITracker.TRACKER_PORT));
 						overlay.kill();
@@ -164,8 +183,8 @@ public class Create {
 			}
 		} catch (ArrayIndexOutOfBoundsException e) {
 			System.out.println("invalid parameters!\n"
-					+ "=> Create node [chord|can] <IDNetwork>\n"
-					+ "=> Create synapse (-a [chord|can] <IDNetwork>)+");
+					+ "=> Create node [chord|kad] <IDNetwork>\n"
+					+ "=> Create synapse (-a [chord|kad] <IDNetwork>)+");
 		}
 	}
 }

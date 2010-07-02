@@ -20,16 +20,14 @@ public class LaunchTracker {
 					System.in));
 			while (true) {
 				try {
-					System.out.println("\n\n1) print status");
-					System.out.println("2) clear history");
-					System.out.println("3) add invitation");
-					System.out.println("0) exit");
+					System.out.println("\n\n0) print status");
+					System.out.println("1) clear history");
+					System.out.println("2) add invitation");
+					System.out.println("3) exit");
 					System.out.print("---> ");
 					int chx = Integer.parseInt(input.readLine().trim());
 					switch (chx) {
 					case 0:
-						System.exit(0);
-					case 1:
 						System.out.println("\ntracker connected on : "
 								+ tracker.getTransport().getPort() + "\n");
 						Set<String> keys = tracker.getPeerSet().keySet();
@@ -45,16 +43,18 @@ public class LaunchTracker {
 							System.out.println("\t. access pass: " + i.getAccessPass() + "\n");
 						}
 						break;
-					case 2:
+					case 1:
 						tracker.getPeerSet().clear();
 						break;
-					case 3:
+					case 2:
 						System.out.print("networkID: ");
 						String networkID = input.readLine();
 						System.out.print("access pass: ");
 						String accessPass = input.readLine();
 						tracker.addInvitation(networkID, accessPass);
 						break;
+					case 3:
+						System.exit(0);
 					default:
 						break;
 					}
