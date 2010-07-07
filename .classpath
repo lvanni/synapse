@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="jSynapse/trunk/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="tracker/tags/tracker_1.0/dist/tracker.jar"/>
-	<classpathentry kind="lib" path="jSynapse/trunk/lib/routing.jar"/>
+	<classpathentry kind="lib" path="tracker/tags/tracker_1.0/dist/tracker.jar" sourcepath="tracker/tags/tracker_1.0"/>
 	<classpathentry kind="output" path="jSynapse/trunk/bin"/>
 </classpath>

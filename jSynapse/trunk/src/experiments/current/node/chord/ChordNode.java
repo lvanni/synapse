@@ -22,7 +22,7 @@ import core.tools.Range;
 public class ChordNode extends AbstractChord {
 	/** name of the service */
 	private static SimpleDateFormat formater = new SimpleDateFormat(
-			"dd/MM/yy_H:mm:ss");
+	"dd/MM/yy_H:mm:ss");
 	protected static String time = formater.format(new Date());
 	public String overlayIntifier = "chordNetwork"; // use an unique ID is possible
 	/** Transport protocol */
@@ -43,11 +43,11 @@ public class ChordNode extends AbstractChord {
 	public ChordNode(String ip, int port, String overlayIntifier) {
 		this.overlayIntifier = overlayIntifier;
 		this.h = new HashFunction(overlayIntifier);
-		int id = h.SHA1ToInt(ip + port + time);
 		// TRANSPORT LAYER BASED ON THE SOCKET IMPLEMENTATION
 		transport = new SocketImpl(port, 10, RequestHandler.class.getName(),
 				10, 1, 50, this);
 		((SocketImpl) transport).launchServer();
+		int id = h.SHA1ToInt(ip +  transport.getPort() + time);
 		initialize(ip, id, transport.getPort());
 		checkStable();
 	}
@@ -165,7 +165,6 @@ public class ChordNode extends AbstractChord {
 				put(Integer.parseInt(args[2]), args[3]);
 				break;
 			case IChord.GET:
-				System.out.println("===> handleRequest Get");
 				result = get(Integer.parseInt(args[2]));
 				break;
 			case IChord.SETSUCC:
@@ -192,7 +191,7 @@ public class ChordNode extends AbstractChord {
 	@Override
 	public String toString() {
 		return getIdentifier() + " on " + getThisNode().getIp() + ":"
-				+ getThisNode().getPort() + "\n" + super.toString();
+		+ getThisNode().getPort() + "\n" + super.toString();
 	}
 
 	/**
@@ -214,10 +213,6 @@ public class ChordNode extends AbstractChord {
 	 * @return the hash value of the key
 	 */
 	public int keyToH(String key) { // A CHANGER!
-		try {
-			return Integer.parseInt(key);
-		} catch (NumberFormatException e) {
-			return h.SHA1ToInt(key);
-		}
+		return h.SHA1ToInt(key);
 	}
 }

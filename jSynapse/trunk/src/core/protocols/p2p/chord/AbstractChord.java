@@ -16,7 +16,7 @@ import core.tools.Range;
 public abstract class AbstractChord implements IChord {
 
 	/** the degree of the address space of the chord */
-	public static int SPACESIZE = 10;
+	public static int SPACESIZE = 16;
 
 	/** represent this node */
 	private Node thisNode;
@@ -37,7 +37,7 @@ public abstract class AbstractChord implements IChord {
 	private int next = 0;
 
 	/** Time between each stabilization/fix fingerstable */
-	private int timeToCheck = 200;
+	private int timeToCheck = 100;
 
 	/** The status of the node */
 	private boolean alive = true;
@@ -73,7 +73,7 @@ public abstract class AbstractChord implements IChord {
 		} else {
 			Node pred = closestPrecedingNode(id);
 			String succ = sendRequest(FINDSUCC + "," + id, pred);
-			return new Node(succ);
+			return succ.equals("unreachable") ? thisNode : new Node(succ);
 		}
 	}
 
@@ -93,18 +93,14 @@ public abstract class AbstractChord implements IChord {
 	 * @see core.protocols.p2p.chord.IChord#join(Node)
 	 */
 	public void join(Node chord) {
-		predecessor = null;
 		String succ = sendRequest(FINDSUCC + "," + thisNode.getId(), chord);
-		successor = new Node(succ);
-		// GET OBJECT ON JOIN
-		while (getPredecessor() == null) {
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+		if(!succ.equals("unreachable")){
+//			predecessor = null;
+			successor = new Node(succ);
+			sendRequest(JOIN + "," + thisNode, successor);
+		} else {
+			System.out.println("Fail to join: " + chord.getIp() + ":" + chord.getPort());
 		}
-		sendRequest(JOIN + "," + thisNode, successor);
 	}
 
 	/**
@@ -112,7 +108,7 @@ public abstract class AbstractChord implements IChord {
 	 */
 	public void stabilize() {
 		String pred = sendRequest(GETPRED + "", successor);
-		if (!pred.equals(thisNode.toString())) { // PRED != NULL
+		if (!pred.equals(thisNode.toString()) && !pred.equals("unreachable")) { // PRED != NULL
 			Node x = new Node(pred);
 			if (Range.inside(x.getId(), thisNode.getId() + 1,
 					successor.getId() - 1)) {

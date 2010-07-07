@@ -14,6 +14,7 @@ import core.protocols.p2p.Node;
 import core.protocols.transport.ITransport;
 import core.protocols.transport.socket.request.RequestHandler;
 import core.protocols.transport.socket.server.SocketImpl;
+import core.tools.HashFunction;
 import core.tools.InfoConsole;
 import experiments.current.synapse.Synapse;
 
@@ -24,18 +25,20 @@ public class KadNodePlugin implements IDHT{
 	private Node node;
 	private Kademlia kad;
 	private Synapse synapse;
+	/** Hash function */
+	private HashFunction h;
 
 	public KadNodePlugin(String identifier, Synapse synapse) {
 		try {
 			this.identifier = identifier;
 			this.synapse = synapse;
+			this.h = new HashFunction(identifier);
 			ServerSocket serverSocket = new ServerSocket(0);
 			node = new Node(InfoConsole.getIp(), 0, serverSocket.getLocalPort());
-			kad = new Kademlia(Identifier.randomIdentifier(), serverSocket.getLocalPort(), synapse, identifier);
+			kad = new Kademlia(Identifier.randomIdentifier(), serverSocket.getLocalPort(), this);
 			transport = new SocketImpl(0, 10, RequestHandler.class.getName(),
 					10, 1, 50, this);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -45,10 +48,8 @@ public class KadNodePlugin implements IDHT{
 		try {
 			kad.put(id, value);
 		} catch (RoutingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -95,17 +96,33 @@ public class KadNodePlugin implements IDHT{
 	}
 
 	public int keyToH(String key) {
-		// TODO Auto-generated method stub
-		return 0;
+		return h.SHA1ToInt(key);
 	}
 
 	public void kill() {
 		// TODO Auto-generated method stub
-
 	}
 
 	public String handleRequest(String code) {
-		// TODO Auto-generated method stub
+//		System.out.println("receive: " + code);
+		String[] args = code.split(",");
+		for(String arg : args){
+			if(arg.split("=")[0].equals("lookup")){
+				String key = arg.split("=")[1].split("]")[0];
+				String cleanKey = synapse.getInCleanTable(key+ "|" + identifier);
+//				String cleanKey = synapse.getInCleanTable(key);
+				if (cleanKey != null && !cleanKey.equals("null")
+						&& !cleanKey.equals("")) {
+					System.out.println("CleanKey found!\t" + key + " => " + cleanKey);
+					if (synapse.cacheTableExist(cleanKey).equals("1")) {
+						// THEN SYNAPSE AND USE THE CACHE TABLE
+						synapse.synapseGet(cleanKey, identifier);
+					}
+				} else {
+					System.out.println("CleanKey not found!\t" + key);
+				}
+			}
+		}
 		return null;
 	}
 }

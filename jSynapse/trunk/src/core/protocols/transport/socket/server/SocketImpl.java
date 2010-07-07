@@ -8,6 +8,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import core.protocols.p2p.IDHT;
 import core.protocols.p2p.Node;
 import core.protocols.transport.IRequestHandler;
 
@@ -52,18 +53,13 @@ public class SocketImpl extends AbstractServer {
 	 * @see core.protocols.transport.ITransport#sendRequest(String, Node)
 	 */
 	public String sendRequest(String message, Node destination) {
-		if (TTL == 0) {
-			overlay.kill();
-		}
 		Socket socket = null;
 		BufferedReader pin = null;
 		PrintWriter pout = null;
 		try {
-			while ((socket = new Socket(destination.getIp(), destination
-					.getPort())) == null) {
-				System.out.println("can not create a socket to "
-						+ destination.getIp() + ":" + destination.getPort());
-			}
+			socket = new Socket(destination.getIp(), destination.getPort());
+			// System.out.println("can not create a socket to "
+			// + destination.getIp() + ":" + destination.getPort());
 			pin = new BufferedReader(new InputStreamReader(socket
 					.getInputStream()));
 			pout = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
@@ -75,33 +71,18 @@ public class SocketImpl extends AbstractServer {
 
 			// WAIT FOR A RESPONSE
 			String res = pin.readLine();
-			TTL = MAX_TTL;
-			try {
-				socket.close();
-				pout.close();
-				pin.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (NullPointerException e) {
-				System.err.println("\tno socket opended...");
-			}
+			// TTL = MAX_TTL;
+			
+			socket.close();
+			pout.close();
+			pin.close();
+
 			return res;
 		} catch (IOException e) {
-			System.err.println("\n\n[" + TTL-- + "] : time to live");
-			System.out.println("trying to send: " + message + "\nto: " + destination);
-			System.err.println(e.getMessage() + " => cached");
-			System.err.println("\t\"unreachable\" message is sent!");
+//			System.out.println("Warning: " + destination.getIp() + ":" + destination.getPort()
+//					+ " unreachable");
+//			System.out.println("Fail to send: " + message);
 			return "unreachable";
-		} finally {
-			try {
-				socket.close();
-				pout.close();
-				pin.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (NullPointerException e) {
-				System.err.println("\tno socket opended...");
-			}
 		}
 	}
 }

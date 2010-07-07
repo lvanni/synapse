@@ -27,8 +27,7 @@ import org.planx.xmlstore.routing.operation.RemoveOperation;
 import org.planx.xmlstore.routing.operation.RestoreOperation;
 import org.planx.xmlstore.routing.operation.StoreOperation;
 
-import experiments.current.synapse.Synapse;
-import experiments.current.synapse.plugin.kademlia.MyMessageServer;
+import experiments.current.synapse.plugin.kademlia.KadNodePlugin;
 
 /**
  * Maps keys to values in a distributed setting using the Kademlia protocol.
@@ -45,7 +44,7 @@ public class Kademlia implements DistributedMap {
 	private MessageServer server;
 	private Timer timer;
 	private boolean isClosed = false;
-
+	
 	/**
 	 * Creates a Kademlia DistributedMap with the specified identifier and no
 	 * persistence.
@@ -54,7 +53,7 @@ public class Kademlia implements DistributedMap {
 	 * @param udpPort    The UDP port to use for routing messages
 	 **/
 	public Kademlia(Identifier id, int udpPort) throws IOException, RoutingException {
-		this(null, id, udpPort, null, null, null, null);
+		this(null, id, udpPort, null, null, null);
 	}
 
 	/**
@@ -64,8 +63,8 @@ public class Kademlia implements DistributedMap {
 	 * @param id         The id to use or null to create a random id
 	 * @param udpPort    The UDP port to use for routing messages
 	 **/
-	public Kademlia(Identifier id, int udpPort, Synapse synapse, String identifier) throws IOException, RoutingException {
-		this(null, id, udpPort, null, null,  synapse, identifier);
+	public Kademlia(Identifier id, int udpPort, KadNodePlugin plugin) throws IOException, RoutingException {
+		this(null, id, udpPort, null, null, plugin);
 	}
 
 	/**
@@ -78,7 +77,7 @@ public class Kademlia implements DistributedMap {
 	 **/
 	public Kademlia(Identifier id, int udpPort, Configuration config)
 	throws IOException, RoutingException {
-		this(null, id, udpPort, null, config, null, null);
+		this(null, id, udpPort, null, config, null);
 	}
 
 	/**
@@ -95,7 +94,7 @@ public class Kademlia implements DistributedMap {
 	 **/
 	public Kademlia(String name, int udpPort, InetSocketAddress bootstrap,
 			Configuration config) throws IOException, RoutingException {
-		this(name, null, udpPort, bootstrap, config, null, null);
+		this(name, null, udpPort, bootstrap, config, null);
 	}
 
 	/**
@@ -118,7 +117,7 @@ public class Kademlia implements DistributedMap {
 	 *                          attempting to connect to the network
 	 **/
 	public Kademlia(String name, Identifier defaultId, int udpPort,
-			InetSocketAddress bootstrap, Configuration config, Synapse synapse, String identifier)
+			InetSocketAddress bootstrap, Configuration config, KadNodePlugin plugin)
 	throws IOException, RoutingException {
 
 		conf = (config == null) ? new Configuration() : config;
@@ -133,18 +132,14 @@ public class Kademlia implements DistributedMap {
 
 		local = new Node(InetAddress.getLocalHost(), udpPort, id);
 
-		initialize(udpPort, bootstrap, synapse, identifier);
+		initialize(udpPort, bootstrap, plugin);
 	}
 
-	private void initialize(int udpPort, InetSocketAddress bootstrap, Synapse synapse, String identifier) throws RoutingException, IOException{
+	private void initialize(int udpPort, InetSocketAddress bootstrap, KadNodePlugin plugin) throws RoutingException, IOException{
 		NeighbourhoodListenerImpl listener = new NeighbourhoodListenerImpl(local);
 		space = new Space(local, conf, listener);
 		MessageFactory factory = new MessageFactoryImpl(localMap, local, space);
-		if(synapse != null){
-			server = new MyMessageServer(udpPort, factory, conf.RESPONSE_TIMEOUT, synapse, identifier);
-		} else {
-			server = new MessageServer(udpPort, factory, conf.RESPONSE_TIMEOUT);
-		}
+		server = new MessageServer(udpPort, factory, conf.RESPONSE_TIMEOUT, plugin);
 		listener.setMessageServer(server);
 
 		// Schedule recurring RestoreOperation

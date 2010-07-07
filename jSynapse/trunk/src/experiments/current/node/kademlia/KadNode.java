@@ -14,6 +14,7 @@ import core.protocols.p2p.Node;
 import core.protocols.transport.ITransport;
 import core.protocols.transport.socket.request.RequestHandler;
 import core.protocols.transport.socket.server.SocketImpl;
+import core.tools.HashFunction;
 import core.tools.InfoConsole;
 
 public class KadNode implements IDHT{
@@ -22,10 +23,13 @@ public class KadNode implements IDHT{
 	private ITransport transport;
 	private Node node;
 	private Kademlia kad;
+	/** Hash function */
+	private HashFunction h;
 
 	public KadNode(String identifier) {
 		try {
 			this.identifier = identifier;
+			this.h = new HashFunction(identifier);
 			ServerSocket serverSocket = new ServerSocket(0);
 			node = new Node(InfoConsole.getIp(), 0, serverSocket.getLocalPort());
 			kad = new Kademlia(Identifier.randomIdentifier(), serverSocket.getLocalPort());
@@ -38,7 +42,8 @@ public class KadNode implements IDHT{
 	}
 
 	public void put(String key, String value) {
-		Identifier id = new Identifier(BigInteger.valueOf((Integer.parseInt(key))));
+		Identifier id = new Identifier(BigInteger.valueOf(keyToH(key)));
+		System.out.println("put(" + keyToH(key) + ", " + value + ")");
 		try {
 			kad.put(id, value);
 		} catch (RoutingException e) {
@@ -51,7 +56,7 @@ public class KadNode implements IDHT{
 	}
 
 	public String get(String key) {
-		Identifier id = new Identifier(BigInteger.valueOf((Integer.parseInt(key))));
+		Identifier id = new Identifier(BigInteger.valueOf(keyToH(key)));
 		try {
 			return (String) kad.get(id);
 		} catch (RoutingException e) {
@@ -84,8 +89,7 @@ public class KadNode implements IDHT{
 	}
 
 	public int keyToH(String key) {
-		// TODO Auto-generated method stub
-		return 0;
+		return h.SHA1ToInt(key);
 	}
 
 	public void kill() {

@@ -32,6 +32,9 @@ public class Create {
 		CHORD, CHORDPLUGIN, KAD, KADPLUGIN, SYNAPSE
 	}
 
+	private static String trackerAddress = "cycloid.inria.fr";
+	private static int trackerPort = 8000;
+
 	/**
 	 * Instantiate a node of the type NodeType
 	 * 
@@ -70,7 +73,7 @@ public class Create {
 		}
 
 		// CONNECT ON TRACKER
-		Node tracker = new Node(ITracker.TRACKER_HOST, 0, ITracker.TRACKER_PORT);
+		Node tracker = new Node(trackerAddress, 0, trackerPort);
 		String trackerResponse = overlay.getTransport()
 		.sendRequest(
 				ITracker.GETCONNECTION + "," + overlay.getIdentifier(),
@@ -78,9 +81,11 @@ public class Create {
 		overlay.getTransport().sendRequest(
 				ITracker.ADDNODE + "," + overlay.getIdentifier() + ","
 				+ overlay.getThisNode(), tracker);
-		if (!trackerResponse.equals("null")) {
+		if (!trackerResponse.equals("unreachable") && !trackerResponse.equals("null")) {
 			Node n = new Node(trackerResponse);
 			overlay.join(n.getIp(), n.getPort());
+		} else {
+			System.out.println("Warning: node launched in standalone mode\n");
 		}
 		return overlay;
 	}
@@ -93,6 +98,12 @@ public class Create {
 	public static void main(String[] args) {
 		try {
 			IDHT overlay = null;
+			for (int i = 1; i < args.length; i++) {
+				if(args[i].equals("--tracker") || args[i].equals("-t")) {
+					trackerAddress = args[i + 1];
+					trackerPort = Integer.parseInt(args[i + 2]);
+				}
+			}
 			if (args[0].equals("node")) {
 				if(args[1].equals("chord")) {
 					overlay = getNode(args[1], args[2], NodeType.CHORD, null);
@@ -113,7 +124,7 @@ public class Create {
 									NodeType.KADPLUGIN, synapse);
 							synapse.getNetworks().add(o);
 						}
-					} 
+					}
 				}
 				overlay = synapse;
 			}
@@ -144,12 +155,12 @@ public class Create {
 					case 2:
 						System.out.print("\nkey = ");
 						key = input.readLine();
-						String found = "";
-						if (overlay instanceof Synapse) {
-							found = ((Synapse) overlay).get(key);
-						} else {
+						String found;
+//						if (overlay instanceof Synapse) {
+//							found = ((Synapse) overlay).get(key);
+//						} else {
 							found = overlay.get(key);
-						}
+//						}
 						System.out.println("found: " + found);
 						break;
 					case 3:
@@ -159,8 +170,8 @@ public class Create {
 										ITracker.REMOVENODE + ","
 										+ o.getIdentifier() + ","
 										+ o.getThisNode(),
-										new Node(ITracker.TRACKER_HOST, 0,
-												ITracker.TRACKER_PORT));
+										new Node(trackerAddress, 0,
+												trackerPort));
 							}
 
 						}
@@ -168,8 +179,8 @@ public class Create {
 								ITracker.REMOVENODE + ","
 								+ overlay.getIdentifier() + ","
 								+ overlay.getThisNode(),
-								new Node(ITracker.TRACKER_HOST, 0,
-										ITracker.TRACKER_PORT));
+								new Node(trackerAddress, 0,
+										trackerPort));
 						overlay.kill();
 					default:
 						break;
@@ -183,8 +194,8 @@ public class Create {
 			}
 		} catch (ArrayIndexOutOfBoundsException e) {
 			System.out.println("invalid parameters!\n"
-					+ "=> Create node [chord|kad] <IDNetwork>\n"
-					+ "=> Create synapse (-a [chord|kad] <IDNetwork>)+");
+					+ "=> Create node [chord|kad] <IDNetwork> -t trackerAddress trackerPort\n"
+					+ "=> Create synapse (-a [chord|kad] <IDNetwork>)+ -t trackerAddress trackerPort");
 		}
 	}
 }

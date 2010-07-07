@@ -103,6 +103,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse 
 				public void run() {
 					int hKey = keyToH(o.keyToH(key) + "|" + o.getIdentifier()); // h(key)|IDENT
 					putInCleanTable(hKey, key); // SAVE THE CLEAN KEY
+//					putInCleanTable(o.keyToH(key), key);
 					o.put(key, value); // MULTIPUT
 				}
 			}).start();
@@ -139,7 +140,6 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse 
 	public void synapseGet(String key, String overlayIntifier) {
 		for (int i = 0; i < networks.size(); i++) {
 			IDHT o = networks.get(i);
-			System.out.println(o.getIdentifier() + " Vs " + overlayIntifier);
 			if (!o.getIdentifier().equals(overlayIntifier)) {
 				new Thread(new Get(key, o, this)).start();
 			}
@@ -162,9 +162,9 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse 
 
 		public void run() {
 			// CLEAN TABLE
-//			int hCleanKey = keyToH(o.keyToH(key) + "|" + o.getIdentifier()); // h(key)|IDENT
-//			putInCleanTable(hCleanKey, key);
-			putInCleanTable(o.keyToH(key), key);
+			int hCleanKey = keyToH(o.keyToH(key) + "|" + o.getIdentifier()); // h(key)|IDENT
+			putInCleanTable(hCleanKey, key);
+//			putInCleanTable(o.keyToH(key), key);
 
 			// ADD VALUE IN THE CACHE TABLE
 			addValue(key, o.get(key));
@@ -303,6 +303,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse 
 		String res = "";
 		res = transport.sendRequest(getIdentifier() + "," + message,
 				destination);
+		// ************************* TO CHANGE
 		if (res.equals(""))
 			res = getThisNode().toString();
 		return res;

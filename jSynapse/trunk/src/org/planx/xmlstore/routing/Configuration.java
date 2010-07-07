@@ -34,7 +34,7 @@ public class Configuration {
     /**
      * Bucket size.
      **/
-    public int K = 3;
+    public int K = 1;
 
     /**
      * Size of replacement cache.
