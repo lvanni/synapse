@@ -14,7 +14,7 @@ import core.protocols.transport.socket.server.SocketImpl;
 public class Tracker implements ITracker, IRequestHandler {
 
 	/** peerSet<networkID, List<Node>> */
-	private Map<String, List<Node>> peerSet;
+	private Map<String, List<NodeInfo>> peerSet;
 
 	private ITransport transport;
 	
@@ -24,35 +24,27 @@ public class Tracker implements ITracker, IRequestHandler {
 		transport = new SocketImpl(port, 10, RequestHandler.class.getName(),
 				10, 1, 50, this);
 		((SocketImpl) transport).launchServer();
-		peerSet = new HashMap<String, List<Node>>();
+		peerSet = new HashMap<String, List<NodeInfo>>();
 	}
 
 	// //////////////////////////// //
 	// CRUD NODE //
 	// //////////////////////////// //
-	public void putNode(String networkID, Node node) {
-		List<Node> nodes = null;
+	public void putNode(String networkID, NodeInfo node) {
+		List<NodeInfo> nodes = null;
 		if ((nodes = peerSet.get(networkID)) != null) {
 			nodes.add(node);
 		} else {
-			nodes = new ArrayList<Node>();
+			nodes = new ArrayList<NodeInfo>();
 			nodes.add(node);
 			peerSet.put(networkID, nodes);
 		}
 	}
 
 	public String getJoinEntry(String networkID) {
-		List<Node> nodes = peerSet.get(networkID);
-		return nodes != null && nodes.size() != 0 ? nodes.get(0).toString()
+		List<NodeInfo> nodes = peerSet.get(networkID);
+		return nodes != null && nodes.size() != 0 ? nodes.get(0).getNode().toString()
 				: "null";
-	}
-
-	public void removeNode(String networkID, String node) {
-		List<Node> nodes = peerSet.get(networkID);
-		nodes.remove(node);
-		if (nodes.size() == 0) {
-			peerSet.remove(networkID);
-		}
 	}
 
 	// /////////////////////////////////////////// //
@@ -68,16 +60,17 @@ public class Tracker implements ITracker, IRequestHandler {
 		int f = Integer.parseInt(args[0]);
 		switch (f) {
 		case ADDNODE:
-			putNode(args[1], new Node(args[2], Integer.parseInt(args[3]),
-					Integer.parseInt(args[4])));
+			Node node = new Node(args[2], Integer.parseInt(args[3]),
+					Integer.parseInt(args[4]));
+			putNode(args[1], new NodeInfo(node, Integer.parseInt(args[5])));
 			break;
 		case GETCONNECTION:
 			result = getJoinEntry(args[1]);
 			break;
 		case REMOVENODE:
-			Node n = new Node(args[2], Integer.parseInt(args[3]), Integer
+			node = new Node(args[2], Integer.parseInt(args[3]), Integer
 					.parseInt(args[4]));
-			peerSet.get(args[1]).remove(n);
+			peerSet.get(args[1]).remove(new NodeInfo(node));
 			break;
 		case JOIN:
 			System.out.println("receive a join");
@@ -106,11 +99,11 @@ public class Tracker implements ITracker, IRequestHandler {
 	// //////////////////////////// //
 	// GETTER AND SETTER //
 	// //////////////////////////// //
-	public Map<String, List<Node>> getPeerSet() {
+	public Map<String, List<NodeInfo>> getPeerSet() {
 		return peerSet;
 	}
 
-	public void setPeerSet(Map<String, List<Node>> peerSet) {
+	public void setPeerSet(Map<String, List<NodeInfo>> peerSet) {
 		this.peerSet = peerSet;
 	}
 

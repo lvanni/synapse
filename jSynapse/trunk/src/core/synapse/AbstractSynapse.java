@@ -16,6 +16,7 @@ import core.protocols.transport.socket.request.RequestHandler;
 import core.protocols.transport.socket.server.SocketImpl;
 import core.tools.HashFunction;
 import core.tools.Range;
+import experiments.current.Oracle;
 
 /**
  * This abstract class represent a synapse peer
@@ -101,9 +102,9 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse 
 		for (final IDHT o : networks) {
 			new Thread(new Runnable() {
 				public void run() {
-					int hKey = keyToH(o.keyToH(key) + "|" + o.getIdentifier()); // h(key)|IDENT
-					putInCleanTable(hKey, key); // SAVE THE CLEAN KEY
-//					putInCleanTable(o.keyToH(key), key);
+//					int hKey = keyToH(o.keyToH(key) + "|" + o.getIdentifier()); // h(key)|IDENT
+//					putInCleanTable(hKey, key); // SAVE THE CLEAN KEY
+					putInCleanTable(o.keyToH(key), key);
 					o.put(key, value); // MULTIPUT
 				}
 			}).start();
@@ -162,9 +163,9 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse 
 
 		public void run() {
 			// CLEAN TABLE
-			int hCleanKey = keyToH(o.keyToH(key) + "|" + o.getIdentifier()); // h(key)|IDENT
-			putInCleanTable(hCleanKey, key);
-//			putInCleanTable(o.keyToH(key), key);
+//			int hCleanKey = keyToH(o.keyToH(key) + "|" + o.getIdentifier()); // h(key)|IDENT
+//			putInCleanTable(hCleanKey, key);
+			putInCleanTable(o.keyToH(key), key);
 
 			// ADD VALUE IN THE CACHE TABLE
 			addValue(key, o.get(key));
@@ -283,7 +284,6 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse 
 		int hKey = h.SHA1ToInt(key);
 		if (Range.inside(hKey, getPredecessor().getId() + 1, getThisNode()
 				.getId())) {
-			System.out.println("getValues!! + " + key);
 			if (cacheTable.get(key) != null) {
 				return cacheTable.get(key).getValues();
 			} else {
@@ -366,6 +366,10 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse 
 				break;
 			case ISynapse.GETCacheValue:
 				result = getValues(args[2]);
+				break;
+			// ORACLE GET
+			case Oracle.GET:
+				result = get(args[2]);
 				break;
 			default:
 				break;

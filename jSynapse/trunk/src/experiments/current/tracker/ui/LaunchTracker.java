@@ -4,12 +4,10 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Set;
 
-import core.protocols.p2p.Node;
 import core.tools.InfoConsole;
 import experiments.current.tracker.core.Invitation;
+import experiments.current.tracker.core.NodeInfo;
 import experiments.current.tracker.core.Tracker;
-
-
 
 public class LaunchTracker {
 
@@ -43,7 +41,7 @@ public class LaunchTracker {
 						Set<String> keys = tracker.getPeerSet().keySet();
 						for (String key : keys) {
 							System.out.println(key + ":");
-							for (Node n : tracker.getPeerSet().get(key)) {
+							for (NodeInfo n : tracker.getPeerSet().get(key)) {
 								System.out.println("\t" + n);
 							}
 						}

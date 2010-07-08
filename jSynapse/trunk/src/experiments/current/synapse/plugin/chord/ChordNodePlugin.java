@@ -52,15 +52,16 @@ public class ChordNodePlugin extends ChordNode {
 			int f = Integer.parseInt(args[1]);
 			switch (f) {
 			case IChord.GET:
-				String cleanKey = synapse.getInCleanTable(args[2] + "|"
-						+ overlayIntifier);
-//				String cleanKey = synapse.getInCleanTable(args[2]);
+//				String cleanKey = synapse.getInCleanTable(args[2] + "|"
+//						+ overlayIntifier);
+				String cleanKey = synapse.getInCleanTable(args[2]);
 				if (cleanKey != null && !cleanKey.equals("null")
 						&& !cleanKey.equals("")) {
-					System.out.println("CleanKey found!\t" + args[2] + " => " + cleanKey);
+//					System.out.println("CleanKey found!\t" + args[2] + " => " + cleanKey);
 					if (synapse.cacheTableExist(cleanKey).equals("1")) {
 						// THEN SYNAPSE AND USE THE CACHE TABLE
 						synapse.synapseGet(cleanKey, overlayIntifier);
+//						System.out.println("clean key found: " +  args[2] + " => " + cleanKey);
 					}
 				} else {
 					System.out.println("CleanKey not found!\t" + args[2]);

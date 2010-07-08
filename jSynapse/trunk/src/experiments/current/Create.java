@@ -80,7 +80,7 @@ public class Create {
 				tracker);
 		overlay.getTransport().sendRequest(
 				ITracker.ADDNODE + "," + overlay.getIdentifier() + ","
-				+ overlay.getThisNode(), tracker);
+				+ overlay.getThisNode() + "," + overlay.getTransport().getPort(), tracker);
 		if (!trackerResponse.equals("unreachable") && !trackerResponse.equals("null")) {
 			Node n = new Node(trackerResponse);
 			overlay.join(n.getIp(), n.getPort());

@@ -11,6 +11,7 @@ import core.protocols.transport.socket.request.RequestHandler;
 import core.protocols.transport.socket.server.SocketImpl;
 import core.tools.HashFunction;
 import core.tools.Range;
+import experiments.current.Oracle;
 
 /**
  * This is an implementation of a chord node
@@ -45,7 +46,7 @@ public class ChordNode extends AbstractChord {
 		this.h = new HashFunction(overlayIntifier);
 		// TRANSPORT LAYER BASED ON THE SOCKET IMPLEMENTATION
 		transport = new SocketImpl(port, 10, RequestHandler.class.getName(),
-				10, 1, 50, this);
+				10, 1, 100, this);
 		((SocketImpl) transport).launchServer();
 		int id = h.SHA1ToInt(ip +  transport.getPort() + time);
 		initialize(ip, id, transport.getPort());
@@ -96,11 +97,7 @@ public class ChordNode extends AbstractChord {
 	private void put(int hKey, String value) {
 		if (Range.inside(hKey, getPredecessor().getId() + 1, getThisNode()
 				.getId())) {
-			if (table.containsKey(hKey)) {
-				table.put(hKey, table.get(hKey) + "****" + value);
-			} else {
 				table.put(hKey, value);
-			}
 		} else {
 			sendRequest(IChord.PUT + "," + hKey + "," + value,
 					closestPrecedingNode(hKey));
@@ -174,6 +171,13 @@ public class ChordNode extends AbstractChord {
 			case IChord.SETPRED:
 				setPredecessor(new Node(args[2], Integer.parseInt(args[3]),
 						Integer.parseInt(args[4])));
+				break;
+			// ORACLE TESTS
+			case Oracle.PUT:
+				put(args[2], args[3]);
+				break;
+			case Oracle.GET:
+				result = get(args[2]);
 				break;
 			default:
 				break;
