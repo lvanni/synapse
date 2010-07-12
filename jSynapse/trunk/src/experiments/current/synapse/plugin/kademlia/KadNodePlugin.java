@@ -48,7 +48,7 @@ public class KadNodePlugin extends KadNode{
 	}
 
 	public String handleRequest(String code) {
-		System.out.println("receive: " + code);
+//		System.out.println("receive: " + code);
 		String[] args = code.split(",");
 		if (args[0].equals(getIdentifier())) { 
 			super.handleRequest(code);
@@ -56,18 +56,18 @@ public class KadNodePlugin extends KadNode{
 			for(String arg : args){
 				if(arg.split("=")[0].equals("lookup")){
 					String key = arg.split("=")[1].split("]")[0];
-//					String cleanKey = synapse.getInCleanTable(key+ "|" + identifier);
-					System.out.println("search " + key);
-					String cleanKey = synapse.getInCleanTable(key);
+					String cleanKey = synapse.getInCleanTable(key+ "|" + identifier);
+//					String cleanKey = synapse.getInCleanTable(key);
+//					System.out.println("search " + key);
 					if (cleanKey != null && !cleanKey.equals("null")
 							&& !cleanKey.equals("")) {
-						System.out.println("CleanKey found!\t" + key + " => " + cleanKey);
+//						System.out.println("CleanKey found!\t" + key + " => " + cleanKey);
 						if (synapse.cacheTableExist(cleanKey).equals("1")) {
 							// THEN SYNAPSE AND USE THE CACHE TABLE
 							synapse.synapseGet(cleanKey, identifier);
 						}
 					} else {
-						System.out.println("CleanKey not found!\t" + key);
+//						System.out.println("CleanKey not found!\t" + key);
 					}
 				}
 			}

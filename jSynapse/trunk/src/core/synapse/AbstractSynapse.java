@@ -102,8 +102,8 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse 
 		for (final IDHT o : networks) {
 			new Thread(new Runnable() {
 				public void run() {
-//					int hKey = keyToH(o.keyToH(key) + "|" + o.getIdentifier()); // h(key)|IDENT
-//					putInCleanTable(hKey, key); // SAVE THE CLEAN KEY
+					int hKey = keyToH(o.keyToH(key) + "|" + o.getIdentifier()); // h(key)|IDENT
+					putInCleanTable(hKey, key); // SAVE THE CLEAN KEY
 					putInCleanTable(o.keyToH(key), key);
 					o.put(key, value); // MULTIPUT
 				}
@@ -163,9 +163,9 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse 
 
 		public void run() {
 			// CLEAN TABLE
-//			int hCleanKey = keyToH(o.keyToH(key) + "|" + o.getIdentifier()); // h(key)|IDENT
-//			putInCleanTable(hCleanKey, key);
-			putInCleanTable(o.keyToH(key), key);
+			int hCleanKey = keyToH(o.keyToH(key) + "|" + o.getIdentifier()); // h(key)|IDENT
+			putInCleanTable(hCleanKey, key);
+//			putInCleanTable(o.keyToH(key), key);
 
 			// ADD VALUE IN THE CACHE TABLE
 			addValue(key, o.get(key));

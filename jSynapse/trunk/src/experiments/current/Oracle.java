@@ -24,10 +24,13 @@ public class Oracle {
 		} else if(args[0].equals("get")){
 			String res = transport.sendRequest(args[2] + "," + GET + "," + args[1],
 					new Node(args[3], Integer.parseInt(args[4])));
-			if(res == null || res.split("\\.").length > 1 || res.equals("null")){
-				System.out.println("null");
-			} else { 
-				System.out.println(res);
+			if(res != null && res.split("\\.").length == 1 && !res.equals("null")){
+				for(String arg : res.split("\\*\\*\\*\\*")){
+					if(!arg.equals("null") && !arg.equals("") && arg != null){
+							System.out.println(arg);
+							break;
+					}
+				}
 			}
 		} else {
 			System.out.println("Oracle put <key> <value> <networkID> <address> <port>");

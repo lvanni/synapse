@@ -16,7 +16,7 @@ import core.tools.Range;
 public abstract class AbstractChord implements IChord {
 
 	/** the degree of the address space of the chord */
-	public static int SPACESIZE = 17;
+	public static int SPACESIZE = 25;
 
 	/** represent this node */
 	private Node thisNode;

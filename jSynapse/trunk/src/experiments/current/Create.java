@@ -32,7 +32,7 @@ public class Create {
 		CHORD, CHORDPLUGIN, KAD, KADPLUGIN, SYNAPSE
 	}
 
-	private static String trackerAddress = "cycloid.inria.fr";
+	private static String trackerAddress = "localhost";
 	private static int trackerPort = 8000;
 
 	/**
