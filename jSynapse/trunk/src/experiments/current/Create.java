@@ -26,6 +26,20 @@ import experiments.current.synapse.plugin.kademlia.KadNodePlugin;
 public class Create {
 
 	/**
+	 * Put the application in background mode.
+	 */
+	public void BackgroundMode() {
+		synchronized(this){
+			try {
+				this.wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
 	 * 
 	 */
 	private static enum NodeType {
@@ -98,12 +112,17 @@ public class Create {
 	public static void main(String[] args) {
 		try {
 			IDHT overlay = null;
+			boolean backgroundMode = false;
 			for (int i = 1; i < args.length; i++) {
 				if(args[i].equals("--tracker") || args[i].equals("-t")) {
 					trackerAddress = args[i + 1];
 					trackerPort = Integer.parseInt(args[i + 2]);
 				}
+				if(args[i].equals("--background") || args[i].equals("-b")) {
+					backgroundMode = true;
+				}
 			}
+
 			if (args[0].equals("node")) {
 				if(args[1].equals("chord")) {
 					overlay = getNode(args[1], args[2], NodeType.CHORD, null);
@@ -127,75 +146,80 @@ public class Create {
 					}
 				}
 				overlay = synapse;
+			} else {
+				throw new Exception("Invalid parameters");
 			}
 
 			// STAND-BY
-			BufferedReader input = new BufferedReader(new InputStreamReader(
-					System.in));
-			while (true) {
-				System.out.println("0) Status");
-				System.out.println("1) Publish");
-				System.out.println("2) Search");
-				System.out.println("3) Quit");
-				System.out.print("---> ");
-				try {
-					int chx = Integer.parseInt(input.readLine().trim());
-					String key;
-					switch (chx) {
-					case 0:
-						System.out.println("\n" + overlay + "\n");
-						break;
-					case 1:
-						System.out.print("\nkey = ");
-						key = input.readLine();
-						System.out.print("value = ");
-						String value = input.readLine();
-						overlay.put(key, value);
-						break;
-					case 2:
-						System.out.print("\nkey = ");
-						key = input.readLine();
-						String found;
-//						if (overlay instanceof Synapse) {
-//							found = ((Synapse) overlay).get(key);
-//						} else {
+			if(!backgroundMode){
+				BufferedReader input = new BufferedReader(new InputStreamReader(
+						System.in));
+				while (true) {
+					System.out.println("0) Status");
+					System.out.println("1) Publish");
+					System.out.println("2) Search");
+					System.out.println("3) Quit");
+					System.out.print("---> ");
+					try {
+						int chx = Integer.parseInt(input.readLine().trim());
+						String key;
+						switch (chx) {
+						case 0:
+							System.out.println("\n" + overlay + "\n");
+							break;
+						case 1:
+							System.out.print("\nkey = ");
+							key = input.readLine();
+							System.out.print("value = ");
+							String value = input.readLine();
+							overlay.put(key, value);
+							break;
+						case 2:
+							System.out.print("\nkey = ");
+							key = input.readLine();
+							String found;
+							//						if (overlay instanceof Synapse) {
+							//							found = ((Synapse) overlay).get(key);
+							//						} else {
 							found = overlay.get(key);
-//						}
-						System.out.println("found: " + found);
-						break;
-					case 3:
-						if (overlay instanceof Synapse) {
-							for (IDHT o : ((Synapse) overlay).getNetworks()) {
-								overlay.getTransport().sendRequest(
-										ITracker.REMOVENODE + ","
-										+ o.getIdentifier() + ","
-										+ o.getThisNode(),
-										new Node(trackerAddress, 0,
-												trackerPort));
-							}
+							//						}
+							System.out.println("found: " + found);
+							break;
+						case 3:
+							if (overlay instanceof Synapse) {
+								for (IDHT o : ((Synapse) overlay).getNetworks()) {
+									overlay.getTransport().sendRequest(
+											ITracker.REMOVENODE + ","
+											+ o.getIdentifier() + ","
+											+ o.getThisNode(),
+											new Node(trackerAddress, 0,
+													trackerPort));
+								}
 
+							}
+							overlay.getTransport().sendRequest(
+									ITracker.REMOVENODE + ","
+									+ overlay.getIdentifier() + ","
+									+ overlay.getThisNode(),
+									new Node(trackerAddress, 0,
+											trackerPort));
+							overlay.kill();
+						default:
+							break;
 						}
-						overlay.getTransport().sendRequest(
-								ITracker.REMOVENODE + ","
-								+ overlay.getIdentifier() + ","
-								+ overlay.getThisNode(),
-								new Node(trackerAddress, 0,
-										trackerPort));
-						overlay.kill();
-					default:
-						break;
+						System.out.println("\npress Enter to continue...");
+						input.readLine();
+					} catch (NumberFormatException e) {
+						System.out.println("what?");
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
-					System.out.println("\npress Enter to continue...");
-					input.readLine();
-				} catch (NumberFormatException e) {
-				} catch (IOException e) {
-					e.printStackTrace();
 				}
+			} else {
+				new Create().BackgroundMode();
 			}
-		} catch (ArrayIndexOutOfBoundsException e) {
-			System.out.println("invalid parameters!\n"
-					+ "=> Create node [chord|kad] <IDNetwork> -t trackerAddress trackerPort\n"
-					+ "=> Create synapse (-a [chord|kad] <IDNetwork>)+ -t trackerAddress trackerPort");
+		} catch (Exception e) {
+			System.out.println("usage: Create [node|synapse] [chord|kad] <networkID> [[-t|--tracker] <address> <port>] [-b|--background]");
 		}
 	}
 }

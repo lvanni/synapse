@@ -15,8 +15,7 @@ root path: jSynapse/trunk
 java -cp bin experiments.current.tracker.ui.LaunchTracker
 
 2) launch serveral nodes or synapses:
-java -cp bin experiments.current.Create node [chord|kad] <IDNetwork> -t trackerAddress trackerPort
-java -cp bin experiments.current.Create synapse (-a [chord|kad] <IDNetwork>)+ -t trackerAddress trackerPort
+java -cp bin experiments.current.Create [node|synapse] [chord|kad] <NetworkID> [[-t|--tracker] <address> <port>] [-b|--background]
 
 3) Use the Oracle (put/get operation):
 java -cp bin experiments.current.Oracle put <key> <value> <networkID> <address> <port>
