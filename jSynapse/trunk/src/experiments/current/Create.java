@@ -31,10 +31,15 @@ public class Create {
 	public void BackgroundMode(IDHT overlay) {
 		synchronized(this){
 			try {
-				System.out.println(overlay.getThisNode().getIp() + ":" + overlay.getThisNode().getPort());
+				System.out.println(overlay.getIdentifier() + ":" + overlay.getThisNode().getIp() + ":" + overlay.getThisNode().getPort());
+				if(overlay instanceof Synapse){
+					Synapse synapse = (Synapse) overlay;
+					for(IDHT o : synapse.getNetworks()) {
+						System.out.println(o.getIdentifier() + ":" + o.getThisNode().getIp() + ":" + o.getThisNode().getPort());
+					}
+				}
 				this.wait();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -220,7 +225,8 @@ public class Create {
 				new Create().BackgroundMode(overlay);
 			}
 		} catch (Exception e) {
-			System.out.println("usage: Create [node|synapse] [chord|kad] <networkID> [[-t|--tracker] <address> <port>] [-b|--background]");
+			System.out.println("usage: \nCreate node [chord|kad] <networkID> [[-t|--tracker] <address> <port>] [-b|--background]");
+			System.out.println("Create synapse [-a [chord|kad] <networkID>]+ [[-t|--tracker] <address> <port>] [-b|--background]");
 		}
 	}
 }
