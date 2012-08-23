@@ -28,9 +28,10 @@ public class Create {
 	/**
 	 * Put the application in background mode.
 	 */
-	public void BackgroundMode() {
+	public void BackgroundMode(IDHT overlay) {
 		synchronized(this){
 			try {
+				System.out.println(overlay.getThisNode().getIp() + ":" + overlay.getThisNode().getPort());
 				this.wait();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
@@ -216,7 +217,7 @@ public class Create {
 					}
 				}
 			} else {
-				new Create().BackgroundMode();
+				new Create().BackgroundMode(overlay);
 			}
 		} catch (Exception e) {
 			System.out.println("usage: Create [node|synapse] [chord|kad] <networkID> [[-t|--tracker] <address> <port>] [-b|--background]");

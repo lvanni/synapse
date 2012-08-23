@@ -12,7 +12,7 @@ Usage
 root path: jSynapse/trunk
 
 1) launch the tracker:
-java -cp bin experiments.current.tracker.ui.LaunchTracker
+java -cp bin experiments.current.tracker.ui.LaunchTracker [[-p|--port] <port>] [-b|--background]
 
 2) launch serveral nodes or synapses:
 java -cp bin experiments.current.Create [node|synapse] [chord|kad] <NetworkID> [[-t|--tracker] <address> <port>] [-b|--background]
