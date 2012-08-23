@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Set;
 
-import core.protocols.p2p.IDHT;
 import core.tools.InfoConsole;
 import experiments.current.tracker.core.Invitation;
 import experiments.current.tracker.core.NodeInfo;
@@ -18,7 +17,7 @@ public class LaunchTracker {
 	public void BackgroundMode(Tracker tracker) {
 		synchronized(this){
 			try {
-				System.out.println(tracker.getTransport().getPort());
+				System.out.println("127.0.0.1:" + tracker.getTransport().getPort());
 				this.wait();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
