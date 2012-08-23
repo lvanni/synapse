@@ -18,4 +18,8 @@ java -cp bin experiments.current.tracker.ui.LaunchTracker
 java -cp bin experiments.current.Create node [chord|kad] <IDNetwork> -t trackerAddress trackerPort
 java -cp bin experiments.current.Create synapse (-a [chord|kad] <IDNetwork>)+ -t trackerAddress trackerPort
 
+3) Use the Oracle (put/get operation):
+java -cp bin experiments.current.Oracle put <key> <value> <networkID> <address> <port>
+java -cp bin experiments.current.Oracle get <key> <networkID> <address> <port>
+
 L.V
