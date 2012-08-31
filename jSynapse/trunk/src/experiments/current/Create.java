@@ -225,6 +225,7 @@ public class Create {
 				new Create().BackgroundMode(overlay);
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.out.println("usage: \nCreate node [chord|kad] <networkID> [[-t|--tracker] <address> <port>] [-b|--background]");
 			System.out.println("Create synapse [-a [chord|kad] <networkID>]+ [[-t|--tracker] <address> <port>] [-b|--background]");
 		}

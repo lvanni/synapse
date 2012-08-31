@@ -62,7 +62,7 @@ public class LaunchTracker {
 									InfoConsole.getIp() + ":" + tracker.getTransport().getPort() + "\n");
 							Set<String> keys = tracker.getPeerSet().keySet();
 							for (String key : keys) {
-								System.out.println(key + ":");
+								System.out.println(key + ":" + tracker.getPeerSet().get(key).size() + " nodes");
 								for (NodeInfo n : tracker.getPeerSet().get(key)) {
 									System.out.println("\t" + n);
 								}
