@@ -10,7 +10,7 @@ import core.protocols.transport.ITransport;
 import core.protocols.transport.socket.request.RequestHandler;
 import core.protocols.transport.socket.server.SocketImpl;
 
-public class Simulator implements IRequestHandler, Serializable {
+public class Simulator implements ISimulator, IRequestHandler, Serializable {
 
 	private static Simulator INSTANCE = new Simulator();
 
