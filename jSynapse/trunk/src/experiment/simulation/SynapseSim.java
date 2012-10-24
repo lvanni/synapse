@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.util.Map;
 
+import core.protocol.p2p.IDHT;
 import core.protocol.p2p.Node;
 import core.protocol.transport.IRequestHandler;
 import core.protocol.transport.ITransport;
@@ -25,7 +27,14 @@ import core.protocol.transport.socket.server.SocketImpl;
  * @version 1.0
  * @since 2012
  */
-public class SynapseSim implements ISimulator, IRequestHandler, Serializable {
+public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
+	
+	/* ********************************************* */
+	/* 					Attribute					 */
+	/* ********************************************* */
+	
+	private Map<String, IDHT> topology;
+	
 
 	/* ********************************************* */
 	/* 				Singleton Pattern				 */

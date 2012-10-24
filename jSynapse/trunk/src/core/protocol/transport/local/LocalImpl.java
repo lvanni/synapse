@@ -2,12 +2,12 @@ package core.protocol.transport.local;
 
 import core.protocol.p2p.Node;
 import core.protocol.transport.ITransport;
-import experiment.simulation.ISimulator;
+import experiment.simulation.ISynapseSim;
 import experiment.simulation.SynapseSim;
 
 public class LocalImpl implements ITransport {
 	
-	private ISimulator simulator;
+	private ISynapseSim simulator;
 	
 	public LocalImpl() {
 		this.simulator = SynapseSim.getInstance();

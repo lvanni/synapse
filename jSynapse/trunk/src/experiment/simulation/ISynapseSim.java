@@ -10,9 +10,12 @@ import core.protocol.transport.IRequestHandler;
  *         Sophia-Antipolis - France
  * 
  */
-public interface ISimulator {
+public interface ISynapseSim {
 	
 	public static int DEFAULT_PORT = 8000;
+	public static enum NodeType {
+		CHORD, KAD, SYNAPSE
+	}
 	
 	public IRequestHandler getReceiver(Node node) ;
 
