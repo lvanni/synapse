@@ -12,6 +12,8 @@ import core.protocols.transport.IRequestHandler;
  */
 public interface ISimulator {
 	
+	public static int DEFAULT_PORT = 8000;
+	
 	public IRequestHandler getReceiver(Node node) ;
 
 }

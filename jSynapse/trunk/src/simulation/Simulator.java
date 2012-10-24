@@ -16,7 +16,7 @@ public class Simulator implements ISimulator, IRequestHandler, Serializable {
 	private static Simulator INSTANCE = new Simulator();
 
 	private Simulator() {
-		ITransport transport = new SocketImpl(0, 10, RequestHandler.class
+		ITransport transport = new SocketImpl(DEFAULT_PORT, 10, RequestHandler.class
 				.getName(), 10, 1, 100, this);
 		((SocketImpl) transport).launchServer();
 	}
@@ -31,7 +31,8 @@ public class Simulator implements ISimulator, IRequestHandler, Serializable {
 	}
 
 	public String handleRequest(String message) {
-		return null;
+		System.out.println(message);
+		return message + " world !";
 	}
 
 	public void kill() {
@@ -51,7 +52,7 @@ public class Simulator implements ISimulator, IRequestHandler, Serializable {
 				System.in));
 
 		while (true) {
-			if(args[0].equals("-d") || args[0].equals("--debug")) {
+			if(args.length > 0 && (args[0].equals("-d") || args[0].equals("--debug"))) {
 				System.out.println("\n\n0) Print topology");
 				System.out.println("1) Create node");
 				System.out.println("2) Put");

@@ -7,8 +7,6 @@ import core.protocols.transport.ITransport;
 
 public class LocalImpl implements ITransport {
 	
-	public static int DEFAULT_PORT = 8000;
-	
 	private ISimulator simulator;
 	
 	public LocalImpl() {
@@ -16,7 +14,7 @@ public class LocalImpl implements ITransport {
 	}
 
 	public int getPort() {
-		return DEFAULT_PORT;
+		return Simulator.DEFAULT_PORT;
 	}
 
 	/**
