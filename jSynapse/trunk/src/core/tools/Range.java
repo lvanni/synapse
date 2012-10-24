@@ -1,6 +1,6 @@
 package core.tools;
 
-import core.protocols.p2p.chord.AbstractChord;
+import core.protocol.p2p.chord.AbstractChord;
 
 /**
  * Tool class
