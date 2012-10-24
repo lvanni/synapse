@@ -39,7 +39,7 @@ public class Simulator implements ISimulator, IRequestHandler, Serializable {
 	 */
 	public static void main(String[] args) {
 
-		Simulator simulator = new Simulator();
+		Simulator simulator = getInstance();
 
 		BufferedReader input = new BufferedReader(new InputStreamReader(
 				System.in));
