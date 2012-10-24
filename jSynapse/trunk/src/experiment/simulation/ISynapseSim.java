@@ -13,10 +13,21 @@ import core.protocol.transport.IRequestHandler;
 public interface ISynapseSim {
 	
 	public static int DEFAULT_PORT = 8000;
+	
 	public static enum NodeType {
 		CHORD, KAD, SYNAPSE
 	}
 	
+	public static enum Command {
+		CREATE, PUT, GET;
+	}
+	
 	public IRequestHandler getReceiver(Node node) ;
+	
+	public int createNode(NodeType nodeType, String networkId);
+	
+	public int put(String key, String value);
+	
+	public int get(String key);
 
 }

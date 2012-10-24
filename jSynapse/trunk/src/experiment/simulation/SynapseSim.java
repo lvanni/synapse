@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 import core.protocol.p2p.IDHT;
@@ -33,8 +34,7 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 	/* ********************************************* */
 	/* 					Attribute					 */
 	/* ********************************************* */
-	
-	private Map<String, IDHT> topology;
+	private Map<NodeType, Map<String, IDHT>> topology;
 	
 
 	/* ********************************************* */
@@ -55,18 +55,32 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 	/* ********************************************* */
 	/* 			implements ISimulator				 */
 	/* ********************************************* */
-	
 	public IRequestHandler getReceiver(Node node) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	public int createNode(NodeType nodeType, String networkId) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public int put(String key, String value) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	public int get(String key) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
 	/* ********************************************* */
 	/* 			implements IRequestHandler			 */
 	/* ********************************************* */
 	public String handleRequest(String message) {
 		try {
-			return commandExecutor(commandInterpretor(message));
+			return commandExecutor(commandInterpretor(message), message.split(","));
 		} catch (SynapseSimException e) {
 			e.printStackTrace();
 			return e.toString();
@@ -77,29 +91,17 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 		// TODO Auto-generated method stub
 	}
 	
+	/* ********************************************* */
+	/* 					private Methods				 */
+	/* ********************************************* */
 	/**
 	 * Interpret user command
 	 * @param message
 	 * @return
 	 */
-	private int commandInterpretor(String message){
-		String[] messageDetail = message.split(",");
-		if(messageDetail[0].equals("print")){
-			return 0;
-		}
-		if(messageDetail[0].equals("create")){
-			return 1;
-		}
-		if(messageDetail[0].equals("put")){
-			return 2;
-		}
-		if(messageDetail[0].equals("get")){
-			return 3;
-		}
-		if(messageDetail[0].equals("quit")){
-			return 4;
-		}
-		return -1;
+	private Command commandInterpretor(String message) {
+		String[] args = message.split(",");
+		return Command.values()[Integer.parseInt(args[0])];
 	}
 	
 	/**
@@ -107,27 +109,29 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 	 * @param choice
 	 * @throws SynapseSimException
 	 */
-	private String commandExecutor(int choice) throws SynapseSimException{
-		switch (choice) {
-		case 0:
+	private String commandExecutor(Command command, String[] args) throws SynapseSimException{
+		switch (command) {
+		case CREATE:
 			System.out.println("Print topology");
 			return "not yet implemented...";
-		case 1:
+		case GET:
 			System.out.println("Create Node");
 			return "not yet implemented...";
-		case 2:
+		case PUT:
 			System.out.println("put");
 			return "not yet implemented...";
-		case 3:
-			System.out.println("get");
-			return "not yet implemented...";
-		case 4:
-			this.kill();
-			System.exit(0);
 		default:
 			throw new SynapseSimException("How can it be possible to have this case ? You have 2 hours to think about it");
 		}
 	}
+	
+	/* ********************************************* */
+	/* 					public Methods				 */
+	/* ********************************************* */
+	public String printTopology() {
+		return "not yet implemented...";
+	}
+	
 
 	/* ********************************************* */
 	/* 					simulator UI				 */
@@ -151,8 +155,7 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 					int chx = Integer.parseInt(input.readLine().trim());
 					switch (chx) {
 					case 0:
-						System.out.println("Print topology");
-						System.out.println("not yet implemented...");
+						System.out.println(simulator.printTopology());
 						break;
 					case 1:
 						System.out.println("Create Node");
