@@ -10,6 +10,7 @@ import core.protocol.transport.IRequestHandler;
 import core.protocol.transport.ITransport;
 import core.protocol.transport.socket.request.RequestHandler;
 import core.protocol.transport.socket.server.SocketImpl;
+import experiment.simulation.exception.SynapseSimException;
 
 /**
   _____                             _____ _           
@@ -55,12 +56,68 @@ public class SynapseSim implements ISimulator, IRequestHandler, Serializable {
 	/* 			implements IRequestHandler			 */
 	/* ********************************************* */
 	public String handleRequest(String message) {
-		System.out.println(message);
-		return message + " world !";
+		try {
+			return commandExecutor(commandInterpretor(message));
+		} catch (SynapseSimException e) {
+			e.printStackTrace();
+			return e.toString();
+		}
 	}
 
 	public void kill() {
 		// TODO Auto-generated method stub
+	}
+	
+	/**
+	 * Interpret user command
+	 * @param message
+	 * @return
+	 */
+	private int commandInterpretor(String message){
+		String[] messageDetail = message.split(",");
+		if(messageDetail[0].equals("print")){
+			return 0;
+		}
+		if(messageDetail[0].equals("create")){
+			return 1;
+		}
+		if(messageDetail[0].equals("put")){
+			return 2;
+		}
+		if(messageDetail[0].equals("get")){
+			return 3;
+		}
+		if(messageDetail[0].equals("quit")){
+			return 4;
+		}
+		return -1;
+	}
+	
+	/**
+	 * Execute user command
+	 * @param choice
+	 * @throws SynapseSimException
+	 */
+	private String commandExecutor(int choice) throws SynapseSimException{
+		switch (choice) {
+		case 0:
+			System.out.println("Print topology");
+			return "not yet implemented...";
+		case 1:
+			System.out.println("Create Node");
+			return "not yet implemented...";
+		case 2:
+			System.out.println("put");
+			return "not yet implemented...";
+		case 3:
+			System.out.println("get");
+			return "not yet implemented...";
+		case 4:
+			this.kill();
+			System.exit(0);
+		default:
+			throw new SynapseSimException("How can it be possible to have this case ? You have 2 hours to think about it");
+		}
 	}
 
 	/* ********************************************* */
@@ -85,26 +142,32 @@ public class SynapseSim implements ISimulator, IRequestHandler, Serializable {
 					int chx = Integer.parseInt(input.readLine().trim());
 					switch (chx) {
 					case 0:
+						System.out.println("Print topology");
 						System.out.println("not yet implemented...");
 						break;
 					case 1:
+						System.out.println("Create Node");
 						System.out.println("not yet implemented...");
 						break;
 					case 2:
+						System.out.println("put");
 						System.out.println("not yet implemented...");
 						break;
 					case 3:
+						System.out.println("get");
 						System.out.println("not yet implemented...");
 						break;
 					case 4:
 						simulator.kill();
 						System.exit(0);
 					default:
-						break;
+						throw new SynapseSimException("How can it be possible to have this case ? You have 2 hours to think about it");
 					}
 				} catch (NumberFormatException e) {
 					System.out.println("what?");
 				} catch (IOException e) {
+					e.printStackTrace();
+				} catch(SynapseSimException e){
 					e.printStackTrace();
 				}
 			} else {
