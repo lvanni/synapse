@@ -11,25 +11,49 @@ import core.protocol.transport.ITransport;
 import core.protocol.transport.socket.request.RequestHandler;
 import core.protocol.transport.socket.server.SocketImpl;
 
-public class Simulator implements ISimulator, IRequestHandler, Serializable {
+/**
+  _____                             _____ _           
+ / ____|                           / ____(_)          
+| (___  _   _ _ __  _ __  ___  ___| (___  _ _ __ ___  
+ \___ \| | | | '_ \| '_ \/ __|/ _ \\___ \| | '_ ` _ \ 
+ ____) | |_| | | | | |_) \__ \  __/____) | | | | | | |
+|_____/ \__, |_| |_| .__/|___/\___|_____/|_|_| |_| |_|
+         __/ |     | |                                
+        |___/      |_|   
+        
+ * @author lvanni
+ * @version 1.0
+ * @since 2012
+ */
+public class SynapseSim implements ISimulator, IRequestHandler, Serializable {
 
-	private static Simulator INSTANCE = new Simulator();
+	/* ********************************************* */
+	/* 				Singleton Pattern				 */
+	/* ********************************************* */
+	private static SynapseSim INSTANCE = new SynapseSim();
 
-	private Simulator() {
+	private SynapseSim() {
 		ITransport transport = new SocketImpl(DEFAULT_PORT, 10, RequestHandler.class
 				.getName(), 10, 1, 100, this);
 		((SocketImpl) transport).launchServer();
 	}
 
+	public static SynapseSim getInstance() {
+		return INSTANCE;
+	}
+	
+	/* ********************************************* */
+	/* 			implements ISimulator				 */
+	/* ********************************************* */
+	
 	public IRequestHandler getReceiver(Node node) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public static Simulator getInstance() {
-		return INSTANCE;
-	}
-
+	/* ********************************************* */
+	/* 			implements IRequestHandler			 */
+	/* ********************************************* */
 	public String handleRequest(String message) {
 		System.out.println(message);
 		return message + " world !";
@@ -39,14 +63,12 @@ public class Simulator implements ISimulator, IRequestHandler, Serializable {
 		// TODO Auto-generated method stub
 	}
 
-	/**
-	 * Main function to launch the application
-	 * 
-	 * @param args
-	 */
+	/* ********************************************* */
+	/* 					simulator UI				 */
+	/* ********************************************* */
 	public static void main(String[] args) {
 
-		Simulator simulator = getInstance();
+		SynapseSim simulator = getInstance();
 
 		BufferedReader input = new BufferedReader(new InputStreamReader(
 				System.in));

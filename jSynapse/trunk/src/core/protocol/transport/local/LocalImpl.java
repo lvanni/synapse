@@ -3,18 +3,18 @@ package core.protocol.transport.local;
 import core.protocol.p2p.Node;
 import core.protocol.transport.ITransport;
 import experiment.simulation.ISimulator;
-import experiment.simulation.Simulator;
+import experiment.simulation.SynapseSim;
 
 public class LocalImpl implements ITransport {
 	
 	private ISimulator simulator;
 	
 	public LocalImpl() {
-		this.simulator = Simulator.getInstance();
+		this.simulator = SynapseSim.getInstance();
 	}
 
 	public int getPort() {
-		return Simulator.DEFAULT_PORT;
+		return SynapseSim.DEFAULT_PORT;
 	}
 
 	/**

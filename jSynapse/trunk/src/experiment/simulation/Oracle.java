@@ -30,7 +30,7 @@ public class Oracle {
 			ITransport transport = new SocketImpl(0, 10, RequestHandler.class.getName(),
 					10, 1, 100, null);
 			
-			Node simulator = new Node("localhost", Simulator.DEFAULT_PORT);
+			Node simulator = new Node("localhost", SynapseSim.DEFAULT_PORT);
 			String reponse = transport.sendRequest("Hello", simulator);
 			System.out.println(reponse);
 			
