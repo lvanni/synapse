@@ -3,18 +3,25 @@ package simulation;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 
 import core.protocols.transport.IRequestHandler;
 import core.protocols.transport.ITransport;
 import core.protocols.transport.socket.request.RequestHandler;
 import core.protocols.transport.socket.server.SocketImpl;
 
-public class Simulator implements IRequestHandler {
+public class Simulator implements IRequestHandler, Serializable {
 
-	public Simulator() {
-		ITransport transport = new SocketImpl(0, 10, RequestHandler.class.getName(),
-				10, 1, 100, this);
+	private static Simulator INSTANCE = new Simulator();
+
+	private Simulator() {
+		ITransport transport = new SocketImpl(0, 10, RequestHandler.class
+				.getName(), 10, 1, 100, this);
 		((SocketImpl) transport).launchServer();
+	}
+
+	public static Simulator getInstance() {
+		return INSTANCE;
 	}
 
 	public String handleRequest(String message) {
@@ -44,11 +51,13 @@ public class Simulator implements IRequestHandler {
 			try {
 				int chx = Integer.parseInt(input.readLine().trim());
 				switch (chx) {
-				case 0 : break;
-				case 1 : 
-					simulator.kill(); 
+				case 0:
+					break;
+				case 1:
+					simulator.kill();
 					System.exit(0);
-				default : break;
+				default:
+					break;
 				}
 			} catch (NumberFormatException e) {
 				System.out.println("what?");
