@@ -1,20 +1,24 @@
 package simulation;
 
 import core.protocols.p2p.Node;
-import core.protocols.transport.IRequestHandler;
 import core.protocols.transport.ITransport;
 import core.protocols.transport.socket.request.RequestHandler;
 import core.protocols.transport.socket.server.SocketImpl;
+import core.protocols.transport.local.LocalImpl;
 
-public class Oracle implements IRequestHandler{
+public class Oracle {
 	
-	public String handleRequest(String message) {
-		return null;
+	public Oracle(){
+		
 	}
-
-	public void kill() {
-		// TODO Auto-generated method stub
-	}
+	
+	
+	/**private void lauchCommandLine(){
+		while(true){
+			
+		}
+	}**/
+	
 	
 	/**
 	 * Main function to launch the application
@@ -25,10 +29,11 @@ public class Oracle implements IRequestHandler{
 		try {
 			
 			ITransport transport = new SocketImpl(0, 10, RequestHandler.class.getName(),
-					10, 1, 100, new Oracle());
+					10, 1, 100, null);
 			((SocketImpl) transport).launchServer();
 			
-			Node simulator = new Node("localhost", 8000);
+			Node simulator = new Node("localhost", LocalImpl.DEFAULT_PORT);
+			transport.sendRequest("create synapse 1 chord 2 kad 3", simulator);
 			
 			// TODO: implement message
 			
