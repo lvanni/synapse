@@ -1,5 +1,8 @@
 package simulation;
 
+import core.protocols.p2p.Node;
+import core.protocols.transport.IRequestHandler;
+
 /**
  * This interface define the Simulator
  * 
@@ -9,4 +12,6 @@ package simulation;
  */
 public interface ISimulator {
 	
+	public IRequestHandler getReceiver(Node node) ;
+
 }

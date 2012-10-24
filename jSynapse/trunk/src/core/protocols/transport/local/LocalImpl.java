@@ -22,9 +22,8 @@ public class LocalImpl implements ITransport {
 	/**
 	 * Send a message to the Node destination
 	 */
-	public String sendRequest(String message, Node destination) {
-		// TODO Auto-generated method stub
-		return null;
+	public String sendRequest(String message, Node node) {
+		return simulator.getReceiver(node).handleRequest(message);
 	}
 
 	/**

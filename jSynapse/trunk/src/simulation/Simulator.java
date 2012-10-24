@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 
+import core.protocols.p2p.Node;
 import core.protocols.transport.IRequestHandler;
 import core.protocols.transport.ITransport;
 import core.protocols.transport.socket.request.RequestHandler;
@@ -18,6 +19,11 @@ public class Simulator implements ISimulator, IRequestHandler, Serializable {
 		ITransport transport = new SocketImpl(0, 10, RequestHandler.class
 				.getName(), 10, 1, 100, this);
 		((SocketImpl) transport).launchServer();
+	}
+
+	public IRequestHandler getReceiver(Node node) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	public static Simulator getInstance() {
@@ -45,24 +51,45 @@ public class Simulator implements ISimulator, IRequestHandler, Serializable {
 				System.in));
 
 		while (true) {
-			System.out.println("0) Status");
-			System.out.println("1) Quit");
-			System.out.print("---> ");
-			try {
-				int chx = Integer.parseInt(input.readLine().trim());
-				switch (chx) {
-				case 0:
-					break;
-				case 1:
-					simulator.kill();
-					System.exit(0);
-				default:
-					break;
+			if(args[0].equals("-d") || args[0].equals("--debug")) {
+				System.out.println("\n\n0) Print topology");
+				System.out.println("1) Create node");
+				System.out.println("2) Put");
+				System.out.println("3) Get");
+				System.out.println("4) Quit");
+				System.out.print("---> ");
+				try {
+					int chx = Integer.parseInt(input.readLine().trim());
+					switch (chx) {
+					case 0:
+						System.out.println("not yet implemented...");
+						break;
+					case 1:
+						System.out.println("not yet implemented...");
+						break;
+					case 2:
+						System.out.println("not yet implemented...");
+						break;
+					case 3:
+						System.out.println("not yet implemented...");
+						break;
+					case 4:
+						simulator.kill();
+						System.exit(0);
+					default:
+						break;
+					}
+				} catch (NumberFormatException e) {
+					System.out.println("what?");
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-			} catch (NumberFormatException e) {
-				System.out.println("what?");
-			} catch (IOException e) {
-				e.printStackTrace();
+			} else {
+				try {
+					input.readLine();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
