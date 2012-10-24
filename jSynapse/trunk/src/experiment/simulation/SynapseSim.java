@@ -113,7 +113,12 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 		switch (command) {
 		case CREATE:
 			System.out.println("Print topology");
-			return "not yet implemented...";
+			if(args.length < 3 || (args[1].equals("Synapse") && ((args.length -1) % 9) != 0)){
+				throw new SynapseSimException("Bad argument number to create Synapse node");
+			}
+			else{
+				return analyseCreateCommandAndExecute(args);
+			}
 		case GET:
 			System.out.println("Create Node");
 			return "not yet implemented...";
@@ -123,6 +128,25 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 		default:
 			throw new SynapseSimException("How can it be possible to have this case ? You have 2 hours to think about it");
 		}
+	}
+	
+	/**
+	 * Analyse create command and execute it 
+	 * @param args
+	 * @return
+	 * @throws SynapseSimException
+	 */
+	private String analyseCreateCommandAndExecute(String[] args) throws SynapseSimException{
+		if(args[1].equals("Kad")){
+			createNode(NodeType.KAD, args[2]);
+		}
+		if(args[1].equals("Chord")){
+			createNode(NodeType.CHORD,args[2]);
+		}
+		if(args[1].equals("Synapse")){
+			
+		}
+		throw new SynapseSimException("Unknown node type");
 	}
 	
 	/* ********************************************* */
