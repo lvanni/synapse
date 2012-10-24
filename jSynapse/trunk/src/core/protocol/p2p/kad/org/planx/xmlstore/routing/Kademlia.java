@@ -27,7 +27,7 @@ import core.protocol.p2p.kad.org.planx.xmlstore.routing.operation.RemoveOperatio
 import core.protocol.p2p.kad.org.planx.xmlstore.routing.operation.RestoreOperation;
 import core.protocol.p2p.kad.org.planx.xmlstore.routing.operation.StoreOperation;
 
-import experiment.networking.current.synapse.plugin.kademlia.KadNodePlugin;
+import experiment.networking.current.node.synapse.plugin.kademlia.KadNodePlugin;
 
 /**
  * Maps keys to values in a distributed setting using the Kademlia protocol.

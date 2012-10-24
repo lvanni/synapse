@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import core.protocol.p2p.Node;
 import core.protocol.transport.socket.SimpleSocketImpl;
 import core.tools.InfoConsole;
-import experiment.networking.old2010.nodes.ChordNode;
+import experiment.networking.old2010.node.ChordNode;
 
 //public class CreateNode implements Runnable{
 

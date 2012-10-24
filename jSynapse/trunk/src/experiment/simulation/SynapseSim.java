@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 import core.protocol.p2p.IDHT;
@@ -13,6 +12,9 @@ import core.protocol.transport.IRequestHandler;
 import core.protocol.transport.ITransport;
 import core.protocol.transport.socket.request.RequestHandler;
 import core.protocol.transport.socket.server.SocketImpl;
+import experiment.networking.current.node.chord.ChordNode;
+import experiment.networking.current.node.kademlia.KadNode;
+import experiment.networking.current.node.synapse.Synapse;
 import experiment.simulation.exception.SynapseSimException;
 
 /**
@@ -56,17 +58,29 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 	/* 			implements ISimulator				 */
 	/* ********************************************* */
 	public IRequestHandler getReceiver(Node node) {
-		// TODO Auto-generated method stub
-		return null;
+		return topology.get(node.getNetworkType()).get(node.getNetworkId()); 
 	}
 
 	public int createNode(NodeType nodeType, String networkId) {
-		// TODO Auto-generated method stub
+		switch (nodeType) {
+		case CHORD:
+			ChordNode chordNode = new ChordNode(null, 0, null);
+			chordNode.getThisNode().setNetworkId(networkId);
+			chordNode.getThisNode().setNetworkType(nodeType.toString());
+			break;
+		case KAD:
+			KadNode kadNode = new KadNode(null);
+			kadNode.getThisNode().setNetworkId(networkId);
+			kadNode.getThisNode().setNetworkType(nodeType.toString());
+			break;
+		case SYNAPSE:
+			new Synapse(null, 0);
+			break;
+		}
 		return 0;
 	}
 
 	public int put(String key, String value) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 	

@@ -1,8 +1,8 @@
-package experiment.networking.current.synapse.plugin.chord;
+package experiment.networking.current.node.synapse.plugin.chord;
 
 import core.protocol.p2p.chord.IChord;
 import experiment.networking.current.node.chord.ChordNode;
-import experiment.networking.current.synapse.Synapse;
+import experiment.networking.current.node.synapse.Synapse;
 
 /**
  * This is an implementation of a chordPlugin node for a synapse

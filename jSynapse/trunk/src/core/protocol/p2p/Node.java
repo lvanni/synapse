@@ -10,11 +10,22 @@ package core.protocol.p2p;
 public class Node {
 	/** Address ip of the peer */
 	private String ip;
+
 	/** id of the peer in the chord */
 	private int id;
+	
 	/** port number used for the transport layer */
 	private int port;
+	
+	/** the id of the network related to the node */
+	private String networkId;
+	
+	/** the type of the node (chord, kad, synapse, ...) */
+	private String networkType;
 
+	/** For the new parameters used by the simulator */
+	private static String UNKNOWN_MESSAGE = "this parameter is only used with the simulator";
+	
 	/**
 	 * Default constructor of Node
 	 * 
@@ -26,6 +37,8 @@ public class Node {
 		this.ip = ip;
 		this.id = id;
 		this.port = port;
+		this.networkId = UNKNOWN_MESSAGE;
+		this.networkType = UNKNOWN_MESSAGE;
 	}
 
 	/**
@@ -117,4 +130,37 @@ public class Node {
 	public void setPort(int port) {
 		this.port = port;
 	}
+
+	/**
+	 * 
+	 * @return get the networkId of the node
+	 */
+	public String getNetworkId() {
+		return networkId;
+	}
+
+	/**
+	 * Set the networkId
+	 * @param networkId
+	 */
+	public void setNetworkId(String networkId) {
+		this.networkId = networkId;
+	}
+
+	/**
+	 * 
+	 * @return the type of the node
+	 */
+	public String getNetworkType() {
+		return networkType;
+	}
+
+	/**
+	 * set the type of the node
+	 * @param type
+	 */
+	public void setNetworkType(String type) {
+		this.networkType = type;
+	}
+	
 }

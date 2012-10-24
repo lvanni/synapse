@@ -11,9 +11,9 @@ import core.protocol.p2p.chord.AbstractChord;
 import core.tools.InfoConsole;
 import experiment.networking.current.node.chord.ChordNode;
 import experiment.networking.current.node.kademlia.KadNode;
-import experiment.networking.current.synapse.Synapse;
-import experiment.networking.current.synapse.plugin.chord.ChordNodePlugin;
-import experiment.networking.current.synapse.plugin.kademlia.KadNodePlugin;
+import experiment.networking.current.node.synapse.Synapse;
+import experiment.networking.current.node.synapse.plugin.chord.ChordNodePlugin;
+import experiment.networking.current.node.synapse.plugin.kademlia.KadNodePlugin;
 
 /**
  * This a very simple User Interface to allow to create Synapse, node and

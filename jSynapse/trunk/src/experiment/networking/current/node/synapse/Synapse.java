@@ -1,4 +1,4 @@
-package experiment.networking.current.synapse;
+package experiment.networking.current.node.synapse;
 
 import core.protocol.p2p.synapse.AbstractSynapse;
 

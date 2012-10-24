@@ -15,8 +15,8 @@ import core.protocol.p2p.Node;
 import core.protocol.transport.ITransport;
 import core.protocol.transport.socket.SimpleSocketImpl;
 import core.tools.InfoConsole;
-import experiment.networking.old2010.synapse.Synapse;
-import experiment.networking.old2010.synapse.plugins.ChordNodePlugin;
+import experiment.networking.old2010.node.synapse.Synapse;
+import experiment.networking.old2010.node.synapse.plugins.ChordNodePlugin;
 
 //public class CreateSynapse implements Runnable{
 //

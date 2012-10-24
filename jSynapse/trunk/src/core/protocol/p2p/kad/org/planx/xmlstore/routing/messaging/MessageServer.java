@@ -15,7 +15,7 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import experiment.networking.current.synapse.plugin.kademlia.KadNodePlugin;
+import experiment.networking.current.node.synapse.plugin.kademlia.KadNodePlugin;
 
 /**
  * Listens for incoming UDP messages and provides a framework for sending messages

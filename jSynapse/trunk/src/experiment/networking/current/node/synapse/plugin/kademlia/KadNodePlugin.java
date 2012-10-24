@@ -1,4 +1,4 @@
-package experiment.networking.current.synapse.plugin.kademlia;
+package experiment.networking.current.node.synapse.plugin.kademlia;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -14,7 +14,7 @@ import core.protocol.transport.socket.server.SocketImpl;
 import core.tools.HashFunction;
 import core.tools.InfoConsole;
 import experiment.networking.current.node.kademlia.KadNode;
-import experiment.networking.current.synapse.Synapse;
+import experiment.networking.current.node.synapse.Synapse;
 
 public class KadNodePlugin extends KadNode{
 
