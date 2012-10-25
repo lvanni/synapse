@@ -20,39 +20,46 @@ import experiment.networking.current.Oracle;
 
 public class KadNode implements IDHT{
 
-	protected String identifier;
+	protected String overlayIdentifier;
 	protected ITransport transport;
-	protected Node node;
+	protected Node nodeInfo;
 	protected Kademlia kad;
-
-	/** Hash function */
 	protected HashFunction h;
 
 	protected KadNode() {}
 
 	public KadNode(String overlayIntifier) {
-		this(overlayIntifier, null);
-	}
-	
-	public KadNode(String overlayIntifier, ITransport transport) {
 		try {
-			this.identifier = overlayIntifier;
+			
+			this.overlayIdentifier = overlayIntifier;
 			this.h = new HashFunction(overlayIntifier);
 			ServerSocket serverSocket = new ServerSocket(0);
-			node = new Node(InfoConsole.getIp(), 0, serverSocket.getLocalPort());
+			nodeInfo = new Node(InfoConsole.getIp(), 0, serverSocket.getLocalPort());
 			kad = new Kademlia(Identifier.randomIdentifier(), serverSocket.getLocalPort());
 
-			if(transport == null) {
-				// DEFAULT TRANSPORT LAYER BASED ON THE SOCKET IMPLEMENTATION
-				transport = new SocketImpl(0, 10, RequestHandler.class.getName(),
-						10, 1, 100, this);
-				((SocketImpl) transport).launchServer();
-			} else {
-				this.transport = transport;
-			}
+			// DEFAULT TRANSPORT LAYER BASED ON THE SOCKET IMPLEMENTATION
+			transport = new SocketImpl(0, 10, RequestHandler.class.getName(),
+					10, 1, 100, this);
+			((SocketImpl) transport).launchServer();
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public KadNode(Node nodeInfo, ITransport transport) {
+		try {
+			
+			ServerSocket serverSocket = new ServerSocket(0);
+			
+			this.overlayIdentifier = nodeInfo.getNetworkId();
+			this.h = new HashFunction(this.overlayIdentifier);
+			this.nodeInfo = nodeInfo;
+			this.kad = new Kademlia(Identifier.randomIdentifier(), serverSocket.getLocalPort());
+			this.transport = transport;
+
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -93,18 +100,18 @@ public class KadNode implements IDHT{
 	}
 
 	public String getOverlayIntifier() {
-		return identifier;
+		return overlayIdentifier;
 	}
 
 	public Node getThisNode() {
-		return node;
+		return nodeInfo;
 	}
 	
 	/**
 	 * @see core.protocol.p2p.chord.IChord#getThisNode()
 	 */
 	public Node setThisNode(Node node) {
-		return this.node = node;
+		return this.nodeInfo = node;
 	}
 
 	public ITransport getTransport() {

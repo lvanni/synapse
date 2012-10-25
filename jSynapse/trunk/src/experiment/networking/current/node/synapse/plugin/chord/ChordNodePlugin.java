@@ -1,5 +1,6 @@
 package experiment.networking.current.node.synapse.plugin.chord;
 
+import core.protocol.p2p.Node;
 import core.protocol.p2p.chord.IChord;
 import core.protocol.transport.ITransport;
 import experiment.networking.current.node.chord.ChordNode;
@@ -44,24 +45,37 @@ public class ChordNodePlugin extends ChordNode {
 	}
 	
 	/**
+	 * Constructor
+	 * 
+	 * @param host
+	 * @param port
+	 * @param synapse
+	 * @param overlayIntifier
+	 */
+	public ChordNodePlugin(Node nodeInfo, Synapse synapse, ITransport transport) {
+		super(nodeInfo, transport);
+		this.synapse = synapse;
+	}
+	
+	/**
 	 * @see core.protocol.transport.IRequestHandler#handleRequest(String)
 	 */
 	public String handleRequest(String code) {
 		String[] args = code.split(",");
 		String result = "";
-		if (args[0].equals(overlayIntifier)) {
+		if (args[0].equals(overlayIdentifier)) {
 			int f = Integer.parseInt(args[1]);
 			switch (f) {
 			case IChord.GET:
 				String cleanKey = synapse.getInCleanTable(args[2] + "|"
-						+ overlayIntifier);
+						+ overlayIdentifier);
 //				String cleanKey = synapse.getInCleanTable(args[2]);
 				if (cleanKey != null && !cleanKey.equals("null")
 						&& !cleanKey.equals("")) {
 //					System.out.println("CleanKey found!\t" + args[2] + " => " + cleanKey);
 					if (synapse.cacheTableExist(cleanKey).equals("1")) {
 						// THEN SYNAPSE AND USE THE CACHE TABLE
-						synapse.synapseGet(cleanKey, overlayIntifier);
+						synapse.synapseGet(cleanKey, overlayIdentifier);
 //						System.out.println("clean key found: " +  args[2] + " => " + cleanKey);
 					}
 				} else {

@@ -53,7 +53,16 @@ public abstract class AbstractChord implements IChord {
 	 *            the port number of the node to listen request
 	 */
 	public void initialize(String ip, int id, int port) {
-		thisNode = new Node(ip, id, port);
+		initialize(new Node(ip, id, port));
+	}
+	
+	/**
+	 * Initialize a chord node
+	 * 
+	 * @param nodeInfo
+	 */
+	public void initialize(Node nodeInfo) {
+		thisNode = nodeInfo;
 		successor = thisNode;
 		predecessor = thisNode;
 		table = new HashMap<Integer, String>();
