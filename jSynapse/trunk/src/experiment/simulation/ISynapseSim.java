@@ -22,7 +22,19 @@ public interface ISynapseSim {
 	 *
 	 */
 	public static enum NodeType {
-		CHORD, KAD, SYNAPSE
+		CHORD(0), 
+		KAD(1), 
+		SYNAPSE(2);
+		
+		private final int value;
+	 
+		private NodeType(int value) {
+			this.value = value;
+		}
+	 
+		public int getValue() {
+			return this.value;
+		}
 	}
 	
 	/**
@@ -31,7 +43,19 @@ public interface ISynapseSim {
 	 *
 	 */
 	public static enum Command {
-		CREATE, PUT, GET;
+		CREATE(0), 
+		PUT(1), 
+		GET(2);
+		
+		private final int value;
+		 
+		private Command(int value) {
+			this.value = value;
+		}
+	 
+		public int getValue() {
+			return this.value;
+		}
 	}
 	
 	/**

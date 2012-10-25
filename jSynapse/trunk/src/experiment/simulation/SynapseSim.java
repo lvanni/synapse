@@ -205,7 +205,14 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 	/* 					public Methods				 */
 	/* ********************************************* */
 	public String printTopology() {
-		return "not yet implemented...";
+		String result = "";
+		for(NodeType nodeType : topology.keySet()) {
+			Map<String, IDHT> topologyByNetwork = topology.get(nodeType);
+			for(Map.Entry<String, IDHT> node : topologyByNetwork.entrySet()){
+				result += node.getValue();
+			}
+		}
+		return result;
 	}
 	
 
@@ -214,27 +221,32 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 	/* ********************************************* */
 	public static void clearScreen() {
 		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+		System.out.println(
+				"  _____                             _____ _           \n" + 
+				" / ____|                           / ____(_)          \n" + 
+				"| (___  _   _ _ __  _ __  ___  ___| (___  _ _ __ ___  \n" + 
+				" \\___ \\| | | | '_ \\| '_ \\/ __|/ _ \\\\___ \\| | '_ ` _ \\ \n" + 
+				" ____) | |_| | | | | |_) \\__ \\  __/____) | | | | | | |\n" + 
+				"|_____/ \\__, |_| |_| .__/|___/\\___|_____/|_|_| |_| |_|\n" + 
+				"         __/ |     | |                                \n" + 
+				"        |___/      |_|   \n\n");
 	}
 	
+	/**
+	 * Launch the simulator
+	 * @param args
+	 */
 	public static void main(String[] args) {
 
-		SynapseSim simulator = getInstance();
+		SynapseSim synapseSim = getInstance();
 
 		BufferedReader input = new BufferedReader(new InputStreamReader(
 				System.in));
 		
-		clearScreen();
-		System.out.println(
-"  _____                             _____ _           \n" + 
-" / ____|                           / ____(_)          \n" + 
-"| (___  _   _ _ __  _ __  ___  ___| (___  _ _ __ ___  \n" + 
-" \\___ \\| | | | '_ \\| '_ \\/ __|/ _ \\\\___ \\| | '_ ` _ \\ \n" + 
-" ____) | |_| | | | | |_) \\__ \\  __/____) | | | | | | |\n" + 
-"|_____/ \\__, |_| |_| .__/|___/\\___|_____/|_|_| |_| |_|\n" + 
-"         __/ |     | |                                \n" + 
-"        |___/      |_|   \n\n");
-
 		while (true) {
+
+			clearScreen();
+
 			if(args.length > 0 && (args[0].equals("-d") || args[0].equals("--debug"))) {
 				System.out.println("\n\n0) Print topology");
 				System.out.println("1) Create node");
@@ -246,12 +258,19 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 					int chx = Integer.parseInt(input.readLine().trim());
 					switch (chx) {
 					case 0:
-						System.out.println(simulator.printTopology());
+						System.out.println(synapseSim.printTopology());
 						break;
 					case 1:
-						System.out.print("Command line ---> ");
-						String command = input.readLine().trim();
-						simulator.commandExecutor(simulator.commandInterpretor(command), command.split(","));
+						System.out.println("\n\n0) Chord");
+						System.out.println("1) Kad");
+						System.out.println("2) Synapse");
+						System.out.print("---> ");
+						int nodeType = Integer.parseInt(input.readLine().trim());
+						int command = Command.CREATE.getValue();
+						System.out.print("Network ID ---> ");
+						String networkId = input.readLine().trim();
+						String commandLine = command + "," + nodeType + "," + networkId;
+						synapseSim.commandExecutor(synapseSim.commandInterpretor(commandLine), commandLine.split(","));
 						break;
 					case 2:
 						System.out.println("put");
@@ -262,7 +281,7 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 						System.out.println("not yet implemented...");
 						break;
 					case 4:
-						simulator.kill();
+						synapseSim.kill();
 						System.exit(0);
 					default:
 						clearScreen();
