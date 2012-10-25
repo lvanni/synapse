@@ -33,6 +33,8 @@ import experiment.simulation.exception.SynapseSimException;
  */
 public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 	
+	private static final long serialVersionUID = 1L;
+
 	/* ********************************************* */
 	/* 					Attribute					 */
 	/* ********************************************* */
@@ -61,23 +63,28 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 		return topology.get(node.getNetworkType()).get(node.getNetworkId()); 
 	}
 
-	public int createNode(NodeType nodeType, String networkId) {
+	public IDHT createNode(NodeType nodeType, String networkId) {
+		return createNode(nodeType, networkId, null);
+	}
+	
+	public IDHT createNode(NodeType nodeType, String networkId, Synapse synapse) {
+		IDHT node = null;
 		switch (nodeType) {
 		case CHORD:
-			ChordNode chordNode = new ChordNode(null, 0, null);
-			chordNode.getThisNode().setNetworkId(networkId);
-			chordNode.getThisNode().setNetworkType(nodeType.toString());
+			node = new ChordNode(null, 0, null);
+			node.getThisNode().setNetworkId(networkId);
+			node.getThisNode().setNetworkType(nodeType.toString());
 			break;
 		case KAD:
-			KadNode kadNode = new KadNode(null);
-			kadNode.getThisNode().setNetworkId(networkId);
-			kadNode.getThisNode().setNetworkType(nodeType.toString());
+			node = new KadNode(null);
+			node.getThisNode().setNetworkId(networkId);
+			node.getThisNode().setNetworkType(nodeType.toString());
 			break;
 		case SYNAPSE:
-			new Synapse(null, 0);
+			node = new Synapse(null, 0);
 			break;
 		}
-		return 0;
+		return node;
 	}
 
 	public int put(String key, String value) {
