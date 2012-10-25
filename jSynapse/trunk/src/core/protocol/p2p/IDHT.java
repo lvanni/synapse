@@ -14,7 +14,7 @@ public interface IDHT extends IRequestHandler {
 	/**
 	 * @return The identifier of the network
 	 */
-	public String getOverlayIntifier();
+	public String getIdentifier();
 
 	/**
 	 * @param key

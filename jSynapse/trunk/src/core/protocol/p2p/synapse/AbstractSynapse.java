@@ -47,40 +47,23 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse 
 	private Map<String, Cache> cacheTable;
 
 	/**
-	 * 
-	 * @param ip
-	 * @param port
-	 * @param identifier
-	 */
-	protected AbstractSynapse(String ip, int port, String identifier) {
-		this(ip, port, identifier, null);
-	}
-	
-	/**
 	 * The default constructor
 	 * 
 	 * @param ip
 	 * @param port
 	 * @param identifier
 	 */
-	protected AbstractSynapse(String ip, int port, String identifier, ITransport transport) {
+	protected AbstractSynapse(String ip, int port, String identifier) {
 		this.identifier = identifier;
 		this.h = new HashFunction(identifier);
 		int id = h.SHA1ToInt(ip + port + time);
 		networks = new ArrayList<IDHT>();
 		cleanKeyTable = new HashMap<Integer, String>();
 		cacheTable = new HashMap<String, Cache>();
-		
-		if(transport == null) {
-			// DEFAULT TRANSPORT LAYER BASED ON THE SOCKET IMPLEMENTATION
-			transport = new SocketImpl(port, 10, RequestHandler.class.getName(),
-					10, 1, 100, this);
-			((SocketImpl) transport).launchServer();
-		} else {
-			this.transport = transport;
-		}
-		
-		
+		// The transport layer
+		this.transport = new SocketImpl(port, 10, RequestHandler.class
+				.getName(), 10, 1, 50, this);
+		((SocketImpl) transport).launchServer();
 		initialize(ip, id, transport.getPort());
 		checkStable();
 	}
@@ -119,7 +102,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse 
 		for (final IDHT o : networks) {
 			new Thread(new Runnable() {
 				public void run() {
-					int hKey = keyToH(o.keyToH(key) + "|" + o.getOverlayIntifier()); // h(key)|IDENT
+					int hKey = keyToH(o.keyToH(key) + "|" + o.getIdentifier()); // h(key)|IDENT
 					putInCleanTable(hKey, key); // SAVE THE CLEAN KEY
 					putInCleanTable(o.keyToH(key), key);
 					o.put(key, value); // MULTIPUT
@@ -158,7 +141,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse 
 	public void synapseGet(String key, String overlayIntifier) {
 		for (int i = 0; i < networks.size(); i++) {
 			IDHT o = networks.get(i);
-			if (!o.getOverlayIntifier().equals(overlayIntifier)) {
+			if (!o.getIdentifier().equals(overlayIntifier)) {
 				new Thread(new Get(key, o, this)).start();
 			}
 		}
@@ -180,7 +163,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse 
 
 		public void run() {
 			// CLEAN TABLE
-			int hCleanKey = keyToH(o.keyToH(key) + "|" + o.getOverlayIntifier()); // h(key)|IDENT
+			int hCleanKey = keyToH(o.keyToH(key) + "|" + o.getIdentifier()); // h(key)|IDENT
 			putInCleanTable(hCleanKey, key);
 //			putInCleanTable(o.keyToH(key), key);
 
@@ -318,7 +301,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse 
 	 */
 	public String sendRequest(String message, Node destination) {
 		String res = "";
-		res = transport.sendRequest(getOverlayIntifier() + "," + message,
+		res = transport.sendRequest(getIdentifier() + "," + message,
 				destination);
 		// ************************* TO CHANGE
 		if (res.equals(""))
@@ -421,9 +404,9 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse 
 	}
 
 	/**
-	 * @see core.protocol.p2p.IDHT#getOverlayIntifier()
+	 * @see core.protocol.p2p.IDHT#getIdentifier()
 	 */
-	public String getOverlayIntifier() {
+	public String getIdentifier() {
 		return identifier;
 	}
 

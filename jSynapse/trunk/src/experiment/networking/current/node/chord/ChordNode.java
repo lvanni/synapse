@@ -22,7 +22,8 @@ import experiment.networking.current.Oracle;
  */
 public class ChordNode extends AbstractChord {
 	/** name of the service */
-	private static SimpleDateFormat formater = new SimpleDateFormat("dd/MM/yy_H:mm:ss");
+	private static SimpleDateFormat formater = new SimpleDateFormat(
+	"dd/MM/yy_H:mm:ss");
 	protected static String time = formater.format(new Date());
 	public String overlayIntifier = "chordNetwork"; // use an unique ID is possible
 	/** Transport protocol */
@@ -32,7 +33,26 @@ public class ChordNode extends AbstractChord {
 	/* just to debug */
 	public static boolean debugMode = false;
 
-	
+	/**
+	 * Default constructor
+	 * 
+	 * @param ip
+	 * @param port
+	 * @param overlayIntifier
+	 *            the identifier of the chord network
+	 */
+	public ChordNode(String ip, int port, String overlayIntifier) {
+		this.overlayIntifier = overlayIntifier;
+		this.h = new HashFunction(overlayIntifier);
+		// TRANSPORT LAYER BASED ON THE SOCKET IMPLEMENTATION
+		transport = new SocketImpl(port, 10, RequestHandler.class.getName(),
+				10, 1, 100, this);
+		((SocketImpl) transport).launchServer();
+		int id = h.SHA1ToInt(ip +  transport.getPort() + time);
+		initialize(ip, id, transport.getPort());
+		checkStable();
+	}
+
 	/**
 	 * Constructor without overlayIntifier (it is auto-generate)
 	 * 
@@ -42,48 +62,12 @@ public class ChordNode extends AbstractChord {
 	public ChordNode(String ip, int port) {
 		this(ip, port, "<" + ip + port + ">");
 	}
-	
-	/**
-	 * 
-	 * @param ip
-	 * @param port
-	 * @param overlayIntifier
-	 */
-	public ChordNode(String ip, int port, String overlayIntifier) {
-		this(ip, port, overlayIntifier, null);
-	}
-	
-	/**
-	 * Default constructor
-	 * 
-	 * @param ip
-	 * @param port
-	 * @param overlayIntifier
-	 *            the identifier of the chord network
-	 */
-	public ChordNode(String ip, int port, String overlayIntifier, ITransport transport) {
-		
-		if(transport == null) {
-			// DEFAULT TRANSPORT LAYER BASED ON THE SOCKET IMPLEMENTATION
-			transport = new SocketImpl(port, 10, RequestHandler.class.getName(),
-					10, 1, 100, this);
-			((SocketImpl) transport).launchServer();
-		} else {
-			this.transport = transport;
-		}
-		
-		this.overlayIntifier = overlayIntifier;
-		this.h = new HashFunction(overlayIntifier);
-		int id = h.SHA1ToInt(ip +  transport.getPort() + time);
-		initialize(ip, id, transport.getPort());
-		checkStable();
-	}
 
 	/**
 	 * @see core.protocol.p2p.chord.AbstractChord#sendRequest(String, Node)
 	 */
 	public String sendRequest(String message, Node destination) {
-		return transport.sendRequest(getOverlayIntifier() + "," + message,
+		return transport.sendRequest(getIdentifier() + "," + message,
 				destination);
 	}
 
@@ -156,7 +140,7 @@ public class ChordNode extends AbstractChord {
 		}
 		String[] args = code.split(",");
 		String result = "";
-		if (args[0].equals(getOverlayIntifier())) {
+		if (args[0].equals(getIdentifier())) {
 			int f = Integer.parseInt(args[1]);
 			switch (f) {
 			case IChord.GETPRED:
@@ -199,7 +183,7 @@ public class ChordNode extends AbstractChord {
 				break;
 			}
 		} else if (args[0].equals("getIdentifier")) {
-			return getOverlayIntifier();
+			return getIdentifier();
 		}
 		if (debugMode) {
 			System.out.println("*\tresult: " + result
@@ -210,7 +194,7 @@ public class ChordNode extends AbstractChord {
 
 	@Override
 	public String toString() {
-		return getOverlayIntifier() + " on " + getThisNode().getIp() + ":"
+		return getIdentifier() + " on " + getThisNode().getIp() + ":"
 		+ getThisNode().getPort() + "\n" + super.toString();
 	}
 
@@ -222,9 +206,9 @@ public class ChordNode extends AbstractChord {
 	}
 
 	/**
-	 * @see core.protocol.p2p.IDHT#getOverlayIntifier()
+	 * @see core.protocol.p2p.IDHT#getIdentifier()
 	 */
-	public String getOverlayIntifier() {
+	public String getIdentifier() {
 		return overlayIntifier;
 	}
 
