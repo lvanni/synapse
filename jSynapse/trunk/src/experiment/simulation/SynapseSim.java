@@ -98,13 +98,14 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 
 		IDHT node = null;
 		int port = nodeID++;	// Fake port number for the simulation 
-
+		
 		switch (nodeType) {
 		case CHORD:
 			if(synapse != null) {
 //				node = new ChordNodePlugin(nodeInfo, synapse, (ITransport) new LocalImpl());
 			} else {
-				node = new ChordNode("localhost",nodeID,networkId, (ITransport) new LocalImpl());
+				System.out.println("port= "+port);
+				node = new ChordNode("localhost",port,networkId, (ITransport) new LocalImpl(port));
 			}
 			break;
 		case KAD:
@@ -128,6 +129,7 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 				node.join(networkToJoin.getIp(), networkToJoin.getPort());
 				
 			}
+			System.out.println("Save node in hash map id=" +node.getThisNode().getPort() );
 			topologyByNodeId.put(node.getThisNode().getPort(),node);
 			topologyByNetworkId.put(networkId, node);
 			topologyByNodeType.put(nodeType, node);
