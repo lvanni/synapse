@@ -101,7 +101,7 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 	/* ********************************************* */
 	public String handleRequest(String message) {
 		try {
-			return commandExecutor(commandInterpretor(message), message.split(","));
+			return commandExecutor(commandInterpretor(message), message.split(" "));
 		} catch (SynapseSimException e) {
 			e.printStackTrace();
 			return e.toString();
@@ -121,7 +121,7 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 	 * @return
 	 */
 	private Command commandInterpretor(String message) {
-		String[] args = message.split(",");
+		String[] args = message.split(" ");
 		return Command.values()[Integer.parseInt(args[0])];
 	}
 	
