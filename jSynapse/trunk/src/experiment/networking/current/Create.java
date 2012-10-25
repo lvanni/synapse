@@ -31,11 +31,11 @@ public class Create {
 	public void BackgroundMode(IDHT overlay) {
 		synchronized(this){
 			try {
-				System.out.println(overlay.getIdentifier() + ":" + overlay.getThisNode().getIp() + ":" + overlay.getThisNode().getPort());
+				System.out.println(overlay.getOverlayIntifier() + ":" + overlay.getThisNode().getIp() + ":" + overlay.getThisNode().getPort());
 				if(overlay instanceof Synapse){
 					Synapse synapse = (Synapse) overlay;
 					for(IDHT o : synapse.getNetworks()) {
-						System.out.println(o.getIdentifier() + ":" + o.getThisNode().getIp() + ":" + o.getThisNode().getPort());
+						System.out.println(o.getOverlayIntifier() + ":" + o.getThisNode().getIp() + ":" + o.getThisNode().getPort());
 					}
 				}
 				this.wait();
@@ -96,10 +96,10 @@ public class Create {
 		Node tracker = new Node(trackerAddress, 0, trackerPort);
 		String trackerResponse = overlay.getTransport()
 		.sendRequest(
-				ITracker.GETCONNECTION + "," + overlay.getIdentifier(),
+				ITracker.GETCONNECTION + "," + overlay.getOverlayIntifier(),
 				tracker);
 		overlay.getTransport().sendRequest(
-				ITracker.ADDNODE + "," + overlay.getIdentifier() + ","
+				ITracker.ADDNODE + "," + overlay.getOverlayIntifier() + ","
 				+ overlay.getThisNode() + "," + overlay.getTransport().getPort(), tracker);
 		if (!trackerResponse.equals("unreachable") && !trackerResponse.equals("null")) {
 			Node n = new Node(trackerResponse);
@@ -196,7 +196,7 @@ public class Create {
 								for (IDHT o : ((Synapse) overlay).getNetworks()) {
 									overlay.getTransport().sendRequest(
 											ITracker.REMOVENODE + ","
-											+ o.getIdentifier() + ","
+											+ o.getOverlayIntifier() + ","
 											+ o.getThisNode(),
 											new Node(trackerAddress, 0,
 													trackerPort));
@@ -205,7 +205,7 @@ public class Create {
 							}
 							overlay.getTransport().sendRequest(
 									ITracker.REMOVENODE + ","
-									+ overlay.getIdentifier() + ","
+									+ overlay.getOverlayIntifier() + ","
 									+ overlay.getThisNode(),
 									new Node(trackerAddress, 0,
 											trackerPort));

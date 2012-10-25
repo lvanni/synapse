@@ -1,6 +1,7 @@
 package experiment.networking.current.node.synapse.plugin.chord;
 
 import core.protocol.p2p.chord.IChord;
+import core.protocol.transport.ITransport;
 import experiment.networking.current.node.chord.ChordNode;
 import experiment.networking.current.node.synapse.Synapse;
 
@@ -17,7 +18,6 @@ public class ChordNodePlugin extends ChordNode {
 	private Synapse synapse;
 
 	/**
-	 * Constructor
 	 * 
 	 * @param host
 	 * @param port
@@ -26,22 +26,23 @@ public class ChordNodePlugin extends ChordNode {
 	 */
 	public ChordNodePlugin(String host, int port, Synapse synapse,
 			String overlayIntifier) {
-		super(host, port, overlayIntifier);
-		this.synapse = synapse;
+		this(host, port, synapse, overlayIntifier, null);
 	}
-
+	
 	/**
 	 * Constructor
 	 * 
 	 * @param host
 	 * @param port
 	 * @param synapse
+	 * @param overlayIntifier
 	 */
-	public ChordNodePlugin(String host, int port, Synapse synapse) {
-		super(host, port);
+	public ChordNodePlugin(String host, int port, Synapse synapse,
+			String overlayIntifier, ITransport transport) {
+		super(host, port, overlayIntifier, transport);
 		this.synapse = synapse;
 	}
-
+	
 	/**
 	 * @see core.protocol.transport.IRequestHandler#handleRequest(String)
 	 */

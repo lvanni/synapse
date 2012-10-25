@@ -27,19 +27,30 @@ public class KadNode implements IDHT{
 
 	/** Hash function */
 	protected HashFunction h;
-	
+
 	protected KadNode() {}
 
-	public KadNode(String identifier) {
+	public KadNode(String overlayIntifier) {
+		this(overlayIntifier, null);
+	}
+	
+	public KadNode(String overlayIntifier, ITransport transport) {
 		try {
-			this.identifier = identifier;
-			this.h = new HashFunction(identifier);
+			this.identifier = overlayIntifier;
+			this.h = new HashFunction(overlayIntifier);
 			ServerSocket serverSocket = new ServerSocket(0);
 			node = new Node(InfoConsole.getIp(), 0, serverSocket.getLocalPort());
 			kad = new Kademlia(Identifier.randomIdentifier(), serverSocket.getLocalPort());
-			transport = new SocketImpl(0, 10, RequestHandler.class.getName(),
-					10, 1, 100, this);
-			((SocketImpl) transport).launchServer();
+
+			if(transport == null) {
+				// DEFAULT TRANSPORT LAYER BASED ON THE SOCKET IMPLEMENTATION
+				transport = new SocketImpl(0, 10, RequestHandler.class.getName(),
+						10, 1, 100, this);
+				((SocketImpl) transport).launchServer();
+			} else {
+				this.transport = transport;
+			}
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -48,7 +59,7 @@ public class KadNode implements IDHT{
 
 	public void put(String key, String value) {
 		Identifier id = new Identifier(BigInteger.valueOf(keyToH(key)));
-//		System.out.println("put(" + keyToH(key) + ", " + value + ")");
+		//		System.out.println("put(" + keyToH(key) + ", " + value + ")");
 		try {
 			kad.put(id, value);
 		} catch (RoutingException e) {
@@ -81,7 +92,7 @@ public class KadNode implements IDHT{
 		}
 	}
 
-	public String getIdentifier() {
+	public String getOverlayIntifier() {
 		return identifier;
 	}
 
@@ -102,10 +113,10 @@ public class KadNode implements IDHT{
 	}
 
 	public String handleRequest(String code) {
-//		System.out.println("request handled: " + code);
+		//		System.out.println("request handled: " + code);
 		String[] args = code.split(",");
 		String result = "";
-		if (args[0].equals(getIdentifier())) {
+		if (args[0].equals(getOverlayIntifier())) {
 			int f = Integer.parseInt(args[1]);
 			switch (f) {
 			case Oracle.PUT:
@@ -118,11 +129,11 @@ public class KadNode implements IDHT{
 				break;
 			}
 		} else if (args[0].equals("getIdentifier")) {
-			return getIdentifier();
+			return getOverlayIntifier();
 		}
 		return result;
 	}
-	
+
 	public void setKad(Kademlia kad) {
 		this.kad = kad;
 	}

@@ -14,6 +14,7 @@ import experiment.networking.current.node.synapse.Synapse;
  */
 public interface ISynapseSim {
 	
+	public static String DEFAULT_IP = "127.0.0.1";
 	public static int DEFAULT_PORT = 8000;
 	
 	/**

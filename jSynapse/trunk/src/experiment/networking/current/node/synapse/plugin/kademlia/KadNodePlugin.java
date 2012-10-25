@@ -9,6 +9,7 @@ import core.protocol.p2p.Node;
 import core.protocol.p2p.kad.org.planx.xmlstore.routing.Identifier;
 import core.protocol.p2p.kad.org.planx.xmlstore.routing.Kademlia;
 import core.protocol.p2p.kad.org.planx.xmlstore.routing.RoutingException;
+import core.protocol.transport.ITransport;
 import core.protocol.transport.socket.request.RequestHandler;
 import core.protocol.transport.socket.server.SocketImpl;
 import core.tools.HashFunction;
@@ -19,12 +20,27 @@ import experiment.networking.current.node.synapse.Synapse;
 public class KadNodePlugin extends KadNode{
 
 	private Synapse synapse;
+	
+	/**
+	 * 
+	 * @param overlayIntifier
+	 * @param synapse
+	 */
+	public KadNodePlugin(String overlayIntifier, Synapse synapse) {
+		this(overlayIntifier, synapse, null);
+	}
 
-	public KadNodePlugin(String identifier, Synapse synapse) {
+	/**
+	 * 
+	 * @param overlayIntifier
+	 * @param synapse
+	 * @param transport
+	 */
+	public KadNodePlugin(String overlayIntifier, Synapse synapse, ITransport transport) {
 		try {
-			this.identifier = identifier;
+			this.identifier = overlayIntifier;
 			this.synapse = synapse;
-			this.h = new HashFunction(identifier);
+			this.h = new HashFunction(overlayIntifier);
 			ServerSocket serverSocket = new ServerSocket(0);
 			node = new Node(InfoConsole.getIp(), 0, serverSocket.getLocalPort());
 			kad = new Kademlia(Identifier.randomIdentifier(), serverSocket.getLocalPort(), this);
@@ -50,7 +66,7 @@ public class KadNodePlugin extends KadNode{
 	public String handleRequest(String code) {
 //		System.out.println("receive: " + code);
 		String[] args = code.split(",");
-		if (args[0].equals(getIdentifier())) { 
+		if (args[0].equals(getOverlayIntifier())) { 
 			super.handleRequest(code);
 		} else {
 			for(String arg : args){

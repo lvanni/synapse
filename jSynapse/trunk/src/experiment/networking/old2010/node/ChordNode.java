@@ -61,7 +61,7 @@ public class ChordNode extends AbstractChord implements Runnable{
 	// /////////////////////////////////////////// //
 	public String sendRequest(String message, Node destination){
 		String res = "";
-		res = transport.sendRequest(getIdentifier() + "," + message, destination);
+		res = transport.sendRequest(getOverlayIntifier() + "," + message, destination);
 		if(res == null || res.equals(""))
 			res = getThisNode().toString(); // <================== A REVOIR
 		return res;
@@ -117,7 +117,7 @@ public class ChordNode extends AbstractChord implements Runnable{
 	public String handleRequest(String code){
 		String[] args = code.split(",");
 		String result = "";
-		if(args[0].equals(getIdentifier())){
+		if(args[0].equals(getOverlayIntifier())){
 			int f = Integer.parseInt(args[1]);
 			switch(f){
 			case IChord.GETPRED :
@@ -148,13 +148,13 @@ public class ChordNode extends AbstractChord implements Runnable{
 			default: break;
 			}
 		} else if(args[0].equals("getIdentifier")){
-			return getIdentifier();
+			return getOverlayIntifier();
 		}
 		return result;
 	}
 
 	public String toString(){
-		return getIdentifier() + " on "+ getThisNode().getIp() + ":" + getThisNode().getPort() + "\n" + super.toString();
+		return getOverlayIntifier() + " on "+ getThisNode().getIp() + ":" + getThisNode().getPort() + "\n" + super.toString();
 	}
 
 	// /////////////////////////////////////////// //
@@ -196,7 +196,7 @@ public class ChordNode extends AbstractChord implements Runnable{
 		return transport;
 	}
 
-	public String getIdentifier() {
+	public String getOverlayIntifier() {
 		return overlayIntifier;
 	}
 

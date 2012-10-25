@@ -1,6 +1,7 @@
 package experiment.networking.current.node.synapse;
 
 import core.protocol.p2p.synapse.AbstractSynapse;
+import core.protocol.transport.ITransport;
 
 /**
  * This is an implementation of a synapse node
@@ -18,6 +19,16 @@ public class Synapse extends AbstractSynapse {
 	 * @param port
 	 */
 	public Synapse(String ip, int port) {
-		super(ip, port, "synapse");
+		this(ip, port, null);
+	}
+	
+	/**
+	 * Default constructor
+	 * 
+	 * @param ip
+	 * @param port
+	 */
+	public Synapse(String ip, int port, ITransport transport) {
+		super(ip, port, "synapse", transport);
 	}
 }
