@@ -15,6 +15,8 @@ import core.protocol.transport.socket.server.SocketImpl;
 import experiment.networking.current.node.chord.ChordNode;
 import experiment.networking.current.node.kademlia.KadNode;
 import experiment.networking.current.node.synapse.Synapse;
+import experiment.networking.current.node.synapse.plugin.kademlia.KadNodePlugin;
+import experiment.networking.old2010.node.synapse.plugins.ChordNodePlugin;
 import experiment.simulation.exception.SynapseSimException;
 
 /**
@@ -71,12 +73,20 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 		IDHT node = null;
 		switch (nodeType) {
 		case CHORD:
-			node = new ChordNode(null, 0, null);
+			if(synapse != null) {
+				node = new ChordNodePlugin(null, 0, null);
+			} else {
+				node = new ChordNode(null, 0, null);
+			}
 			node.getThisNode().setNetworkId(networkId);
 			node.getThisNode().setNetworkType(nodeType.toString());
 			break;
 		case KAD:
-			node = new KadNode(null);
+			if(synapse != null) {
+				node = new KadNodePlugin(null, null);
+			} else {
+				node = new KadNode(null);
+			}
 			node.getThisNode().setNetworkId(networkId);
 			node.getThisNode().setNetworkType(nodeType.toString());
 			break;
