@@ -143,7 +143,6 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 	private String commandExecutor(Command command, String[] args) throws SynapseSimException{
 		switch (command) {
 		case CREATE:
-			System.out.println("Print topology");
 			if(args.length < 3 || (args[1].equals("Synapse") && ((args.length) % 3) != 0)){
 				throw new SynapseSimException("Bad argument number to create Synapse node");
 			}
@@ -168,25 +167,29 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 	 * @throws SynapseSimException
 	 */
 	private String analyseCreateCommandAndExecute(String[] args) throws SynapseSimException{
-		if(args[1].equals("Kad")){
+		
+		NodeType nodeTypeSelected = NodeType.values()[Integer.parseInt(args[1])];
+		
+		System.out.println(nodeTypeSelected + " == " + NodeType.CHORD);
+		if(nodeTypeSelected.equals(NodeType.KAD)){
 			createNode(NodeType.KAD, args[2]);
 			return "Node Kad created on network: "+args[2];
 		}
-		if(args[1].equals("Chord")){
+		if(nodeTypeSelected.equals(NodeType.CHORD)){
 			createNode(NodeType.CHORD,args[2]);
 			return "Node Chord created on network: "+args[2];
 		}
-		if(args[1].equals("Synapse")){
+		if(nodeTypeSelected.equals(NodeType.SYNAPSE)){
 			Synapse synapse=(Synapse)createNode(NodeType.SYNAPSE,args[2]);
 			int chordNumber=0;
 			int kadNumber=0;
 			for(int i=3;i<args.length;i+=3){
-				if(args[i+1].equals("Kad")){
+				if(args[i+1].equals(NodeType.KAD.toString())){
 					createNode(NodeType.KAD,args[i+2],synapse);
 					kadNumber++;
 					continue;
 				}
-				if(args[i+1].equals("Chord")){
+				if(args[i+1].equals(NodeType.CHORD.toString())){
 					createNode(NodeType.CHORD,args[i+2],synapse);
 					chordNumber++;
 					continue;
@@ -246,8 +249,7 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 						System.out.println(simulator.printTopology());
 						break;
 					case 1:
-						System.out.println("\n\nEnter you command line: \n\tnode [chord|kad] <networkID>\n\tsynapse [-a [chord|kad] <networkID>]+");
-						System.out.print("Create ---> ");
+						System.out.print("Command line ---> ");
 						String command = input.readLine().trim();
 						simulator.commandExecutor(simulator.commandInterpretor(command), command.split(","));
 						break;
@@ -269,12 +271,13 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 					System.out.println("Press enter to continue...");
 					input.readLine();
 				} catch (NumberFormatException e) {
+					e.printStackTrace();
 					System.out.println("what?");
 				} catch (IOException e) {
 					e.printStackTrace();
 				} catch(SynapseSimException e){
 					System.err.println(e.getMessage());
-//					e.printStackTrace();
+					e.printStackTrace();
 				}
 			} else {
 				try {
