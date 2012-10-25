@@ -144,7 +144,7 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 		switch (command) {
 		case CREATE:
 			System.out.println("Print topology");
-			if(args.length < 3 || (args[1].equals("Synapse") && ((args.length -1) % 9) != 0)){
+			if(args.length < 3 || (args[1].equals("Synapse") && ((args.length) % 3) != 0)){
 				throw new SynapseSimException("Bad argument number to create Synapse node");
 			}
 			else{
@@ -170,12 +170,30 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 	private String analyseCreateCommandAndExecute(String[] args) throws SynapseSimException{
 		if(args[1].equals("Kad")){
 			createNode(NodeType.KAD, args[2]);
+			return "Node Kad created on network: "+args[2];
 		}
 		if(args[1].equals("Chord")){
 			createNode(NodeType.CHORD,args[2]);
+			return "Node Chord created on network: "+args[2];
 		}
 		if(args[1].equals("Synapse")){
-			
+			Synapse synapse=(Synapse)createNode(NodeType.SYNAPSE,args[2]);
+			int chordNumber=0;
+			int kadNumber=0;
+			for(int i=3;i<args.length;i+=3){
+				if(args[i+1].equals("Kad")){
+					createNode(NodeType.KAD,args[i+2],synapse);
+					kadNumber++;
+					continue;
+				}
+				if(args[i+1].equals("Chord")){
+					createNode(NodeType.CHORD,args[i+2],synapse);
+					chordNumber++;
+					continue;
+				}
+				throw new SynapseSimException("Unknown node type in synapse creation, correct this and come back");
+			}
+			return "Node Synapse created with :"+chordNumber+" chord node, "+kadNumber+" kad node inside, on network: "+args[2];
 		}
 		throw new SynapseSimException("Unknown node type");
 	}
