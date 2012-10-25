@@ -46,7 +46,10 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 	/* ********************************************* */
 	private int nodeID = 0;
 	// NodeType, NetworkID, NodeID
-	private Map<NodeType, Map<String, Map<Integer, IDHT>>> topology;
+	//private Map<NodeType, Map<String, Map<Integer, IDHT>>> topology;
+	private Map<NodeType,IDHT> topologyByNodeType;
+	private Map<String,IDHT> topologyByNetworkId;
+	private Map<Integer,IDHT> topologyByNodeId;
 
 	/* ********************************************* */
 	/* 				Singleton Pattern				 */
@@ -57,7 +60,10 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 		ITransport transport = new SocketImpl(DEFAULT_PORT, 10, RequestHandler.class
 				.getName(), 10, 1, 100, this);
 		((SocketImpl) transport).launchServer();
-		topology = new HashMap<NodeType, Map<String, Map<Integer, IDHT>>>();
+		//topology = new HashMap<NodeType, Map<String, Map<Integer, IDHT>>>();
+		topologyByNodeType = new HashMap<NodeType, IDHT>();
+		topologyByNodeId = new HashMap<Integer, IDHT>();
+		topologyByNetworkId = new HashMap<String, IDHT>();
 	}
 
 	public static SynapseSim getInstance() {
@@ -73,6 +79,7 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 
 		try {
 			synchronized (INSTANCE) {
+				receiver = topologyByNodeId.get(node.getPort());
 //				Map<String, Map<Integer, IDHT>> 	topologyByNodeType  = topology.get(node.getNodeType());
 //				Map<Integer, IDHT> 					topologyByNetworkID = topologyByNodeType.get(node.getNetworkId());
 	
@@ -97,7 +104,7 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 			if(synapse != null) {
 //				node = new ChordNodePlugin(nodeInfo, synapse, (ITransport) new LocalImpl());
 			} else {
-//				node = new ChordNode(nodeInfo, (ITransport) new LocalImpl());
+				node = new ChordNode("localhost",nodeID,networkId, (ITransport) new LocalImpl());
 			}
 			break;
 		case KAD:
@@ -114,7 +121,17 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 
 		// Add node to the topology
 		synchronized (INSTANCE) {
-			if(!topology.containsKey((nodeType))) {
+			if(topologyByNetworkId.containsKey(networkId)){
+				//JOIN
+				System.out.println("contain key");
+				Node networkToJoin = topologyByNetworkId.get(networkId).getThisNode();
+				node.join(networkToJoin.getIp(), networkToJoin.getPort());
+				
+			}
+			topologyByNodeId.put(node.getThisNode().getPort(),node);
+			topologyByNetworkId.put(networkId, node);
+			topologyByNodeType.put(nodeType, node);
+			/*if(!topology.containsKey((nodeType))) {
 				topology.put(nodeType, new HashMap<String, Map<Integer,IDHT>>());
 			}
 			Map<String, Map<Integer, IDHT>> topologyByNodeType  = topology.get(nodeType);
@@ -128,7 +145,7 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 				node.join(networkToJoin.getIp(), networkToJoin.getPort());
 			}
 
-			topologyByNodeType.get(networkId).put(node.getThisNode().getId(), node);
+			topologyByNodeType.get(networkId).put(node.getThisNode().getId(), node);*/
 		}
 
 		return node;
@@ -237,7 +254,10 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 	public String printTopology() {
 
 		String result = "";
-		Map<String, Map<Integer, IDHT>> topologyByNodeType;
+		for(Map.Entry<Integer, IDHT> node: topologyByNodeId.entrySet()){
+			result += node.getValue();
+		}
+		/*Map<String, Map<Integer, IDHT>> topologyByNodeType;
 		Map<Integer, IDHT> topologyByNetworkID;
 
 		for(NodeType nodeType : topology.keySet()) {
@@ -252,7 +272,7 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 
 					result += node.getValue();
 			}
-		}
+		}*/
 		return result;
 	}
 

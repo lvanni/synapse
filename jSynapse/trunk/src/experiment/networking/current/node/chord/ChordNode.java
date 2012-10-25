@@ -42,12 +42,18 @@ public class ChordNode extends AbstractChord {
 	 *            the identifier of the chord network
 	 */
 	public ChordNode(String ip, int port, String overlayIntifier) {
-		this.overlayIntifier = overlayIntifier;
+		this(ip,port,overlayIntifier,null);
+	}
+	
+	public ChordNode(String ip,int port, String overlayIdentifier,ITransport transport){
+		this.overlayIntifier = overlayIdentifier;
 		this.h = new HashFunction(overlayIntifier);
 		// TRANSPORT LAYER BASED ON THE SOCKET IMPLEMENTATION
-		transport = new SocketImpl(port, 10, RequestHandler.class.getName(),
-				10, 1, 100, this);
-		((SocketImpl) transport).launchServer();
+		this.transport = transport;
+		if(transport == null){
+			this.transport = new SocketImpl(port, 10, RequestHandler.class.getName(),10, 1, 100, this);
+			((SocketImpl) this.transport).launchServer();
+		}
 		int id = h.SHA1ToInt(ip +  transport.getPort() + time);
 		initialize(ip, id, transport.getPort());
 		checkStable();
