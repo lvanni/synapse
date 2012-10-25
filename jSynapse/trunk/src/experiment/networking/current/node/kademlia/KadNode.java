@@ -99,6 +99,13 @@ public class KadNode implements IDHT{
 	public Node getThisNode() {
 		return node;
 	}
+	
+	/**
+	 * @see core.protocol.p2p.chord.IChord#getThisNode()
+	 */
+	public Node setThisNode(Node node) {
+		return this.node = node;
+	}
 
 	public ITransport getTransport() {
 		return transport;

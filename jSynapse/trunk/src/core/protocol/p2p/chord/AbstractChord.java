@@ -254,6 +254,13 @@ public abstract class AbstractChord implements IChord {
 	public Node getThisNode() {
 		return thisNode;
 	}
+	
+	/**
+	 * @see core.protocol.p2p.chord.IChord#getThisNode()
+	 */
+	public Node setThisNode(Node node) {
+		return this.thisNode = node;
+	}
 
 	/**
 	 * @see core.protocol.p2p.chord.IChord#getPredecessor()

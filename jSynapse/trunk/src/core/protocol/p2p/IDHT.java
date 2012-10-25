@@ -34,6 +34,11 @@ public interface IDHT extends IRequestHandler {
 	public Node getThisNode();
 
 	/**
+	 * @return a instance of the node
+	 */
+	public Node setThisNode(Node node);
+	
+	/**
 	 * Put<key,value> : the Common command of a DHT
 	 * 
 	 * @param key

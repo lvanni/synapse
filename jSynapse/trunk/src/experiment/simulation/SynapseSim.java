@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import core.protocol.p2p.IDHT;
@@ -31,13 +30,13 @@ import experiment.simulation.exception.SynapseSimException;
 |_____/ \__, |_| |_| .__/|___/\___|_____/|_|_| |_| |_|
          __/ |     | |                                
         |___/      |_|   
-        
+
  * @author lvanni
  * @version 1.0
  * @since 2012
  */
 public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	/* ********************************************* */
@@ -46,7 +45,6 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 	private int nodeID = 0;
 	// NodeType, NetworkID, NodeID
 	private Map<NodeType, Map<String, Map<Integer, IDHT>>> topology;
-	
 
 	/* ********************************************* */
 	/* 				Singleton Pattern				 */
@@ -63,74 +61,113 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 	public static SynapseSim getInstance() {
 		return INSTANCE;
 	}
-	
+
 	/* ********************************************* */
 	/* 			implements ISimulator				 */
 	/* ********************************************* */
 	public IRequestHandler getReceiver(Node node) {
-		Map<String, Map<Integer, IDHT>> 	topologyByNodeType  = topology.get(node.getNetworkType());
-		Map<Integer, IDHT> 					topologyByNetworkID = topologyByNodeType.get(node.getNetworkId());
-		return topologyByNetworkID.get(node.getId()); 
+
+		IRequestHandler receiver = null;
+
+		while(receiver == null) {
+			System.out.println("SEARCH: ");
+			System.out.println(node.getNodeType());
+//			System.out.println(node.getNetworkId());
+//			System.out.println(node.getId());
+
+			try {
+				synchronized (INSTANCE) {
+
+					Map<String, Map<Integer, IDHT>> 	topologyByNodeType  = topology.get(node.getNodeType());
+					Map<Integer, IDHT> 					topologyByNetworkID = topologyByNodeType.get(node.getNetworkId());
+
+					receiver = topologyByNetworkID.get(node.getId()); 
+				}
+			} catch (Exception e) {
+				System.out.println("Waiting to initialize the topology...");
+				System.out.println("FOUND: " );
+				for(NodeType type : topology.keySet()){
+					System.out.println(type);
+				}
+				try {
+					Thread.sleep(200);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+			}
+		}
+
+		return receiver;
 	}
 
 	public IDHT createNode(NodeType nodeType, String networkId) {
 		return createNode(nodeType, networkId, null);
 	}
-	
+
 	public IDHT createNode(NodeType nodeType, String networkId, Synapse synapse) {
+
 		IDHT node = null;
+		int port = nodeID++;	// Fake port number for the simulation 
+		Node nodeInfo = new Node(DEFAULT_IP, nodeID, port);
+		nodeInfo.setNetworkId(networkId);
+		nodeInfo.setNodeType(nodeType.toString());
+
 		switch (nodeType) {
 		case CHORD:
 			if(synapse != null) {
-				node = new ChordNodePlugin(DEFAULT_IP, nodeID++, synapse, networkId, (ITransport) new LocalImpl());
+				node = new ChordNodePlugin(nodeInfo.getIp(), nodeInfo.getPort(), synapse, networkId, (ITransport) new LocalImpl());
 			} else {
-				node = new ChordNode(DEFAULT_IP, nodeID++, networkId, (ITransport) new LocalImpl());
+				node = new ChordNode(nodeInfo.getIp(), nodeInfo.getPort(), networkId, (ITransport) new LocalImpl());
 			}
-			node.getThisNode().setId(nodeID);
-			node.getThisNode().setNetworkId(networkId);
-			node.getThisNode().setNetworkType(nodeType.toString());
 			break;
 		case KAD:
 			if(synapse != null) {
-				node = new KadNodePlugin(DEFAULT_IP, synapse, (ITransport) new LocalImpl());
+				node = new KadNodePlugin(nodeInfo.getIp(), synapse, (ITransport) new LocalImpl());
 			} else {
 				node = new KadNode(networkId, (ITransport) new LocalImpl());
 			}
-			node.getThisNode().setId(nodeID);
-			node.getThisNode().setNetworkId(networkId);
-			node.getThisNode().setNetworkType(nodeType.toString());
 			break;
 		case SYNAPSE:
-			node = new Synapse(DEFAULT_IP, nodeID++, (ITransport) new LocalImpl());
+			node = new Synapse(nodeInfo.getIp(), nodeInfo.getPort(), (ITransport) new LocalImpl());
 			break;
 		}
-		
+
+		node.setThisNode(nodeInfo);
+
 		// Add node to the topology
-		if(!topology.containsKey((nodeType))) {
-			topology.put(nodeType, new HashMap<String, Map<Integer,IDHT>>());
+		synchronized (INSTANCE) {
+			if(!topology.containsKey((nodeType))) {
+				topology.put(nodeType, new HashMap<String, Map<Integer,IDHT>>());
+			}
+			Map<String, Map<Integer, IDHT>> 	topologyByNodeType  = topology.get(nodeType);
+			if(!topologyByNodeType.containsKey(networkId)) {
+				topologyByNodeType.put(networkId, new HashMap<Integer, IDHT>());
+			} else {
+				// JOIN
+				Node networkToJoin = topologyByNodeType.get(networkId).get(0).getThisNode();
+				node.join(networkToJoin.getIp(), networkToJoin.getPort());
+			}
+
+			topologyByNodeType.get(networkId).put(node.getThisNode().getId(), node);
 		}
-		Map<String, Map<Integer, IDHT>> 	topologyByNodeType  = topology.get(nodeType);
-		if(!topologyByNodeType.containsKey(networkId)) {
-			topologyByNodeType.put(networkId, new HashMap<Integer, IDHT>());
-		} else {
-			// JOIN
-			Node networkToJoin = topologyByNodeType.get(networkId).get(0).getThisNode();
-			node.join(networkToJoin.getIp(), networkToJoin.getPort());
-		}
-		topologyByNodeType.get(networkId).put(node.getThisNode().getId(), node);
-		
+
+//		System.out.println("CREATE: ");
+//		System.out.println(nodeType);
+//		System.out.println(networkId);
+//		System.out.println(node.getThisNode().getId());
+
 		return node;
 	}
 
 	public int put(String key, String value) {
 		return 0;
 	}
-	
+
 	public int get(String key) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-	
+
 	/* ********************************************* */
 	/* 			implements IRequestHandler			 */
 	/* ********************************************* */
@@ -138,15 +175,16 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 		try {
 			return commandExecutor(commandInterpretor(message), message.split(","));
 		} catch (SynapseSimException e) {
+			System.out.println(message);
 			e.printStackTrace();
-			return e.toString();
+			return message;
 		}
 	}
 
 	public void kill() {
 		// TODO Auto-generated method stub
 	}
-	
+
 	/* ********************************************* */
 	/* 					private Methods				 */
 	/* ********************************************* */
@@ -159,7 +197,7 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 		String[] args = message.split(",");
 		return Command.values()[Integer.parseInt(args[0])];
 	}
-	
+
 	/**
 	 * Execute user command
 	 * @param choice
@@ -184,7 +222,7 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 			throw new SynapseSimException("How can it be possible to have this case ? You have 2 hours to think about it");
 		}
 	}
-	
+
 	/**
 	 * Analyse create command and execute it 
 	 * @param args
@@ -192,9 +230,9 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 	 * @throws SynapseSimException
 	 */
 	private String analyseCreateCommandAndExecute(String[] args) throws SynapseSimException{
-		
+
 		NodeType nodeTypeSelected = NodeType.values()[Integer.parseInt(args[1])];
-	
+
 		if(nodeTypeSelected == NodeType.SYNAPSE){
 			Synapse synapse = (Synapse)createNode(NodeType.SYNAPSE,args[2]);
 			NodeType synapseNodeTypeSelected;
@@ -217,32 +255,32 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 			return "Node "+nodeTypeSelected.toString()+ " created on network: "+ args[2];
 		}
 	}
-	
+
 	/* ********************************************* */
 	/* 					public Methods				 */
 	/* ********************************************* */
 	public String printTopology() {
-		
+
 		String result = "";
 		Map<String, Map<Integer, IDHT>> topologyByNodeType;
 		Map<Integer, IDHT> topologyByNetworkID;
-		
+
 		for(NodeType nodeType : topology.keySet()) {
-			
+
 			topologyByNodeType = topology.get(nodeType);
-			
+
 			for(String networkId : topologyByNodeType.keySet()){
-				
+
 				topologyByNetworkID = topologyByNodeType.get(networkId);
-				
+
 				for(Map.Entry<Integer,IDHT> node : topologyByNetworkID.entrySet())
-				
-				result += node.getValue();
+
+					result += node.getValue();
 			}
 		}
 		return result;
 	}
-	
+
 
 	/* ********************************************* */
 	/* 					simulator UI				 */
@@ -257,9 +295,9 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 				" ____) | |_| | | | | |_) \\__ \\  __/____) | | | | | | |\n" + 
 				"|_____/ \\__, |_| |_| .__/|___/\\___|_____/|_|_| |_| |_|\n" + 
 				"         __/ |     | |                                \n" + 
-				"        |___/      |_|   \n\n");
+		"        |___/      |_|   \n\n");
 	}
-	
+
 	/**
 	 * Launch the simulator
 	 * @param args
@@ -270,7 +308,7 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 
 		BufferedReader input = new BufferedReader(new InputStreamReader(
 				System.in));
-		
+
 		while (true) {
 
 			clearScreen();

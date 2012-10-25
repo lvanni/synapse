@@ -21,7 +21,7 @@ public class Node {
 	private String networkId;
 	
 	/** the type of the node (chord, kad, synapse, ...) */
-	private String networkType;
+	private String nodeType;
 
 	/** For the new parameters used by the simulator */
 	private static String UNKNOWN_MESSAGE = "this parameter is only used with the simulator";
@@ -38,7 +38,7 @@ public class Node {
 		this.id = id;
 		this.port = port;
 		this.networkId = UNKNOWN_MESSAGE;
-		this.networkType = UNKNOWN_MESSAGE;
+		this.nodeType = UNKNOWN_MESSAGE;
 	}
 
 	/**
@@ -151,16 +151,16 @@ public class Node {
 	 * 
 	 * @return the type of the node
 	 */
-	public String getNetworkType() {
-		return networkType;
+	public String getNodeType() {
+		return nodeType;
 	}
 
 	/**
 	 * set the type of the node
 	 * @param type
 	 */
-	public void setNetworkType(String type) {
-		this.networkType = type;
+	public void setNodeType(String type) {
+		this.nodeType = type;
 	}
 	
 }
