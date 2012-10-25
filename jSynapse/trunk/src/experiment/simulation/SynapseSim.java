@@ -15,6 +15,8 @@ import core.protocol.transport.socket.server.SocketImpl;
 import experiment.networking.current.node.chord.ChordNode;
 import experiment.networking.current.node.kademlia.KadNode;
 import experiment.networking.current.node.synapse.Synapse;
+import experiment.networking.current.node.synapse.plugin.kademlia.KadNodePlugin;
+import experiment.networking.old2010.node.synapse.plugins.ChordNodePlugin;
 import experiment.simulation.exception.SynapseSimException;
 
 /**
@@ -71,12 +73,20 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 		IDHT node = null;
 		switch (nodeType) {
 		case CHORD:
-			node = new ChordNode(null, 0, null);
+			if(synapse != null) {
+				node = new ChordNodePlugin(null, 0, null);
+			} else {
+				node = new ChordNode(null, 0, null);
+			}
 			node.getThisNode().setNetworkId(networkId);
 			node.getThisNode().setNetworkType(nodeType.toString());
 			break;
 		case KAD:
-			node = new KadNode(null);
+			if(synapse != null) {
+				node = new KadNodePlugin(null, null);
+			} else {
+				node = new KadNode(null);
+			}
 			node.getThisNode().setNetworkId(networkId);
 			node.getThisNode().setNetworkType(nodeType.toString());
 			break;
@@ -133,7 +143,6 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 	private String commandExecutor(Command command, String[] args) throws SynapseSimException{
 		switch (command) {
 		case CREATE:
-			System.out.println("Print topology");
 			if(args.length < 3 || (args[1].equals("Synapse") && ((args.length) % 3) != 0)){
 				throw new SynapseSimException("Bad argument number to create Synapse node");
 			}
@@ -158,25 +167,29 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 	 * @throws SynapseSimException
 	 */
 	private String analyseCreateCommandAndExecute(String[] args) throws SynapseSimException{
-		if(args[1].equals("Kad")){
+		
+		NodeType nodeTypeSelected = NodeType.values()[Integer.parseInt(args[1])];
+		
+		System.out.println(nodeTypeSelected + " == " + NodeType.CHORD);
+		if(nodeTypeSelected.equals(NodeType.KAD)){
 			createNode(NodeType.KAD, args[2]);
 			return "Node Kad created on network: "+args[2];
 		}
-		if(args[1].equals("Chord")){
+		if(nodeTypeSelected.equals(NodeType.CHORD)){
 			createNode(NodeType.CHORD,args[2]);
 			return "Node Chord created on network: "+args[2];
 		}
-		if(args[1].equals("Synapse")){
+		if(nodeTypeSelected.equals(NodeType.SYNAPSE)){
 			Synapse synapse=(Synapse)createNode(NodeType.SYNAPSE,args[2]);
 			int chordNumber=0;
 			int kadNumber=0;
 			for(int i=3;i<args.length;i+=3){
-				if(args[i+1].equals("Kad")){
+				if(args[i+1].equals(NodeType.KAD.toString())){
 					createNode(NodeType.KAD,args[i+2],synapse);
 					kadNumber++;
 					continue;
 				}
-				if(args[i+1].equals("Chord")){
+				if(args[i+1].equals(NodeType.CHORD.toString())){
 					createNode(NodeType.CHORD,args[i+2],synapse);
 					chordNumber++;
 					continue;
@@ -199,12 +212,27 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 	/* ********************************************* */
 	/* 					simulator UI				 */
 	/* ********************************************* */
+	public static void clearScreen() {
+		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+	}
+	
 	public static void main(String[] args) {
 
 		SynapseSim simulator = getInstance();
 
 		BufferedReader input = new BufferedReader(new InputStreamReader(
 				System.in));
+		
+		clearScreen();
+		System.out.println(
+"  _____                             _____ _           \n" + 
+" / ____|                           / ____(_)          \n" + 
+"| (___  _   _ _ __  _ __  ___  ___| (___  _ _ __ ___  \n" + 
+" \\___ \\| | | | '_ \\| '_ \\/ __|/ _ \\\\___ \\| | '_ ` _ \\ \n" + 
+" ____) | |_| | | | | |_) \\__ \\  __/____) | | | | | | |\n" + 
+"|_____/ \\__, |_| |_| .__/|___/\\___|_____/|_|_| |_| |_|\n" + 
+"         __/ |     | |                                \n" + 
+"        |___/      |_|   \n\n");
 
 		while (true) {
 			if(args.length > 0 && (args[0].equals("-d") || args[0].equals("--debug"))) {
@@ -221,8 +249,9 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 						System.out.println(simulator.printTopology());
 						break;
 					case 1:
-						System.out.println("Create Node");
-						System.out.println("not yet implemented...");
+						System.out.print("Command line ---> ");
+						String command = input.readLine().trim();
+						simulator.commandExecutor(simulator.commandInterpretor(command), command.split(","));
 						break;
 					case 2:
 						System.out.println("put");
@@ -236,17 +265,23 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 						simulator.kill();
 						System.exit(0);
 					default:
+						clearScreen();
 						throw new SynapseSimException("How can it be possible to have this case ? You have 2 hours to think about it");
 					}
+					System.out.println("Press enter to continue...");
+					input.readLine();
 				} catch (NumberFormatException e) {
+					e.printStackTrace();
 					System.out.println("what?");
 				} catch (IOException e) {
 					e.printStackTrace();
 				} catch(SynapseSimException e){
+					System.err.println(e.getMessage());
 					e.printStackTrace();
 				}
 			} else {
 				try {
+					System.out.println("SynapseSim started...");
 					input.readLine();
 				} catch (IOException e) {
 					e.printStackTrace();
