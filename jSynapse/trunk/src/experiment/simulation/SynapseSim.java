@@ -191,12 +191,27 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 	/* ********************************************* */
 	/* 					simulator UI				 */
 	/* ********************************************* */
+	public static void clearScreen() {
+		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+	}
+	
 	public static void main(String[] args) {
 
 		SynapseSim simulator = getInstance();
 
 		BufferedReader input = new BufferedReader(new InputStreamReader(
 				System.in));
+		
+		clearScreen();
+		System.out.println(
+"  _____                             _____ _           \n" + 
+" / ____|                           / ____(_)          \n" + 
+"| (___  _   _ _ __  _ __  ___  ___| (___  _ _ __ ___  \n" + 
+" \\___ \\| | | | '_ \\| '_ \\/ __|/ _ \\\\___ \\| | '_ ` _ \\ \n" + 
+" ____) | |_| | | | | |_) \\__ \\  __/____) | | | | | | |\n" + 
+"|_____/ \\__, |_| |_| .__/|___/\\___|_____/|_|_| |_| |_|\n" + 
+"         __/ |     | |                                \n" + 
+"        |___/      |_|   \n\n");
 
 		while (true) {
 			if(args.length > 0 && (args[0].equals("-d") || args[0].equals("--debug"))) {
@@ -213,8 +228,10 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 						System.out.println(simulator.printTopology());
 						break;
 					case 1:
-						System.out.println("Create Node");
-						System.out.println("not yet implemented...");
+						System.out.println("\n\nEnter you command line: \n\tnode [chord|kad] <networkID>\n\tsynapse [-a [chord|kad] <networkID>]+");
+						System.out.print("Create ---> ");
+						String command = input.readLine().trim();
+						simulator.commandExecutor(simulator.commandInterpretor(command), command.split(","));
 						break;
 					case 2:
 						System.out.println("put");
@@ -228,17 +245,22 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 						simulator.kill();
 						System.exit(0);
 					default:
+						clearScreen();
 						throw new SynapseSimException("How can it be possible to have this case ? You have 2 hours to think about it");
 					}
+					System.out.println("Press enter to continue...");
+					input.readLine();
 				} catch (NumberFormatException e) {
 					System.out.println("what?");
 				} catch (IOException e) {
 					e.printStackTrace();
 				} catch(SynapseSimException e){
-					e.printStackTrace();
+					System.err.println(e.getMessage());
+//					e.printStackTrace();
 				}
 			} else {
 				try {
+					System.out.println("SynapseSim started...");
 					input.readLine();
 				} catch (IOException e) {
 					e.printStackTrace();
