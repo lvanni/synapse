@@ -206,8 +206,8 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 	private String commandExecutor(Command command, String[] args) throws SynapseSimException{
 		switch (command) {
 		case CREATE:
-			if(args.length < 3 || (args[1].equals("Synapse") && ((args.length) % 3) != 0)){
-				throw new SynapseSimException("Bad argument number to create Synapse node");
+			if(args.length < 3 || (args[1].equals("Synapse") && ((args.length-3) % 2) != 0)){
+				throw new SynapseSimException("Bad argument number to create node");
 			}
 			else{
 				return analyseCreateCommandAndExecute(args);
@@ -238,9 +238,9 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 			NodeType synapseNodeTypeSelected;
 			int chordNumber=0;
 			int kadNumber=0;
-			for(int i=3;i<args.length;i+=3){
-				synapseNodeTypeSelected = NodeType.values()[Integer.parseInt(args[i+1])];
-				createNode(synapseNodeTypeSelected, args[i+2],synapse);
+			for(int i=3;i<args.length;i+=2){
+				synapseNodeTypeSelected = NodeType.values()[Integer.parseInt(args[i])];
+				createNode(synapseNodeTypeSelected, args[i+1],synapse);
 				if(synapseNodeTypeSelected == NodeType.KAD){
 					kadNumber++;
 				}
