@@ -1,8 +1,6 @@
 package experiment.networking.current.node.synapse.plugin.chord;
 
-import core.protocol.p2p.Node;
 import core.protocol.p2p.chord.IChord;
-import core.protocol.transport.ITransport;
 import experiment.networking.current.node.chord.ChordNode;
 import experiment.networking.current.node.synapse.Synapse;
 
@@ -19,6 +17,7 @@ public class ChordNodePlugin extends ChordNode {
 	private Synapse synapse;
 
 	/**
+	 * Constructor
 	 * 
 	 * @param host
 	 * @param port
@@ -27,55 +26,41 @@ public class ChordNodePlugin extends ChordNode {
 	 */
 	public ChordNodePlugin(String host, int port, Synapse synapse,
 			String overlayIntifier) {
-		this(host, port, synapse, overlayIntifier, null);
+		super(host, port, overlayIntifier);
+		this.synapse = synapse;
 	}
-	
+
 	/**
 	 * Constructor
 	 * 
 	 * @param host
 	 * @param port
 	 * @param synapse
-	 * @param overlayIntifier
 	 */
-	public ChordNodePlugin(String host, int port, Synapse synapse,
-			String overlayIntifier, ITransport transport) {
-		super(host, port, overlayIntifier, transport);
+	public ChordNodePlugin(String host, int port, Synapse synapse) {
+		super(host, port);
 		this.synapse = synapse;
 	}
-	
-	/**
-	 * Constructor
-	 * 
-	 * @param host
-	 * @param port
-	 * @param synapse
-	 * @param overlayIntifier
-	 */
-	public ChordNodePlugin(Node nodeInfo, Synapse synapse, ITransport transport) {
-		super(nodeInfo, transport);
-		this.synapse = synapse;
-	}
-	
+
 	/**
 	 * @see core.protocol.transport.IRequestHandler#handleRequest(String)
 	 */
 	public String handleRequest(String code) {
 		String[] args = code.split(",");
 		String result = "";
-		if (args[0].equals(overlayIdentifier)) {
+		if (args[0].equals(overlayIntifier)) {
 			int f = Integer.parseInt(args[1]);
 			switch (f) {
 			case IChord.GET:
 				String cleanKey = synapse.getInCleanTable(args[2] + "|"
-						+ overlayIdentifier);
+						+ overlayIntifier);
 //				String cleanKey = synapse.getInCleanTable(args[2]);
 				if (cleanKey != null && !cleanKey.equals("null")
 						&& !cleanKey.equals("")) {
 //					System.out.println("CleanKey found!\t" + args[2] + " => " + cleanKey);
 					if (synapse.cacheTableExist(cleanKey).equals("1")) {
 						// THEN SYNAPSE AND USE THE CACHE TABLE
-						synapse.synapseGet(cleanKey, overlayIdentifier);
+						synapse.synapseGet(cleanKey, overlayIntifier);
 //						System.out.println("clean key found: " +  args[2] + " => " + cleanKey);
 					}
 				} else {

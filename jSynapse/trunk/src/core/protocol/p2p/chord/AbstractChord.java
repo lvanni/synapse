@@ -53,16 +53,7 @@ public abstract class AbstractChord implements IChord {
 	 *            the port number of the node to listen request
 	 */
 	public void initialize(String ip, int id, int port) {
-		initialize(new Node(ip, id, port));
-	}
-	
-	/**
-	 * Initialize a chord node
-	 * 
-	 * @param nodeInfo
-	 */
-	public void initialize(Node nodeInfo) {
-		thisNode = nodeInfo;
+		thisNode = new Node(ip, id, port);
 		successor = thisNode;
 		predecessor = thisNode;
 		table = new HashMap<Integer, String>();
@@ -262,13 +253,6 @@ public abstract class AbstractChord implements IChord {
 	 */
 	public Node getThisNode() {
 		return thisNode;
-	}
-	
-	/**
-	 * @see core.protocol.p2p.chord.IChord#getThisNode()
-	 */
-	public Node setThisNode(Node node) {
-		return this.thisNode = node;
 	}
 
 	/**

@@ -22,68 +22,52 @@ import experiment.networking.current.Oracle;
  */
 public class ChordNode extends AbstractChord {
 	/** name of the service */
-	private static SimpleDateFormat formater = new SimpleDateFormat("dd/MM/yy_H:mm:ss");
+	private static SimpleDateFormat formater = new SimpleDateFormat(
+	"dd/MM/yy_H:mm:ss");
 	protected static String time = formater.format(new Date());
-	public String overlayIdentifier = "chordNetwork"; // use an unique ID is possible
+	public String overlayIntifier = "chordNetwork"; // use an unique ID is possible
 	/** Transport protocol */
 	protected ITransport transport;
 	/** Hash function */
 	private HashFunction h;
 	/* just to debug */
 	public static boolean debugMode = false;
-	
+
 	/**
+	 * Default constructor
 	 * 
 	 * @param ip
 	 * @param port
-	 * @param overlayIdentifier
-	 */
-	public ChordNode(String ip, int port, String overlayIdentifier) {
-		this(ip, port, overlayIdentifier, null);
-	}
-	
-	/**
-	 * 
-	 * @param ip
-	 * @param port
-	 * @param overlayIdentifier
+	 * @param overlayIntifier
 	 *            the identifier of the chord network
 	 */
-	public ChordNode(String ip, int port, String overlayIdentifier, ITransport transport) {
-		this(new Node(ip, port), transport);
-		this.overlayIdentifier = overlayIdentifier;
-	}
-	
-	/**
-	 * 
-	 * @param nodeInfo
-	 * @param transport
-	 */
-	public ChordNode(Node nodeInfo, ITransport transport) {
-		
-		if(transport == null) {
-			// DEFAULT TRANSPORT LAYER BASED ON THE SOCKET IMPLEMENTATION
-			transport = new SocketImpl(nodeInfo.getPort(), 10, RequestHandler.class.getName(),
-					10, 1, 100, this);
-			((SocketImpl) transport).launchServer();
-		} else {
-			this.transport = transport;
-		}
-		
-		this.overlayIdentifier = nodeInfo.getNetworkId();
-		this.h = new HashFunction(overlayIdentifier);
-		int id = this.h.SHA1ToInt(nodeInfo.getIp() + nodeInfo.getPort() + time);
-		nodeInfo.setId(id);
-		
-		initialize(nodeInfo);
+	public ChordNode(String ip, int port, String overlayIntifier) {
+		this.overlayIntifier = overlayIntifier;
+		this.h = new HashFunction(overlayIntifier);
+		// TRANSPORT LAYER BASED ON THE SOCKET IMPLEMENTATION
+		transport = new SocketImpl(port, 10, RequestHandler.class.getName(),
+				10, 1, 100, this);
+		((SocketImpl) transport).launchServer();
+		int id = h.SHA1ToInt(ip +  transport.getPort() + time);
+		initialize(ip, id, transport.getPort());
 		checkStable();
+	}
+
+	/**
+	 * Constructor without overlayIntifier (it is auto-generate)
+	 * 
+	 * @param ip
+	 * @param port
+	 */
+	public ChordNode(String ip, int port) {
+		this(ip, port, "<" + ip + port + ">");
 	}
 
 	/**
 	 * @see core.protocol.p2p.chord.AbstractChord#sendRequest(String, Node)
 	 */
 	public String sendRequest(String message, Node destination) {
-		return transport.sendRequest(getOverlayIntifier() + "," + message,
+		return transport.sendRequest(getIdentifier() + "," + message,
 				destination);
 	}
 
@@ -156,7 +140,7 @@ public class ChordNode extends AbstractChord {
 		}
 		String[] args = code.split(",");
 		String result = "";
-		if (args[0].equals(getOverlayIntifier())) {
+		if (args[0].equals(getIdentifier())) {
 			int f = Integer.parseInt(args[1]);
 			switch (f) {
 			case IChord.GETPRED:
@@ -199,7 +183,7 @@ public class ChordNode extends AbstractChord {
 				break;
 			}
 		} else if (args[0].equals("getIdentifier")) {
-			return getOverlayIntifier();
+			return getIdentifier();
 		}
 		if (debugMode) {
 			System.out.println("*\tresult: " + result
@@ -210,7 +194,7 @@ public class ChordNode extends AbstractChord {
 
 	@Override
 	public String toString() {
-		return getOverlayIntifier() + " on " + getThisNode().getIp() + ":"
+		return getIdentifier() + " on " + getThisNode().getIp() + ":"
 		+ getThisNode().getPort() + "\n" + super.toString();
 	}
 
@@ -222,10 +206,10 @@ public class ChordNode extends AbstractChord {
 	}
 
 	/**
-	 * @see core.protocol.p2p.IDHT#getOverlayIntifier()
+	 * @see core.protocol.p2p.IDHT#getIdentifier()
 	 */
-	public String getOverlayIntifier() {
-		return overlayIdentifier;
+	public String getIdentifier() {
+		return overlayIntifier;
 	}
 
 	/**

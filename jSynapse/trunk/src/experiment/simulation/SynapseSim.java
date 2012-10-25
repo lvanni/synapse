@@ -73,10 +73,10 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 
 		try {
 			synchronized (INSTANCE) {
-				Map<String, Map<Integer, IDHT>> 	topologyByNodeType  = topology.get(node.getNodeType());
-				Map<Integer, IDHT> 					topologyByNetworkID = topologyByNodeType.get(node.getNetworkId());
+//				Map<String, Map<Integer, IDHT>> 	topologyByNodeType  = topology.get(node.getNodeType());
+//				Map<Integer, IDHT> 					topologyByNetworkID = topologyByNodeType.get(node.getNetworkId());
 	
-				receiver = topologyByNetworkID.get(node.getId()); 
+//				receiver = topologyByNetworkID.get(node.getId()); 
 			}
 		} catch (Exception e) {}
 
@@ -91,31 +91,26 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 
 		IDHT node = null;
 		int port = nodeID++;	// Fake port number for the simulation 
-		Node nodeInfo = new Node(DEFAULT_IP, nodeID, port);
-		nodeInfo.setNetworkId(networkId);
-		nodeInfo.setNodeType(nodeType.toString());
 
 		switch (nodeType) {
 		case CHORD:
 			if(synapse != null) {
-				node = new ChordNodePlugin(nodeInfo, synapse, (ITransport) new LocalImpl());
+//				node = new ChordNodePlugin(nodeInfo, synapse, (ITransport) new LocalImpl());
 			} else {
-				node = new ChordNode(nodeInfo, (ITransport) new LocalImpl());
+//				node = new ChordNode(nodeInfo, (ITransport) new LocalImpl());
 			}
 			break;
 		case KAD:
 			if(synapse != null) {
-				node = new KadNodePlugin(nodeInfo, synapse, (ITransport) new LocalImpl());
+//				node = new KadNodePlugin(nodeInfo, synapse, (ITransport) new LocalImpl());
 			} else {
-				node = new KadNode(nodeInfo, (ITransport) new LocalImpl());
+//				node = new KadNode(nodeInfo, (ITransport) new LocalImpl());
 			}
 			break;
 		case SYNAPSE:
-			node = new Synapse(nodeInfo, (ITransport) new LocalImpl());
+//			node = new Synapse(nodeInfo, (ITransport) new LocalImpl());
 			break;
 		}
-
-		node.setThisNode(nodeInfo);
 
 		// Add node to the topology
 		synchronized (INSTANCE) {
@@ -135,11 +130,6 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 
 			topologyByNodeType.get(networkId).put(node.getThisNode().getId(), node);
 		}
-
-		//		System.out.println("CREATE: ");
-		//		System.out.println(nodeType);
-		//		System.out.println(networkId);
-		//		System.out.println(node.getThisNode().getId());
 
 		return node;
 	}

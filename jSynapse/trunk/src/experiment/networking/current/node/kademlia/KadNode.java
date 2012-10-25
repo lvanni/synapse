@@ -20,53 +20,35 @@ import experiment.networking.current.Oracle;
 
 public class KadNode implements IDHT{
 
-	protected String overlayIdentifier;
+	protected String identifier;
 	protected ITransport transport;
-	protected Node nodeInfo;
+	protected Node node;
 	protected Kademlia kad;
-	protected HashFunction h;
 
+	/** Hash function */
+	protected HashFunction h;
+	
 	protected KadNode() {}
 
-	public KadNode(String overlayIntifier) {
+	public KadNode(String identifier) {
 		try {
-			
-			this.overlayIdentifier = overlayIntifier;
-			this.h = new HashFunction(overlayIntifier);
+			this.identifier = identifier;
+			this.h = new HashFunction(identifier);
 			ServerSocket serverSocket = new ServerSocket(0);
-			nodeInfo = new Node(InfoConsole.getIp(), 0, serverSocket.getLocalPort());
+			node = new Node(InfoConsole.getIp(), 0, serverSocket.getLocalPort());
 			kad = new Kademlia(Identifier.randomIdentifier(), serverSocket.getLocalPort());
-
-			// DEFAULT TRANSPORT LAYER BASED ON THE SOCKET IMPLEMENTATION
 			transport = new SocketImpl(0, 10, RequestHandler.class.getName(),
 					10, 1, 100, this);
 			((SocketImpl) transport).launchServer();
-
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	public KadNode(Node nodeInfo, ITransport transport) {
-		try {
-			
-			ServerSocket serverSocket = new ServerSocket(0);
-			
-			this.overlayIdentifier = nodeInfo.getNetworkId();
-			this.h = new HashFunction(this.overlayIdentifier);
-			this.nodeInfo = nodeInfo;
-			this.kad = new Kademlia(Identifier.randomIdentifier(), serverSocket.getLocalPort());
-			this.transport = transport;
-
-		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public void put(String key, String value) {
 		Identifier id = new Identifier(BigInteger.valueOf(keyToH(key)));
-		//		System.out.println("put(" + keyToH(key) + ", " + value + ")");
+//		System.out.println("put(" + keyToH(key) + ", " + value + ")");
 		try {
 			kad.put(id, value);
 		} catch (RoutingException e) {
@@ -99,19 +81,12 @@ public class KadNode implements IDHT{
 		}
 	}
 
-	public String getOverlayIntifier() {
-		return overlayIdentifier;
+	public String getIdentifier() {
+		return identifier;
 	}
 
 	public Node getThisNode() {
-		return nodeInfo;
-	}
-	
-	/**
-	 * @see core.protocol.p2p.chord.IChord#getThisNode()
-	 */
-	public Node setThisNode(Node node) {
-		return this.nodeInfo = node;
+		return node;
 	}
 
 	public ITransport getTransport() {
@@ -127,10 +102,10 @@ public class KadNode implements IDHT{
 	}
 
 	public String handleRequest(String code) {
-		//		System.out.println("request handled: " + code);
+//		System.out.println("request handled: " + code);
 		String[] args = code.split(",");
 		String result = "";
-		if (args[0].equals(getOverlayIntifier())) {
+		if (args[0].equals(getIdentifier())) {
 			int f = Integer.parseInt(args[1]);
 			switch (f) {
 			case Oracle.PUT:
@@ -143,11 +118,11 @@ public class KadNode implements IDHT{
 				break;
 			}
 		} else if (args[0].equals("getIdentifier")) {
-			return getOverlayIntifier();
+			return getIdentifier();
 		}
 		return result;
 	}
-
+	
 	public void setKad(Kademlia kad) {
 		this.kad = kad;
 	}

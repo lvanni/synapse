@@ -14,7 +14,7 @@ public interface IDHT extends IRequestHandler {
 	/**
 	 * @return The identifier of the network
 	 */
-	public String getOverlayIntifier();
+	public String getIdentifier();
 
 	/**
 	 * @param key
@@ -33,11 +33,6 @@ public interface IDHT extends IRequestHandler {
 	 */
 	public Node getThisNode();
 
-	/**
-	 * @return a instance of the node
-	 */
-	public Node setThisNode(Node node);
-	
 	/**
 	 * Put<key,value> : the Common command of a DHT
 	 * 
