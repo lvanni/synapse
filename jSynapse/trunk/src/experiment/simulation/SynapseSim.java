@@ -134,7 +134,7 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 		switch (command) {
 		case CREATE:
 			System.out.println("Print topology");
-			if(args.length < 3 || (args[1].equals("Synapse") && ((args.length -1) % 9) != 0)){
+			if(args.length < 3 || (args[1].equals("Synapse") && ((args.length) % 3) != 0)){
 				throw new SynapseSimException("Bad argument number to create Synapse node");
 			}
 			else{
@@ -165,7 +165,18 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 			createNode(NodeType.CHORD,args[2]);
 		}
 		if(args[1].equals("Synapse")){
-			
+			Synapse synapse=(Synapse)createNode(NodeType.SYNAPSE,args[2]);
+			for(int i=3;i<args.length;i+=3){
+				if(args[i+1].equals("Kad")){
+					createNode(NodeType.KAD,args[i+2],synapse);
+					continue;
+				}
+				if(args[i+1].equals("Chord")){
+					createNode(NodeType.CHORD,args[i+2],synapse);
+					continue;
+				}
+				throw new SynapseSimException("Unknown node type in synapse creation, correct this and come back");
+			}
 		}
 		throw new SynapseSimException("Unknown node type");
 	}
