@@ -111,7 +111,7 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 	/* ********************************************* */
 	public String handleRequest(String message) {
 		try {
-			return commandExecutor(commandInterpretor(message), message.split(" "));
+			return commandExecutor(commandInterpretor(message), message.split(","));
 		} catch (SynapseSimException e) {
 			e.printStackTrace();
 			return e.toString();
@@ -131,7 +131,7 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 	 * @return
 	 */
 	private Command commandInterpretor(String message) {
-		String[] args = message.split(" ");
+		String[] args = message.split(",");
 		return Command.values()[Integer.parseInt(args[0])];
 	}
 	
@@ -169,36 +169,28 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 	private String analyseCreateCommandAndExecute(String[] args) throws SynapseSimException{
 		
 		NodeType nodeTypeSelected = NodeType.values()[Integer.parseInt(args[1])];
-		
-		System.out.println(nodeTypeSelected + " == " + NodeType.CHORD);
-		if(nodeTypeSelected.equals(NodeType.KAD)){
-			createNode(NodeType.KAD, args[2]);
-			return "Node Kad created on network: "+args[2];
-		}
-		if(nodeTypeSelected.equals(NodeType.CHORD)){
-			createNode(NodeType.CHORD,args[2]);
-			return "Node Chord created on network: "+args[2];
-		}
-		if(nodeTypeSelected.equals(NodeType.SYNAPSE)){
-			Synapse synapse=(Synapse)createNode(NodeType.SYNAPSE,args[2]);
+	
+		if(nodeTypeSelected == NodeType.SYNAPSE){
+			Synapse synapse = (Synapse)createNode(NodeType.SYNAPSE,args[2]);
+			NodeType synapseNodeTypeSelected;
 			int chordNumber=0;
 			int kadNumber=0;
 			for(int i=3;i<args.length;i+=3){
-				if(args[i+1].equals(NodeType.KAD.toString())){
-					createNode(NodeType.KAD,args[i+2],synapse);
+				synapseNodeTypeSelected = NodeType.values()[Integer.parseInt(args[i+1])];
+				createNode(synapseNodeTypeSelected, args[i+2],synapse);
+				if(synapseNodeTypeSelected == NodeType.KAD){
 					kadNumber++;
-					continue;
 				}
-				if(args[i+1].equals(NodeType.CHORD.toString())){
-					createNode(NodeType.CHORD,args[i+2],synapse);
+				else{
 					chordNumber++;
-					continue;
 				}
-				throw new SynapseSimException("Unknown node type in synapse creation, correct this and come back");
 			}
 			return "Node Synapse created with :"+chordNumber+" chord node, "+kadNumber+" kad node inside, on network: "+args[2];
 		}
-		throw new SynapseSimException("Unknown node type");
+		else{
+			createNode(nodeTypeSelected, args[2]);
+			return "Node "+nodeTypeSelected.toString()+ " created on network: "+ args[2];
+		}
 	}
 	
 	/* ********************************************* */
