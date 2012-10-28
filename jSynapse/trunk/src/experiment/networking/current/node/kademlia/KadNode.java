@@ -20,7 +20,7 @@ import experiment.networking.current.Oracle;
 
 public class KadNode implements IDHT{
 
-	protected String identifier;
+	protected String overlayIntifier;
 	protected ITransport transport;
 	protected Node node;
 	protected Kademlia kad;
@@ -30,10 +30,10 @@ public class KadNode implements IDHT{
 	
 	protected KadNode() {}
 
-	public KadNode(String identifier) {
+	public KadNode(String overlayIntifier) {
 		try {
-			this.identifier = identifier;
-			this.h = new HashFunction(identifier);
+			this.overlayIntifier = overlayIntifier;
+			this.h = new HashFunction(overlayIntifier);
 			ServerSocket serverSocket = new ServerSocket(0);
 			node = new Node(InfoConsole.getIp(), 0, serverSocket.getLocalPort());
 			kad = new Kademlia(Identifier.randomIdentifier(), serverSocket.getLocalPort());
@@ -82,7 +82,7 @@ public class KadNode implements IDHT{
 	}
 
 	public String getIdentifier() {
-		return identifier;
+		return overlayIntifier;
 	}
 
 	public Node getThisNode() {

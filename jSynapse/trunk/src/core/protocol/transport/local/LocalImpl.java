@@ -8,13 +8,19 @@ import experiment.simulation.SynapseSim;
 public class LocalImpl implements ITransport {
 	
 	private ISynapseSim simulator;
+	private int port;
 	
 	public LocalImpl() {
-		this.simulator = SynapseSim.getInstance();
+		this(SynapseSim.DEFAULT_PORT);
 	}
 
+	public LocalImpl(int port) {
+		this.simulator = SynapseSim.getInstance();
+		this.port = port;
+	}
+	
 	public int getPort() {
-		return SynapseSim.DEFAULT_PORT;
+		return this.port;
 	}
 
 	/**

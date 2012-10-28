@@ -22,7 +22,7 @@ public class KadNodePlugin extends KadNode{
 
 	public KadNodePlugin(String identifier, Synapse synapse) {
 		try {
-			this.identifier = identifier;
+			this.overlayIntifier = identifier;
 			this.synapse = synapse;
 			this.h = new HashFunction(identifier);
 			ServerSocket serverSocket = new ServerSocket(0);
@@ -56,7 +56,7 @@ public class KadNodePlugin extends KadNode{
 			for(String arg : args){
 				if(arg.split("=")[0].equals("lookup")){
 					String key = arg.split("=")[1].split("]")[0];
-					String cleanKey = synapse.getInCleanTable(key+ "|" + identifier);
+					String cleanKey = synapse.getInCleanTable(key+ "|" + overlayIntifier);
 //					String cleanKey = synapse.getInCleanTable(key);
 //					System.out.println("search " + key);
 					if (cleanKey != null && !cleanKey.equals("null")
@@ -64,7 +64,7 @@ public class KadNodePlugin extends KadNode{
 //						System.out.println("CleanKey found!\t" + key + " => " + cleanKey);
 						if (synapse.cacheTableExist(cleanKey).equals("1")) {
 							// THEN SYNAPSE AND USE THE CACHE TABLE
-							synapse.synapseGet(cleanKey, identifier);
+							synapse.synapseGet(cleanKey, overlayIntifier);
 						}
 					} else {
 //						System.out.println("CleanKey not found!\t" + key);

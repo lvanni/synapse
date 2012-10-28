@@ -34,6 +34,16 @@ public class ChordNode extends AbstractChord {
 	public static boolean debugMode = false;
 
 	/**
+	 * Constructor without overlayIntifier (it is auto-generate)
+	 * 
+	 * @param ip
+	 * @param port
+	 */
+	public ChordNode(String ip, int port) {
+		this(ip, port, "<" + ip + port + ">");
+	}
+	
+	/**
 	 * Default constructor
 	 * 
 	 * @param ip
@@ -42,25 +52,33 @@ public class ChordNode extends AbstractChord {
 	 *            the identifier of the chord network
 	 */
 	public ChordNode(String ip, int port, String overlayIntifier) {
-		this.overlayIntifier = overlayIntifier;
-		this.h = new HashFunction(overlayIntifier);
-		// TRANSPORT LAYER BASED ON THE SOCKET IMPLEMENTATION
-		transport = new SocketImpl(port, 10, RequestHandler.class.getName(),
+		// DEFAULT TRANSPORT LAYER BASED ON THE SOCKET IMPLEMENTATION
+		this.transport = new SocketImpl(port, 10, RequestHandler.class.getName(),
 				10, 1, 100, this);
 		((SocketImpl) transport).launchServer();
+		this.overlayIntifier = overlayIntifier;
+		this.h = new HashFunction(overlayIntifier);
 		int id = h.SHA1ToInt(ip +  transport.getPort() + time);
+		
 		initialize(ip, id, transport.getPort());
 		checkStable();
 	}
-
+	
 	/**
-	 * Constructor without overlayIntifier (it is auto-generate)
-	 * 
+	 * Constructor with transport parameter
 	 * @param ip
 	 * @param port
+	 * @param overlayIntifier
+	 * @param transport
 	 */
-	public ChordNode(String ip, int port) {
-		this(ip, port, "<" + ip + port + ">");
+	public ChordNode(String ip, int port, String overlayIntifier, ITransport transport) {
+		this.transport = transport;
+		this.overlayIntifier = overlayIntifier;
+		this.h = new HashFunction(overlayIntifier);
+		int id = h.SHA1ToInt(ip +  transport.getPort() + time);
+
+		initialize(ip, id, transport.getPort());
+		checkStable();
 	}
 
 	/**
