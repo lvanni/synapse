@@ -25,7 +25,7 @@ public class ChordNode extends AbstractChord {
 	private static SimpleDateFormat formater = new SimpleDateFormat(
 	"dd/MM/yy_H:mm:ss");
 	protected static String time = formater.format(new Date());
-	public String overlayIntifier = "chordNetwork"; // use an unique ID is possible
+	public String overlayIndentifier = "chordNetwork"; // use an unique ID is possible
 	/** Transport protocol */
 	protected ITransport transport;
 	/** Hash function */
@@ -48,16 +48,16 @@ public class ChordNode extends AbstractChord {
 	 * 
 	 * @param ip
 	 * @param port
-	 * @param overlayIntifier
+	 * @param overlayIdentifier
 	 *            the identifier of the chord network
 	 */
-	public ChordNode(String ip, int port, String overlayIntifier) {
+	public ChordNode(String ip, int port, String overlayIdentifier) {
 		// DEFAULT TRANSPORT LAYER BASED ON THE SOCKET IMPLEMENTATION
 		this.transport = new SocketImpl(port, 10, RequestHandler.class.getName(),
 				10, 1, 100, this);
 		((SocketImpl) transport).launchServer();
-		this.overlayIntifier = overlayIntifier;
-		this.h = new HashFunction(overlayIntifier);
+		this.overlayIndentifier = overlayIdentifier;
+		this.h = new HashFunction(overlayIdentifier);
 		int id = h.SHA1ToInt(ip +  transport.getPort() + time);
 		
 		initialize(ip, id, transport.getPort());
@@ -68,13 +68,13 @@ public class ChordNode extends AbstractChord {
 	 * Constructor with transport parameter
 	 * @param ip
 	 * @param port
-	 * @param overlayIntifier
+	 * @param overlayIdentifier
 	 * @param transport
 	 */
-	public ChordNode(String ip, int port, String overlayIntifier, ITransport transport) {
+	public ChordNode(String ip, int port, String overlayIdentifier, ITransport transport) {
 		this.transport = transport;
-		this.overlayIntifier = overlayIntifier;
-		this.h = new HashFunction(overlayIntifier);
+		this.overlayIndentifier = overlayIdentifier;
+		this.h = new HashFunction(overlayIdentifier);
 		int id = h.SHA1ToInt(ip +  transport.getPort() + time);
 
 		initialize(ip, id, transport.getPort());
@@ -227,7 +227,7 @@ public class ChordNode extends AbstractChord {
 	 * @see core.protocol.p2p.IDHT#getIdentifier()
 	 */
 	public String getIdentifier() {
-		return overlayIntifier;
+		return overlayIndentifier;
 	}
 
 	/**

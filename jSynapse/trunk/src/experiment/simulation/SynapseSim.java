@@ -17,7 +17,10 @@ import core.protocol.transport.local.LocalImpl;
 import core.protocol.transport.socket.request.RequestHandler;
 import core.protocol.transport.socket.server.SocketImpl;
 import experiment.networking.current.node.chord.ChordNode;
+import experiment.networking.current.node.kademlia.KadNode;
 import experiment.networking.current.node.synapse.Synapse;
+import experiment.networking.current.node.synapse.plugin.chord.ChordNodePlugin;
+import experiment.networking.current.node.synapse.plugin.kademlia.KadNodePlugin;
 import experiment.simulation.exception.SynapseSimException;
 
 /**
@@ -85,7 +88,7 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 		return createNode(nodeType, overlayIntifier, null);
 	}
 
-	public IDHT createNode(NodeType nodeType, String overlayIntifier, Synapse synapse) {
+	public IDHT createNode(NodeType nodeType, String overlayIdentifier, Synapse synapse) {
 
 		IDHT node = null;
 		int port = nodeID++;	// Fake port number for the simulation 
@@ -93,20 +96,20 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 		switch (nodeType) {
 		case CHORD:
 			if(synapse != null) {
-//				node = new ChordNodePlugin(nodeInfo, synapse, (ITransport) new LocalImpl());
+				node = new ChordNodePlugin(DEFAULT_IP, port, synapse, overlayIdentifier, (ITransport) new LocalImpl(port));
 			} else {
-				node = new ChordNode(DEFAULT_IP, port, overlayIntifier, (ITransport) new LocalImpl(port));
+				node = new ChordNode(DEFAULT_IP, port, overlayIdentifier, (ITransport) new LocalImpl(port));
 			}
 			break;
 		case KAD:
 			if(synapse != null) {
-//				node = new KadNodePlugin(nodeInfo, synapse, (ITransport) new LocalImpl());
+				node = new KadNodePlugin(overlayIdentifier, synapse, (ITransport) new LocalImpl(port));
 			} else {
-				node = new KadNode(nodeInfo, (ITransport) new LocalImpl(port));
+				node = new KadNode(overlayIdentifier, (ITransport) new LocalImpl(port));
 			}
 			break;
 		case SYNAPSE:
-//			node = new Synapse(nodeInfo, (ITransport) new LocalImpl());
+			node = new Synapse(DEFAULT_IP, port, (ITransport) new LocalImpl(port));
 			break;
 		}
 
@@ -119,17 +122,17 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 				topology.put(nodeType, new HashMap<String, Map<Integer,IDHT>>());
 			}
 			Map<String, Map<Integer, IDHT>> topologyByNodeType  = topology.get(nodeType);
-			if(!topologyByNodeType.containsKey(overlayIntifier)) {
-				topologyByNodeType.put(overlayIntifier, new HashMap<Integer, IDHT>());
+			if(!topologyByNodeType.containsKey(overlayIdentifier)) {
+				topologyByNodeType.put(overlayIdentifier, new HashMap<Integer, IDHT>());
 			} else {
 				// JOIN
-				Set<Entry<Integer, IDHT>> topologyByNodeTypeSet = topologyByNodeType.get(overlayIntifier).entrySet();
+				Set<Entry<Integer, IDHT>> topologyByNodeTypeSet = topologyByNodeType.get(overlayIdentifier).entrySet();
 				int id = topologyByNodeTypeSet.iterator().next().getKey();
-				Node networkToJoin = topologyByNodeType.get(overlayIntifier).get(id).getThisNode();
+				Node networkToJoin = topologyByNodeType.get(overlayIdentifier).get(id).getThisNode();
 				node.join(networkToJoin.getIp(), networkToJoin.getPort());
 			}
 
-			topologyByNodeType.get(overlayIntifier).put(node.getThisNode().getId(), node);
+			topologyByNodeType.get(overlayIdentifier).put(node.getThisNode().getId(), node);
 			
 		}
 
@@ -183,10 +186,9 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 	private String commandExecutor(Command command, String[] args) throws SynapseSimException{
 		switch (command) {
 		case CREATE:
-			if(args.length < 3 || (args[1].equals("Synapse") && ((args.length-3) % 2) != 0)){
+			if(args.length < 3 || (args[1].equals("Synapse") && ((args.length-3) % 2) != 0)) {
 				throw new SynapseSimException("Bad argument number to create node");
-			}
-			else{
+			} else {
 				return analyseCreateCommandAndExecute(args);
 			}
 		case GET:
@@ -241,26 +243,8 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 		String result = "";
 		
 		for(Entry<Integer, IDHT> node : NodeToPortMap.entrySet()) {
-			result += node.getValue();
+			result += node.getValue() + "\n";
 		}
-		
-		/*
-		Map<String, Map<Integer, IDHT>> topologyByNodeType;
-		Map<Integer, IDHT> topologyByoverlayIntifier;
-		for(NodeType nodeType : topology.keySet()) {
-
-			topologyByNodeType = topology.get(nodeType);
-
-			for(String overlayIntifier : topologyByNodeType.keySet()){
-
-				topologyByoverlayIntifier = topologyByNodeType.get(overlayIntifier);
-
-				for(Map.Entry<Integer,IDHT> node : topologyByoverlayIntifier.entrySet())
-
-					result += node.getValue();
-			}
-		}
-		*/
 		
 		return result;
 	}
@@ -315,11 +299,30 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 						System.out.println("1) Kad");
 						System.out.println("2) Synapse");
 						System.out.print("---> ");
-						int nodeType = Integer.parseInt(input.readLine().trim());
 						int command = Command.CREATE.getValue();
-						System.out.print("Network ID ---> ");
-						String overlayIntifier = input.readLine().trim();
-						String commandLine = command + "," + nodeType + "," + overlayIntifier;
+						String commandLine = command + ",";
+						int nodeType = Integer.parseInt(input.readLine().trim());
+						if(nodeType < 2) {
+							System.out.print("Network ID ---> ");
+							String overlayIdentifier = input.readLine().trim();
+							commandLine += nodeType + "," + overlayIdentifier;
+						} else {
+							commandLine +=  nodeType + "," + "ControlNetwork";
+							while(true) {
+								System.out.println("\n\t0) Add Chord node");
+								System.out.println("\t1) Add Kad node");
+								System.out.println("\t2) Create Synapse");
+								System.out.print("\t---> ");
+								nodeType = Integer.parseInt(input.readLine().trim());
+								if(nodeType == 2) {
+									break;
+								}
+								System.out.print("\tNetwork ID ---> ");
+								String overlayIdentifier = input.readLine().trim();
+								commandLine += "," + nodeType + "," + overlayIdentifier;
+							}
+							
+						}
 						synapseSim.commandExecutor(synapseSim.commandInterpretor(commandLine), commandLine.split(","));
 						break;
 					case 2:

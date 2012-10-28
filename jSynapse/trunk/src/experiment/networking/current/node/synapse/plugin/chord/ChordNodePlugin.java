@@ -1,6 +1,7 @@
 package experiment.networking.current.node.synapse.plugin.chord;
 
 import core.protocol.p2p.chord.IChord;
+import core.protocol.transport.ITransport;
 import experiment.networking.current.node.chord.ChordNode;
 import experiment.networking.current.node.synapse.Synapse;
 
@@ -22,14 +23,26 @@ public class ChordNodePlugin extends ChordNode {
 	 * @param host
 	 * @param port
 	 * @param synapse
-	 * @param overlayIntifier
+	 * @param overlayIdentifier
 	 */
-	public ChordNodePlugin(String host, int port, Synapse synapse,
-			String overlayIntifier) {
-		super(host, port, overlayIntifier);
+	public ChordNodePlugin(String host, int port, Synapse synapse, String overlayIdentifier) {
+		super(host, port, overlayIdentifier);
 		this.synapse = synapse;
 	}
 
+	/**
+	 * Constructor
+	 * @param host
+	 * @param port
+	 * @param synapse
+	 * @param overlayIdentifier
+	 * @param transport
+	 */
+	public ChordNodePlugin(String host, int port, Synapse synapse, String overlayIdentifier, ITransport transport) {
+		super(host, port, overlayIdentifier, transport);
+		this.synapse = synapse;
+	}
+	
 	/**
 	 * Constructor
 	 * 
@@ -48,19 +61,19 @@ public class ChordNodePlugin extends ChordNode {
 	public String handleRequest(String code) {
 		String[] args = code.split(",");
 		String result = "";
-		if (args[0].equals(overlayIntifier)) {
+		if (args[0].equals(overlayIndentifier)) {
 			int f = Integer.parseInt(args[1]);
 			switch (f) {
 			case IChord.GET:
 				String cleanKey = synapse.getInCleanTable(args[2] + "|"
-						+ overlayIntifier);
+						+ overlayIndentifier);
 //				String cleanKey = synapse.getInCleanTable(args[2]);
 				if (cleanKey != null && !cleanKey.equals("null")
 						&& !cleanKey.equals("")) {
 //					System.out.println("CleanKey found!\t" + args[2] + " => " + cleanKey);
 					if (synapse.cacheTableExist(cleanKey).equals("1")) {
 						// THEN SYNAPSE AND USE THE CACHE TABLE
-						synapse.synapseGet(cleanKey, overlayIntifier);
+						synapse.synapseGet(cleanKey, overlayIndentifier);
 //						System.out.println("clean key found: " +  args[2] + " => " + cleanKey);
 					}
 				} else {

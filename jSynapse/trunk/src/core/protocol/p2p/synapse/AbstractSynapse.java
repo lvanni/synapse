@@ -34,7 +34,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse 
 			"dd/MM/yy_H:mm:ss");
 	protected static String time = formater.format(new Date());
 	/** The control network identifier */
-	public String identifier;
+	public String overlayIndentifier;
 	/** Hash function */
 	protected HashFunction h;
 	/** The transport layer */
@@ -51,22 +51,35 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse 
 	 * 
 	 * @param ip
 	 * @param port
-	 * @param identifier
+	 * @param overlayIndentifier
 	 */
-	protected AbstractSynapse(String ip, int port, String identifier) {
-		this.identifier = identifier;
-		this.h = new HashFunction(identifier);
+	protected AbstractSynapse(String ip, int port, String overlayIndentifier) {
+		this.overlayIndentifier = overlayIndentifier;
+		this.h = new HashFunction(overlayIndentifier);
 		int id = h.SHA1ToInt(ip + port + time);
-		networks = new ArrayList<IDHT>();
-		cleanKeyTable = new HashMap<Integer, String>();
-		cacheTable = new HashMap<String, Cache>();
-		// The transport layer
+		this.networks = new ArrayList<IDHT>();
+		this.cleanKeyTable = new HashMap<Integer, String>();
+		this.cacheTable = new HashMap<String, Cache>();
 		this.transport = new SocketImpl(port, 10, RequestHandler.class
 				.getName(), 10, 1, 50, this);
 		((SocketImpl) transport).launchServer();
+		
 		initialize(ip, id, transport.getPort());
 		checkStable();
 	}
+	
+	protected AbstractSynapse(String ip, int port, String overlayIndentifier, ITransport transport) {
+		this.overlayIndentifier = overlayIndentifier;
+		this.h = new HashFunction(overlayIndentifier);
+		int id = h.SHA1ToInt(ip + port + time);
+		this.networks = new ArrayList<IDHT>();
+		this.cleanKeyTable = new HashMap<Integer, String>();
+		this.cacheTable = new HashMap<String, Cache>();
+		this.transport = transport;
+		
+		initialize(ip, id, transport.getPort());
+		checkStable();
+	}	
 
 	/**
 	 * @see core.protocol.p2p.synapse.ISynapse#invite()
@@ -79,7 +92,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse 
 	 * @see core.protocol.p2p.synapse.ISynapse#join(String, int)
 	 */
 	public void join(String host, int port) {
-		Node chord = new Node(host, h.SHA1ToInt(host + port + identifier), port);
+		Node chord = new Node(host, h.SHA1ToInt(host + port + overlayIndentifier), port);
 		join(chord); // chord join
 	}
 
@@ -318,7 +331,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse 
 		}
 		String[] args = code.split(",");
 		String result = "";
-		if (args[0].equals(identifier)) {
+		if (args[0].equals(overlayIndentifier)) {
 			int f = Integer.parseInt(args[1]);
 			switch (f) {
 			// CHORD
@@ -380,7 +393,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse 
 
 	@Override
 	public String toString() {
-		String res = identifier + " on " + getThisNode().getIp() + ":"
+		String res = overlayIndentifier + " on " + getThisNode().getIp() + ":"
 				+ getThisNode().getPort() + "\n" + super.toString();
 		if (!cleanKeyTable.isEmpty()) {
 			res += "\tCleanKey Content : ";
@@ -407,7 +420,7 @@ public abstract class AbstractSynapse extends AbstractChord implements ISynapse 
 	 * @see core.protocol.p2p.IDHT#getIdentifier()
 	 */
 	public String getIdentifier() {
-		return identifier;
+		return overlayIndentifier;
 	}
 
 	/**

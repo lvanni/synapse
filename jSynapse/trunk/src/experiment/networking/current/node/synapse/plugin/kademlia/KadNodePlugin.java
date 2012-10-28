@@ -9,6 +9,7 @@ import core.protocol.p2p.Node;
 import core.protocol.p2p.kad.org.planx.xmlstore.routing.Identifier;
 import core.protocol.p2p.kad.org.planx.xmlstore.routing.Kademlia;
 import core.protocol.p2p.kad.org.planx.xmlstore.routing.RoutingException;
+import core.protocol.transport.ITransport;
 import core.protocol.transport.socket.request.RequestHandler;
 import core.protocol.transport.socket.server.SocketImpl;
 import core.tools.HashFunction;
@@ -16,24 +17,18 @@ import core.tools.InfoConsole;
 import experiment.networking.current.node.kademlia.KadNode;
 import experiment.networking.current.node.synapse.Synapse;
 
-public class KadNodePlugin extends KadNode{
+public class KadNodePlugin extends KadNode {
 
 	private Synapse synapse;
 
-	public KadNodePlugin(String identifier, Synapse synapse) {
-		try {
-			this.overlayIntifier = identifier;
-			this.synapse = synapse;
-			this.h = new HashFunction(identifier);
-			ServerSocket serverSocket = new ServerSocket(0);
-			node = new Node(InfoConsole.getIp(), 0, serverSocket.getLocalPort());
-			kad = new Kademlia(Identifier.randomIdentifier(), serverSocket.getLocalPort(), this);
-			transport = new SocketImpl(0, 10, RequestHandler.class.getName(),
-					10, 1, 100, this);
-			((SocketImpl) transport).launchServer();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public KadNodePlugin(String overlayIdentifier, Synapse synapse) {
+		super(overlayIdentifier);
+		this.synapse = synapse;
+	}
+
+	public KadNodePlugin(String overlayIdentifier, Synapse synapse, ITransport transport) {
+		super(overlayIdentifier, transport);
+		this.synapse = synapse;
 	}
 
 	public String get(String key){
@@ -56,7 +51,7 @@ public class KadNodePlugin extends KadNode{
 			for(String arg : args){
 				if(arg.split("=")[0].equals("lookup")){
 					String key = arg.split("=")[1].split("]")[0];
-					String cleanKey = synapse.getInCleanTable(key+ "|" + overlayIntifier);
+					String cleanKey = synapse.getInCleanTable(key+ "|" + overlayIdentifier);
 //					String cleanKey = synapse.getInCleanTable(key);
 //					System.out.println("search " + key);
 					if (cleanKey != null && !cleanKey.equals("null")
@@ -64,7 +59,7 @@ public class KadNodePlugin extends KadNode{
 //						System.out.println("CleanKey found!\t" + key + " => " + cleanKey);
 						if (synapse.cacheTableExist(cleanKey).equals("1")) {
 							// THEN SYNAPSE AND USE THE CACHE TABLE
-							synapse.synapseGet(cleanKey, overlayIntifier);
+							synapse.synapseGet(cleanKey, overlayIdentifier);
 						}
 					} else {
 //						System.out.println("CleanKey not found!\t" + key);
