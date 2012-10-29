@@ -140,7 +140,6 @@ public class Oracle {
 			System.out.println("usage: \ncreate [chord|kad] <networkId>");
 			System.out.println("create synapse [chord|kad] <networkId> [chord|kad] <networkId> ...");
 		} finally {
-			transport.stopServer();
 			System.exit(0);
 		}
 	}
