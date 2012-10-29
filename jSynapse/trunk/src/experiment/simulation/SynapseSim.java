@@ -6,8 +6,9 @@ import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Random;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import core.protocol.p2p.IDHT;
 import core.protocol.p2p.Node;
@@ -46,7 +47,8 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 	/* ********************************************* */
 	private int nodeID = 0;
 	// NodeType, overlayIntifier, NodeID
-	private Map<NodeType, Map<String, Map<Integer, IDHT>>> topology;
+//	private Map<NodeType, Map<String, Map<Integer, IDHT>>> topology;
+	Map<String, Map<Integer, IDHT>> topology;
 	private Map<Integer, IDHT> NodeToPortMap; 
 
 	/* ********************************************* */
@@ -58,7 +60,7 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 		ITransport transport = new SocketImpl(DEFAULT_PORT, 10, RequestHandler.class
 				.getName(), 10, 1, 100, this);
 		((SocketImpl) transport).launchServer();
-		topology = new HashMap<NodeType, Map<String, Map<Integer, IDHT>>>();
+		topology = new HashMap<String, Map<Integer, IDHT>>();
 		NodeToPortMap = new HashMap<Integer, IDHT>();
 	}
 
@@ -117,21 +119,17 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 			
 			NodeToPortMap.put(port, node);
 		
-			if(!topology.containsKey((nodeType))) {
-				topology.put(nodeType, new HashMap<String, Map<Integer,IDHT>>());
-			}
-			Map<String, Map<Integer, IDHT>> topologyByNodeType  = topology.get(nodeType);
-			if(!topologyByNodeType.containsKey(overlayIdentifier)) {
-				topologyByNodeType.put(overlayIdentifier, new HashMap<Integer, IDHT>());
+			if(!topology.containsKey(overlayIdentifier)) {
+				topology.put(overlayIdentifier, new HashMap<Integer, IDHT>());
 			} else {
 				// JOIN
-				Set<Entry<Integer, IDHT>> topologyByNodeTypeSet = topologyByNodeType.get(overlayIdentifier).entrySet();
+				Set<Entry<Integer, IDHT>> topologyByNodeTypeSet = topology.get(overlayIdentifier).entrySet();
 				int id = topologyByNodeTypeSet.iterator().next().getKey();
-				Node networkToJoin = topologyByNodeType.get(overlayIdentifier).get(id).getThisNode();
+				Node networkToJoin = topology.get(overlayIdentifier).get(id).getThisNode();
 				node.join(networkToJoin.getIp(), networkToJoin.getPort());
 			}
 
-			topologyByNodeType.get(overlayIdentifier).put(node.getThisNode().getId(), node);
+			topology.get(overlayIdentifier).put(node.getThisNode().getId(), node);
 		}
 
 		return node;
@@ -175,6 +173,18 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 		String[] args = message.split(",");
 		return Command.values()[Integer.parseInt(args[0])];
 	}
+	
+	/**
+	 * 
+	 * @param nodes
+	 * @return
+	 */
+	private IDHT getRandomNode(Map<Integer, IDHT> nodes){
+		Random generator = new Random();
+		Object[] values = nodes.values().toArray();
+		Object randomValue = values[generator.nextInt(values.length)];
+		return (IDHT) randomValue;
+	}
 
 	/**
 	 * Execute user command
@@ -190,11 +200,20 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 				return analyseCreateCommandAndExecute(args);
 			}
 		case GET:
-			System.out.println("Create Node");
-			return "not yet implemented...";
+			if(args.length < 3) {
+				throw new SynapseSimException("Bad argument number to create node");
+			} else {
+				IDHT node = getRandomNode(topology.get(args[2]));
+				return node.get(args[1]);
+			}
 		case PUT:
-			System.out.println("put");
-			return "not yet implemented...";
+			if(args.length < 4) {
+				throw new SynapseSimException("Bad argument number to create node");
+			} else {
+				IDHT node = getRandomNode(topology.get(args[3]));
+				node.put(args[1], args[2]);
+				return "ok";
+			}
 		default:
 			throw new SynapseSimException("How can it be possible to have this case ? You have 2 hours to think about it");
 		}
@@ -239,7 +258,6 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 	public String printTopology() {
 
 		String result = "";
-
 		
 		for(Entry<Integer, IDHT> node : NodeToPortMap.entrySet()) {
 			result += node.getValue() + "\n";
@@ -324,12 +342,25 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 						synapseSim.commandExecutor(synapseSim.commandInterpretor(commandLine), commandLine.split(","));
 						break;
 					case 2:
-						System.out.println("put");
-						System.out.println("not yet implemented...");
+						System.out.print("Key ---> ");
+						String key = input.readLine().trim();
+						System.out.print("Value ---> ");
+						String value = input.readLine().trim();
+						System.out.print("Network ID ---> ");
+						String networkID = input.readLine().trim();
+						command = Command.PUT.getValue();
+						commandLine = command + "," + key + "," + value + "," + networkID;
+						synapseSim.commandExecutor(synapseSim.commandInterpretor(commandLine), commandLine.split(","));
 						break;
 					case 3:
-						System.out.println("get");
-						System.out.println("not yet implemented...");
+						System.out.print("Key ---> ");
+						key = input.readLine().trim();
+						System.out.print("Network ID ---> ");
+						networkID = input.readLine().trim();
+						command = Command.GET.getValue();
+						commandLine = command + "," + key + "," + networkID;
+						value = synapseSim.commandExecutor(synapseSim.commandInterpretor(commandLine), commandLine.split(","));
+						System.out.println("value = " + value);
 						break;
 					case 4:
 						synapseSim.kill();
