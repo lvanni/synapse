@@ -90,13 +90,13 @@ public interface ISynapseSim {
 	 * @param value
 	 * @return
 	 */
-	public int put(String key, String value);
+	public String put(IDHT node, String key, String value);
 
 	/**
 	 * 
 	 * @param key
 	 * @return
 	 */
-	public int get(String key);
+	public String get(IDHT node, String key);
 
 }

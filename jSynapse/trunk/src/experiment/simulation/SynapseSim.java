@@ -135,13 +135,13 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 		return node;
 	}
 
-	public int put(String key, String value) {
-		return 0;
+	public String put(IDHT node, String key, String value) {
+		node.put(key, value);
+		return "";
 	}
 
-	public int get(String key) {
-		// TODO Auto-generated method stub
-		return 0;
+	public String get(IDHT node, String key) {
+		return node.get(key);
 	}
 
 	/* ********************************************* */
@@ -204,15 +204,14 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 				throw new SynapseSimException("Bad argument number to create node");
 			} else {
 				IDHT node = getRandomNode(topology.get(args[2]));
-				return node.get(args[1]);
+				return get(node, args[1]);
 			}
 		case PUT:
 			if(args.length < 4) {
 				throw new SynapseSimException("Bad argument number to create node");
 			} else {
 				IDHT node = getRandomNode(topology.get(args[3]));
-				node.put(args[1], args[2]);
-				return "ok";
+				return put(node, args[1], args[2]);
 			}
 		default:
 			throw new SynapseSimException("How can it be possible to have this case ? You have 2 hours to think about it");
