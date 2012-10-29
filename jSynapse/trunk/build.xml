@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+
+<project name="jSynapse" default="build-all">
+
+  <!-- erase build file -->
+  <target name="clean">
+    <delete dir="bin" />
+    <delete dir="doc/javadoc"/>
+  </target>
+
+  <path id="classpath">
+    <fileset dir="bin/" includes="*.class"/>
+    <fileset dir="lib/" includes="tracker.jar" />
+  </path>
+  
+  <!-- Compile simulator-->
+  <target name="compile">
+    <mkdir dir="bin/"/>
+    <javac srcdir="src" destdir="bin/" classpathref="classpath" includeantruntime="false"/>
+  </target>
+  
+  <!-- Simulator jar-->
+  <target name="simulator_jar" depends="compile">
+    <jar destfile="simulator.jar" basedir="bin">
+      <manifest>
+	<attribute name="Main-Class" value="experiment.simulation.SynapseSim" />
+	<attribute name="Class-Path" value="lib/tracker.jar" />
+      </manifest>
+    </jar>
+  </target>
+
+  <!-- Oracle simulator jar-->
+  <target name="oracle_jar" depends="compile, simulator_jar">
+    <jar destfile="oracleSimulator.jar" basedir="bin">
+      <manifest>
+	<attribute name="Main-Class" value="experiment.simulation.Oracle" />
+	<attribute name="Class-Path" value="lib/tracker.jar" />
+      </manifest>
+    </jar>
+  </target>
+  
+  <!--build all-->
+  <target name="build-all" depends="simulator_jar, oracle_jar">
+    <echo>Build simulator and oracle</echo>
+  </target>
+
+  <!-- generate documentation -->
+  <target name="javadoc" depends="">
+    <mkdir dir="doc/javadoc" />
+    <javadoc packagenames="*.*" sourcepath="src" destdir="doc/javadoc" access="private" windowtitle="jSynapse" verbose="true" author="true" version="true">
+    </javadoc>
+  </target>
+
+</project>
