@@ -10,13 +10,16 @@ public class LocalImpl implements ITransport {
 	private ISynapseSim simulator;
 	private int port;
 	
-	public LocalImpl(int port) {
-		this.simulator = SynapseSim.getInstance();
-		this.port=port;
+	public LocalImpl() {
+		this(SynapseSim.DEFAULT_PORT);
 	}
 
+	public LocalImpl(int port) {
+		this.simulator = SynapseSim.getInstance();
+		this.port = port;
+	}
+	
 	public int getPort() {
-		//return SynapseSim.DEFAULT_PORT;
 		return this.port;
 	}
 

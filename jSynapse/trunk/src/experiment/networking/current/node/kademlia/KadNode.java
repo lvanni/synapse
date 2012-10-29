@@ -20,7 +20,7 @@ import experiment.networking.current.Oracle;
 
 public class KadNode implements IDHT{
 
-	protected String identifier;
+	protected String overlayIdentifier;
 	protected ITransport transport;
 	protected Node node;
 	protected Kademlia kad;
@@ -30,18 +30,31 @@ public class KadNode implements IDHT{
 	
 	protected KadNode() {}
 
-	public KadNode(String identifier) {
+	public KadNode(String overlayIdentifier) {
 		try {
-			this.identifier = identifier;
-			this.h = new HashFunction(identifier);
 			ServerSocket serverSocket = new ServerSocket(0);
-			node = new Node(InfoConsole.getIp(), 0, serverSocket.getLocalPort());
-			kad = new Kademlia(Identifier.randomIdentifier(), serverSocket.getLocalPort());
-			transport = new SocketImpl(0, 10, RequestHandler.class.getName(),
+			this.overlayIdentifier = overlayIdentifier;
+			this.h = new HashFunction(overlayIdentifier);
+			this.node = new Node(InfoConsole.getIp(), 0, serverSocket.getLocalPort());
+			this.kad = new Kademlia(Identifier.randomIdentifier(), serverSocket.getLocalPort());
+			this.transport = new SocketImpl(0, 10, RequestHandler.class.getName(),
 					10, 1, 100, this);
 			((SocketImpl) transport).launchServer();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public KadNode(String overlayIdentifier, ITransport transport) {
+		try {
+			ServerSocket serverSocket = new ServerSocket(0);
+			this.overlayIdentifier = overlayIdentifier;
+			this.h = new HashFunction(overlayIdentifier);
+			this.node = new Node(InfoConsole.getIp(), 0, serverSocket.getLocalPort());
+			this.kad = new Kademlia(Identifier.randomIdentifier(), serverSocket.getLocalPort());
+			this.transport = transport;
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -82,7 +95,7 @@ public class KadNode implements IDHT{
 	}
 
 	public String getIdentifier() {
-		return identifier;
+		return overlayIdentifier;
 	}
 
 	public Node getThisNode() {

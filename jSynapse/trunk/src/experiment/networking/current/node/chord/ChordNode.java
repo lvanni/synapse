@@ -25,39 +25,13 @@ public class ChordNode extends AbstractChord {
 	private static SimpleDateFormat formater = new SimpleDateFormat(
 	"dd/MM/yy_H:mm:ss");
 	protected static String time = formater.format(new Date());
-	public String overlayIntifier = "chordNetwork"; // use an unique ID is possible
+	public String overlayIndentifier = "chordNetwork"; // use an unique ID is possible
 	/** Transport protocol */
 	protected ITransport transport;
 	/** Hash function */
 	private HashFunction h;
 	/* just to debug */
 	public static boolean debugMode = false;
-
-	/**
-	 * Default constructor
-	 * 
-	 * @param ip
-	 * @param port
-	 * @param overlayIntifier
-	 *            the identifier of the chord network
-	 */
-	public ChordNode(String ip, int port, String overlayIntifier) {
-		this(ip,port,overlayIntifier,null);
-	}
-	
-	public ChordNode(String ip,int port, String overlayIdentifier,ITransport transport){
-		this.overlayIntifier = overlayIdentifier;
-		this.h = new HashFunction(overlayIntifier);
-		// TRANSPORT LAYER BASED ON THE SOCKET IMPLEMENTATION
-		this.transport = transport;
-		if(transport == null){
-			this.transport = new SocketImpl(port, 10, RequestHandler.class.getName(),10, 1, 100, this);
-			((SocketImpl) this.transport).launchServer();
-		}
-		int id = h.SHA1ToInt(ip +  transport.getPort() + time);
-		initialize(ip, id, transport.getPort());
-		checkStable();
-	}
 
 	/**
 	 * Constructor without overlayIntifier (it is auto-generate)
@@ -67,6 +41,45 @@ public class ChordNode extends AbstractChord {
 	 */
 	public ChordNode(String ip, int port) {
 		this(ip, port, "<" + ip + port + ">");
+	}
+	
+	/**
+	 * Default constructor
+	 * 
+	 * @param ip
+	 * @param port
+	 * @param overlayIdentifier
+	 *            the identifier of the chord network
+	 */
+
+	public ChordNode(String ip, int port, String overlayIdentifier) {
+		// DEFAULT TRANSPORT LAYER BASED ON THE SOCKET IMPLEMENTATION
+		this.transport = new SocketImpl(port, 10, RequestHandler.class.getName(),
+				10, 1, 100, this);
+		((SocketImpl) transport).launchServer();
+		this.overlayIndentifier = overlayIdentifier;
+		this.h = new HashFunction(overlayIdentifier);
+		int id = h.SHA1ToInt(ip +  transport.getPort() + time);
+		
+		initialize(ip, id, transport.getPort());
+		checkStable();
+	}
+	
+	/**
+	 * Constructor with transport parameter
+	 * @param ip
+	 * @param port
+	 * @param overlayIdentifier
+	 * @param transport
+	 */
+	public ChordNode(String ip, int port, String overlayIdentifier, ITransport transport) {
+		this.transport = transport;
+		this.overlayIndentifier = overlayIdentifier;
+		this.h = new HashFunction(overlayIdentifier);
+		int id = h.SHA1ToInt(ip +  transport.getPort() + time);
+
+		initialize(ip, id, transport.getPort());
+		checkStable();
 	}
 
 	/**
@@ -215,7 +228,7 @@ public class ChordNode extends AbstractChord {
 	 * @see core.protocol.p2p.IDHT#getIdentifier()
 	 */
 	public String getIdentifier() {
-		return overlayIntifier;
+		return overlayIndentifier;
 	}
 
 	/**
