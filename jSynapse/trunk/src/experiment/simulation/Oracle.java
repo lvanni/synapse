@@ -26,14 +26,22 @@ public class Oracle {
 	 * @throws SynapseSimException 
 	 */
 	public String formatResponse(String[] args) throws SynapseSimException{
+		if(args.length < 3) {
+			throw new SynapseSimException("wrong number of parameters");
+		}
 		String command="";
+		int isEven = 0;
 		for(int i=0;i<args.length;i++){
 			if(i==0){
 				command=createCommand(args[i]).getValue()+"";
 			}
 			else{
-				if((i+1) % 2 == 0){
+				if((i+1) % 2 == isEven){
 					command+=","+createNodeType(args[i]).getValue();
+					if (args[i].equals("synapse")) {
+						command+=","+"s1";
+						isEven = 1;
+					}
 				}
 				else{
 					command+=","+args[i];
@@ -128,10 +136,11 @@ public class Oracle {
 			//System.out.println(response);
 			oracle.printInLogsFile(response);
 			System.exit(0);
+			
 		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("usage: \nCreate [chord|kad] <networkId>");
-			System.out.println("Create synapse <networkId> [chord|kad] <networkId> [chord|kad] <networkId> ...");
+//			e.printStackTrace();
+			System.out.println("usage: \ncreate [chord|kad] <networkId>");
+			System.out.println("create synapse [chord|kad] <networkId> [chord|kad] <networkId> ...");
 		}
 	}
 
