@@ -8,7 +8,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import core.protocol.p2p.IDHT;
 import core.protocol.p2p.Node;
 import core.protocol.transport.IRequestHandler;
 

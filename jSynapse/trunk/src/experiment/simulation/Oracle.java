@@ -123,10 +123,10 @@ public class Oracle {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		
+		ITransport transport = new SocketImpl(0, 10, RequestHandler.class.getName(), 10, 1, 100, null);
+		
 		try {
-
-			ITransport transport = new SocketImpl(0, 10, RequestHandler.class.getName(),
-					10, 1, 100, null);
 
 			Node simulator = new Node("localhost", SynapseSim.DEFAULT_PORT);
 			Oracle oracle = new Oracle();
@@ -135,12 +135,13 @@ public class Oracle {
 			String response = transport.sendRequest(argument, simulator);
 			//System.out.println(response);
 			oracle.printInLogsFile(response);
-			System.exit(0);
 			
 		} catch (Exception e) {
-//			e.printStackTrace();
 			System.out.println("usage: \ncreate [chord|kad] <networkId>");
 			System.out.println("create synapse [chord|kad] <networkId> [chord|kad] <networkId> ...");
+		} finally {
+			transport.stopServer();
+			System.exit(0);
 		}
 	}
 
