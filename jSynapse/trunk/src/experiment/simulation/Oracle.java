@@ -29,13 +29,28 @@ public class Oracle {
 		if(args.length < 3) {
 			throw new SynapseSimException("wrong number of parameters");
 		}
-		String command="";
+		Command comm = createCommand(args[0]);
+		String command=comm.getValue()+"";
+		switch(comm){
+		case CREATE:
+			command+=formatCreate(args);
+			break;
+		case PUT:
+			command+=formatOther(args);
+			break;
+		case GET:
+			command+=formatOther(args);
+			break;
+		default:
+			throw new SynapseSimException("Invalid command in the oracle");
+		}
+		return command;
+	}
+
+	private String formatCreate(String[] args) throws SynapseSimException{
 		int isEven = 0;
-		for(int i=0;i<args.length;i++){
-			if(i==0){
-				command=createCommand(args[i]).getValue()+"";
-			}
-			else{
+		String command="";
+		for(int i=1;i<args.length;i++){
 				if((i+1) % 2 == isEven){
 					command+=","+createNodeType(args[i]).getValue();
 					if (args[i].equals("synapse")) {
@@ -46,7 +61,15 @@ public class Oracle {
 				else{
 					command+=","+args[i];
 				}
-			}
+		}
+		return command;
+	}
+	
+	
+	private String formatOther(String[] args) throws SynapseSimException{
+		String command="";
+		for(int i=1;i<args.length;i++){
+				command+=","+args[i];
 		}
 		return command;
 	}
@@ -123,9 +146,9 @@ public class Oracle {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		
+
 		ITransport transport = new SocketImpl(0, 10, RequestHandler.class.getName(), 10, 1, 100, null);
-		
+
 		try {
 
 			Node simulator = new Node("localhost", SynapseSim.DEFAULT_PORT);
@@ -135,7 +158,7 @@ public class Oracle {
 			String response = transport.sendRequest(argument, simulator);
 			//System.out.println(response);
 			oracle.printInLogsFile(response);
-			
+
 		} catch (Exception e) {
 			System.out.println("usage: \ncreate [chord|kad] <networkId>");
 			System.out.println("create synapse [chord|kad] <networkId> [chord|kad] <networkId> ...");

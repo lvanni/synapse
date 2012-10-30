@@ -137,11 +137,11 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 
 	public String put(IDHT node, String key, String value) {
 		node.put(key, value);
-		return "";
+		return "put on node "+node.getThisNode().getPort()+" key "+key+" value "+ value;
 	}
 
 	public String get(IDHT node, String key) {
-		return node.get(key);
+		return "get value "+node.get(key)+ " on node "+ node.getThisNode().getPort() + " key "+ key;
 	}
 
 	/* ********************************************* */
@@ -219,7 +219,7 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 	}
 
 	/**
-	 * Analyse create command and execute it 
+	 * Analyse "create" command and execute it 
 	 * @param args
 	 * @return
 	 * @throws SynapseSimException
@@ -243,7 +243,7 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 					chordNumber++;
 				}
 			}
-			return "Node Synapse created with :"+chordNumber+" chord node, "+kadNumber+" kad node inside, on network: "+args[2];
+			return "Node Synapse created with :"+chordNumber+" chord node, "+kadNumber+" kad node, on network: "+args[2];
 		}
 		else{
 			createNode(nodeTypeSelected, args[2]);
