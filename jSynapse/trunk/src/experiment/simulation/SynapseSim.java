@@ -139,12 +139,12 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 	public String put(IDHT node, String key, String value) {
 		node.put(key, value);
 		//return "put on node "+node.getThisNode().getPort()+" key "+key+" value "+ value;
-		return "PUT,"+key+","+value+","+node.getThisNode().getNetworkType()+","+node.getThisNode().getNetworkId()+","+node.getThisNode().getPort()+",";
+		return "PUT,"+key+","+value+","+","+node.getThisNode().getPort()+",";
 	}
 
 	public String get(IDHT node, String key) {
 		//return "get value "+node.get(key)+ " on node "+ node.getThisNode().getPort() + " key "+ key;
-		return "GET,"+key+","+node.get(key)+","+node.getThisNode().getNetworkType()+","+node.getThisNode().getNetworkId()+","+node.getThisNode().getPort()+",";
+		return "GET,"+key+","+node.get(key)+","+node.getThisNode().getPort()+",";
 	}
 
 	/* ********************************************* */
