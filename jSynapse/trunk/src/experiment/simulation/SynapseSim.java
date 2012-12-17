@@ -137,11 +137,13 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 
 	public String put(IDHT node, String key, String value) {
 		node.put(key, value);
-		return "put on node "+node.getThisNode().getPort()+" key "+key+" value "+ value;
+		//return "put on node "+node.getThisNode().getPort()+" key "+key+" value "+ value;
+		return "PUT,"+key+","+value+","+node.getThisNode().getNetworkType()+","+node.getThisNode().getNetworkId()+","+node.getThisNode().getPort()+",";
 	}
 
 	public String get(IDHT node, String key) {
-		return "get value "+node.get(key)+ " on node "+ node.getThisNode().getPort() + " key "+ key;
+		//return "get value "+node.get(key)+ " on node "+ node.getThisNode().getPort() + " key "+ key;
+		return "GET,"+key+","+node.get(key)+","+node.getThisNode().getNetworkType()+","+node.getThisNode().getNetworkId()+","+node.getThisNode().getPort()+",";
 	}
 
 	/* ********************************************* */
@@ -233,9 +235,13 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 			NodeType synapseNodeTypeSelected;
 			int chordNumber=0;
 			int kadNumber=0;
+			String[] network= new String[2];
+			String[] nodeType = new String[2];
 			for(int i=3;i<args.length;i+=2){
 				synapseNodeTypeSelected = NodeType.values()[Integer.parseInt(args[i])];
 				createNode(synapseNodeTypeSelected, args[i+1],synapse);
+				network[i%3] = args[i+1];
+				nodeType[i%3] = synapseNodeTypeSelected.toString();
 				if(synapseNodeTypeSelected == NodeType.KAD){
 					kadNumber++;
 				}
@@ -243,11 +249,13 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 					chordNumber++;
 				}
 			}
-			return "Node Synapse created with :"+chordNumber+" chord node, "+kadNumber+" kad node, on network: "+args[2];
+			//return "Node Synapse created with :"+chordNumber+" chord node, "+kadNumber+" kad node, on network: "+args[2];
+			return "CREATE,SYNAPSE,"+nodeType[0]+";"+network[0]+","+nodeType[1]+";"+network[1]+",";
 		}
 		else{
 			createNode(nodeTypeSelected, args[2]);
-			return "Node "+nodeTypeSelected.toString()+ " created on network: "+ args[2];
+			//return "Node "+nodeTypeSelected.toString()+ " created on network: "+ args[2];
+			return "CREATE,"+nodeTypeSelected.toString()+","+args[2]+",";
 		}
 	}
 
