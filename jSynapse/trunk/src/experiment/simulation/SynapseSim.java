@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -235,13 +236,13 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 			NodeType synapseNodeTypeSelected;
 			int chordNumber=0;
 			int kadNumber=0;
-			String[] network= new String[2];
-			String[] nodeType = new String[2];
+			ArrayList<String> network=new ArrayList<String>();
+			ArrayList<String> nodeType=new ArrayList<String>();
 			for(int i=3;i<args.length;i+=2){
 				synapseNodeTypeSelected = NodeType.values()[Integer.parseInt(args[i])];
 				createNode(synapseNodeTypeSelected, args[i+1],synapse);
-				network[i%3] = args[i+1];
-				nodeType[i%3] = synapseNodeTypeSelected.toString();
+				network.add(args[i+1]);
+				nodeType.add(synapseNodeTypeSelected.toString());
 				if(synapseNodeTypeSelected == NodeType.KAD){
 					kadNumber++;
 				}
@@ -250,7 +251,7 @@ public class SynapseSim implements ISynapseSim, IRequestHandler, Serializable {
 				}
 			}
 			//return "Node Synapse created with :"+chordNumber+" chord node, "+kadNumber+" kad node, on network: "+args[2];
-			return "CREATE,SYNAPSE,"+nodeType[0]+";"+network[0]+","+nodeType[1]+";"+network[1]+",";
+			return "CREATE,SYNAPSE,"+nodeType.get(0)+";"+network.get(0)+","+nodeType.get(1)+";"+network.get(1)+",";
 		}
 		else{
 			createNode(nodeTypeSelected, args[2]);
